@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%" fill="none">
+  <defs>
+    <!-- Purple to Indigo gradient (top-left loop) -->
+    <linearGradient id="cdPurple" x1="0%" y1="20%" x2="80%" y2="80%">
+      <stop offset="0%" stop-color="#9333ea"/>
+      <stop offset="35%" stop-color="#7c3aed"/>
+      <stop offset="70%" stop-color="#4f46e5"/>
+      <stop offset="100%" stop-color="#2563eb"/>
+    </linearGradient>
+
+    <!-- Cyan to Sky Blue gradient (top-right wing) -->
+    <linearGradient id="cdCyan" x1="20%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="40%" stop-color="#06b6d4"/>
+      <stop offset="80%" stop-color="#0ea5e9"/>
+      <stop offset="100%" stop-color="#2563eb"/>
+    </linearGradient>
+
+    <!-- Blue gradient for the inner checkmark layer -->
+    <linearGradient id="cdBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#60a5fa"/>
+      <stop offset="45%" stop-color="#3b82f6"/>
+      <stop offset="80%" stop-color="#2563eb"/>
+      <stop offset="100%" stop-color="#1d4ed8"/>
+    </linearGradient>
+
+    <!-- Deep indigo shadow at the bottom vertex -->
+    <linearGradient id="cdDark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3b82f6"/>
+      <stop offset="50%" stop-color="#1d4ed8"/>
+      <stop offset="100%" stop-color="#1e3a8a"/>
+    </linearGradient>
+
+    <filter id="cdGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#2563eb" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#cdGlow)">
+    <!-- Top-left loop ribbon -->
+    <path d="M 172 88 
+             C 108 88, 56 140, 56 208 
+             C 56 270, 114 332, 192 396 
+             C 224 422, 256 444, 256 444
+             C 256 444, 236 410, 180 344 
+             C 134 290, 110 248, 110 204 
+             C 110 156, 142 134, 178 134 
+             C 214 134, 248 164, 264 198 
+             L 256 218 
+             C 238 174, 206 88, 172 88 Z" 
+          fill="url(#cdPurple)"/>
+
+    <!-- Top-right wing ribbon -->
+    <path d="M 340 88 
+             C 394 88, 456 128, 456 204 
+             C 456 270, 396 344, 320 402 
+             C 284 430, 256 444, 256 444 
+             C 256 444, 278 420, 342 352 
+             C 390 300, 408 252, 408 204 
+             C 408 160, 376 134, 334 134 
+             C 294 134, 264 164, 256 186 
+             C 272 144, 302 88, 340 88 Z" 
+          fill="url(#cdCyan)"/>
+
+    <!-- Inner checkmark shape (forms heart core) -->
+    <path d="M 124 246 
+             C 106 222, 116 186, 146 172 
+             C 176 158, 212 174, 236 210 
+             L 256 244 
+             C 286 196, 332 146, 384 120 
+             C 418 102, 448 116, 448 152 
+             C 448 182, 412 228, 356 296 
+             L 274 394 
+             C 264 406, 248 406, 238 394 
+             L 154 296 
+             C 138 278, 128 262, 124 246 Z" 
+          fill="url(#cdBlue)"/>
+
+    <!-- Bottom point accent crease -->
+    <path d="M 154 296 
+             L 238 394 
+             C 248 406, 264 406, 274 394 
+             L 356 296 
+             C 340 318, 308 356, 274 390 
+             C 264 400, 248 400, 238 390 
+             C 202 354, 170 318, 154 296 Z" 
+          fill="url(#cdDark)"/>
+  </g>
+</svg>

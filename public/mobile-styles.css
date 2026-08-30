@@ -1,0 +1,1488 @@
+/* ==========================================================================
+   CARE DOKTER - MOBILE HEALTHCARE PROTOTYPE
+   "Continuous Care Companion" · Mandaya Royal Hospital
+   Design System & Mobile Styles
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+  /* Primary & Brand Atmosphere */
+  --primary-deep: #1e3a8a;      /* Deep Royal Navy */
+  --primary: #2563eb;           /* Vibrant Healthcare Blue */
+  --primary-light: #3b82f6;     /* Sky Royal Blue */
+  --primary-subtle: #eff6ff;    /* Soft Tint */
+  --indigo: #4f46e5;            /* Indigo Accent */
+  --purple: #7c3aed;            /* Purple Accent */
+  --cyan: #06b6d4;              /* Soft Turquoise */
+  --cyan-light: #e0f2fe;        /* Cyan tint */
+  --emerald: #10b981;           /* Healthy Green */
+  --emerald-subtle: #ecfdf5;
+  --amber: #f59e0b;
+  --amber-subtle: #fffbeb;
+  
+  /* Neutral Palette */
+  --bg-app: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-card-subtle: #f1f5f9;
+  --text-main: #0f172a;
+  --text-body: #334155;
+  --text-muted: #64748b;
+  --text-light: #94a3b8;
+  --border: #e2e8f0;
+  --border-focus: #93c5fd;
+
+  /* Gradients */
+  --grad-primary: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #06b6d4 100%);
+  --grad-purple-blue: linear-gradient(135deg, #7c3aed 0%, #3b82f6 100%);
+  --grad-card-hero: linear-gradient(145deg, #1e3a8a 0%, #1e40af 60%, #0284c7 100%);
+  --grad-card-mira: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
+  --grad-carepoints: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  --grad-subtle-glow: radial-gradient(circle at top right, rgba(6,182,212,0.12), transparent 70%);
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.08), 0 2px 6px -2px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 10px 25px -5px rgba(30, 58, 138, 0.12), 0 8px 10px -6px rgba(30, 58, 138, 0.06);
+  --shadow-card: 0 8px 20px -4px rgba(15, 23, 42, 0.06);
+
+  /* Dimensions */
+  --nav-height: 72px;
+  --header-height: 58px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Plus Jakarta Sans', 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background-color: #0b1329;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.18) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(124, 58, 237, 0.15) 0px, transparent 50%),
+    radial-gradient(at 50% 50%, rgba(6, 182, 212, 0.08) 0px, transparent 50%);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow-x: hidden;
+}
+
+/* ==========================================================================
+   Desktop Shell & Smartphone Frame
+   ========================================================================== */
+.prototype-stage {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 16px 40px 16px;
+}
+
+.prototype-topbar {
+  width: 100%;
+  max-width: 980px;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 10px 18px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  color: #ffffff;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  z-index: 100;
+}
+
+.prototype-topbar-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+}
+
+.prototype-badge {
+  background: linear-gradient(135deg, #7c3aed 0%, #2563eb 100%);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 20px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.prototype-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-topbar {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f1f5f9;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-topbar:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Smartphone Container Frame */
+.smartphone-frame {
+  position: relative;
+  width: 100%;
+  max-width: 412px;
+  height: 860px;
+  max-height: 92vh;
+  background: #0f172a;
+  border-radius: 46px;
+  box-shadow: 
+    0 0 0 10px #1e293b,
+    0 0 0 12px #334155,
+    0 25px 60px -10px rgba(0, 0, 0, 0.6),
+    0 0 80px rgba(37, 99, 235, 0.25);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+}
+
+/* Fullscreen Mode (When user switches or on actual mobile) */
+.full-screen-mode .smartphone-frame {
+  max-width: 480px;
+  height: 92vh;
+}
+
+@media (max-width: 600px) {
+  .prototype-stage {
+    padding: 0;
+  }
+  .prototype-topbar {
+    display: none;
+  }
+  .smartphone-frame {
+    max-width: 100%;
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+    box-shadow: none;
+    border: none;
+  }
+}
+
+/* Mobile Status Bar */
+.mobile-status-bar {
+  height: 44px;
+  padding: 10px 24px 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+  z-index: 60;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+}
+
+.mobile-status-bar.dark-status {
+  color: #ffffff;
+}
+
+.dynamic-island {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 110px;
+  height: 26px;
+  background: #000000;
+  border-radius: 20px;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 10px;
+}
+
+.camera-lens {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #111827;
+  border: 1px solid #1f2937;
+}
+
+/* Screen Viewports Container */
+.mobile-screen-viewport {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-app);
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Hide scrollbar but keep functional */
+.mobile-screen-viewport::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+
+/* Screen Views */
+.screen-view {
+  display: none;
+  width: 100%;
+  min-height: 100%;
+  flex-direction: column;
+  opacity: 0;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  transform: translateY(8px);
+}
+
+.screen-view.active {
+  display: flex;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ==========================================================================
+   1. SPLASH SCREEN
+   ========================================================================== */
+#screen-splash {
+  background: linear-gradient(180deg, #0b1329 0%, #1e3a8a 50%, #0f172a 100%);
+  color: #ffffff;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 32px;
+  position: relative;
+  cursor: pointer;
+}
+
+.splash-logo-box {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 24px;
+  animation: pulseLogo 2s infinite ease-in-out;
+  filter: drop-shadow(0 15px 25px rgba(37, 99, 235, 0.4));
+}
+
+@keyframes pulseLogo {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.splash-title {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: #ffffff;
+  margin-bottom: 6px;
+}
+
+.splash-subtitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: #93c5fd;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 36px;
+}
+
+.splash-loader-bar {
+  width: 140px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.splash-loader-progress {
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(90deg, #38bdf8, #818cf8);
+  border-radius: 4px;
+  animation: loadProgress 1.4s infinite ease-in-out;
+}
+
+@keyframes loadProgress {
+  0% { transform: translateX(-100%); width: 30%; }
+  50% { width: 70%; }
+  100% { transform: translateX(300%); width: 40%; }
+}
+
+.splash-skip-hint {
+  position: absolute;
+  bottom: 40px;
+  font-size: 11px;
+  color: #64748b;
+  letter-spacing: 0.2px;
+}
+
+/* ==========================================================================
+   2. WELCOME SCREEN
+   ========================================================================== */
+#screen-welcome {
+  background: linear-gradient(180deg, #ffffff 0%, #f0f7ff 100%);
+  padding: 60px 24px 32px 24px;
+  justify-content: space-between;
+}
+
+.welcome-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.welcome-logo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  padding: 6px 14px 6px 8px;
+  border-radius: 30px;
+  border: 1px solid #e0f2fe;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
+  margin-bottom: 18px;
+}
+
+.welcome-logo-img {
+  width: 26px;
+  height: 26px;
+}
+
+.welcome-logo-text {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary-deep);
+}
+
+.welcome-headline {
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--text-main);
+  margin-bottom: 10px;
+  letter-spacing: -0.5px;
+}
+
+.welcome-desc {
+  font-size: 13.5px;
+  color: var(--text-muted);
+  line-height: 1.55;
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+/* 3 Benefits Cards */
+.welcome-benefits-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.benefit-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.benefit-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: #cbd5e1;
+}
+
+.benefit-icon-box {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.benefit-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 2px;
+}
+
+.benefit-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+/* Welcome Actions */
+.welcome-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+/* ==========================================================================
+   BUTTONS & FORM CONTROLS
+   ========================================================================== */
+.btn-primary-mobile {
+  width: 100%;
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+  color: #ffffff;
+  border: none;
+  padding: 14px 20px;
+  border-radius: 14px;
+  font-size: 14.5px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+  transition: all 0.2s ease;
+}
+
+.btn-primary-mobile:hover {
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+  transform: translateY(-1px);
+}
+
+.btn-primary-mobile:active {
+  transform: translateY(1px);
+}
+
+.btn-secondary-mobile {
+  width: 100%;
+  background: #ffffff;
+  color: var(--primary-deep);
+  border: 1.5px solid #cbd5e1;
+  padding: 13px 20px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary-mobile:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
+
+.text-btn {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  padding: 4px 8px;
+  transition: color 0.2s ease;
+}
+
+.text-btn:hover {
+  color: var(--primary-deep);
+  text-decoration: underline;
+}
+
+/* ==========================================================================
+   3. LOGIN SCREEN
+   ========================================================================== */
+#screen-login {
+  background: linear-gradient(180deg, #f8fafc 0%, #eff6ff 100%);
+  padding: 54px 24px 32px 24px;
+  justify-content: space-between;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.login-logo {
+  width: 54px;
+  height: 54px;
+  margin-bottom: 12px;
+}
+
+.login-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 4px;
+}
+
+.login-subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* Form Styles */
+.form-group {
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.form-label {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-body);
+  margin-bottom: 6px;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 14px;
+  color: var(--text-muted);
+  font-size: 16px;
+  pointer-events: none;
+}
+
+.form-input {
+  width: 100%;
+  background: #ffffff;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px 12px 42px;
+  font-size: 14px;
+  color: var(--text-main);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.form-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+/* Prototype Demo Box */
+.demo-credentials-card {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border: 1.5px dashed #86efac;
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin: 16px 0;
+  text-align: left;
+}
+
+.demo-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.demo-tag {
+  font-size: 11px;
+  font-weight: 800;
+  color: #15803d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.demo-autofill-btn {
+  background: #16a34a;
+  color: #ffffff;
+  border: none;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.demo-autofill-btn:hover {
+  background: #15803d;
+}
+
+.demo-creds-text {
+  font-size: 12px;
+  color: #166534;
+  line-height: 1.4;
+}
+
+/* ==========================================================================
+   4. ONBOARDING SCREENS (1, 2, 3)
+   ========================================================================== */
+#screen-onboarding {
+  background: #ffffff;
+  padding: 54px 24px 32px 24px;
+  justify-content: space-between;
+}
+
+.onboarding-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.onboarding-dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background: #cbd5e1;
+  transition: all 0.3s ease;
+}
+
+.dot.active {
+  width: 24px;
+  background: var(--primary);
+}
+
+.onboarding-step-content {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  animation: fadeIn 0.3s ease;
+}
+
+.onboarding-step-content.active {
+  display: flex;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.onboarding-visual-box {
+  width: 100%;
+  height: 220px;
+  background: linear-gradient(135deg, #f0f7ff 0%, #e0f2fe 100%);
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 28px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #bae6fd;
+}
+
+/* Journey Flow Graphic (Screen 2) */
+.journey-flow-diagram {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 85%;
+}
+
+.flow-step-pill {
+  background: #ffffff;
+  border: 1.5px solid #93c5fd;
+  border-radius: 12px;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--primary-deep);
+  box-shadow: var(--shadow-sm);
+}
+
+.flow-step-pill.highlight {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+  color: #ffffff;
+  border-color: #1e3a8a;
+}
+
+.flow-arrow-down {
+  text-align: center;
+  font-size: 14px;
+  color: var(--primary);
+  font-weight: 800;
+}
+
+.onboarding-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 10px;
+  line-height: 1.3;
+}
+
+.onboarding-desc {
+  font-size: 13.5px;
+  color: var(--text-muted);
+  line-height: 1.55;
+  max-width: 320px;
+}
+
+/* ==========================================================================
+   5. HOME SCREEN (MAIN CONTINUOUS CARE DASHBOARD)
+   ========================================================================== */
+#screen-home {
+  padding: 50px 18px 90px 18px; /* space for bottom nav */
+}
+
+/* Home Header */
+.home-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.home-brand-mini {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.home-brand-logo {
+  width: 28px;
+  height: 28px;
+}
+
+.home-brand-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--primary-deep);
+  line-height: 1.1;
+}
+
+.home-brand-sub {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.patient-avatar-badge {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6 0%, #1e3a8a 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  border: 2px solid #ffffff;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+}
+
+/* Greeting Banner */
+.home-greeting-box {
+  margin-bottom: 18px;
+}
+
+.greeting-name {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.3px;
+}
+
+.greeting-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* ==========================================================================
+   SECTION 1: CARE JOURNEY CARD (Hero)
+   ========================================================================== */
+.care-journey-hero-card {
+  background: var(--grad-card-hero);
+  border-radius: 22px;
+  padding: 20px;
+  color: #ffffff;
+  margin-bottom: 16px;
+  box-shadow: 0 10px 25px -4px rgba(30, 58, 138, 0.35);
+  position: relative;
+  overflow: hidden;
+}
+
+.care-journey-hero-card::before {
+  content: '';
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 140px;
+  height: 140px;
+  background: radial-gradient(circle, rgba(6,182,212,0.3), transparent 70%);
+  pointer-events: none;
+}
+
+.journey-top-pill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.journey-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #bae6fd;
+}
+
+.journey-status-tag {
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.journey-name {
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 14px;
+  line-height: 1.25;
+}
+
+/* Progress Container */
+.journey-progress-container {
+  margin-bottom: 16px;
+}
+
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #e0f2fe;
+}
+
+.progress-track {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #38bdf8 0%, #4ade80 100%);
+  border-radius: 6px;
+  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.journey-next-appointment {
+  background: rgba(15, 23, 42, 0.35);
+  border-radius: 12px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.next-apt-label {
+  color: #94a3b8;
+  display: block;
+  font-size: 10.5px;
+}
+
+.next-apt-date {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   SECTION 2: MIRA PREVIEW CARD
+   ========================================================================== */
+.mira-preview-card {
+  background: #ffffff;
+  border: 1.5px solid #bae6fd;
+  border-radius: 20px;
+  padding: 18px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+.mira-preview-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, #0284c7 0%, #38bdf8 100%);
+}
+
+.mira-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.mira-avatar-img {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #38bdf8;
+  box-shadow: 0 4px 10px rgba(6, 182, 212, 0.2);
+}
+
+.mira-title-badge {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mira-ai-tag {
+  background: #e0f2fe;
+  color: #0369a1;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+.mira-prompt-bubble {
+  background: #f0f9ff;
+  border: 1px solid #e0f2fe;
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-size: 13px;
+  color: #0369a1;
+  font-weight: 600;
+  margin-bottom: 14px;
+  line-height: 1.45;
+}
+
+.btn-mira-checkin {
+  width: 100%;
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  color: #ffffff;
+  border: none;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+  transition: all 0.2s ease;
+}
+
+.btn-mira-checkin:hover {
+  box-shadow: 0 6px 16px rgba(2, 132, 199, 0.35);
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   SECTION 3 & 4: CAREPOINTS & UPCOMING CARE
+   ========================================================================== */
+.card-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+/* CarePoints Card */
+.carepoints-card {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.points-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.points-badge {
+  font-size: 12px;
+  font-weight: 700;
+  color: #d97706;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.points-value {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 4px;
+}
+
+.points-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+
+/* Upcoming Care Card */
+.upcoming-care-card {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: var(--shadow-sm);
+}
+
+.apt-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.apt-badge {
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.apt-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 2px;
+}
+
+.apt-date-text {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 6px;
+}
+
+.apt-doctor {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+/* ==========================================================================
+   6. BOTTOM NAVIGATION BAR
+   ========================================================================== */
+.bottom-nav-mobile {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--nav-height);
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(16px);
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 8px 10px 8px;
+  z-index: 50;
+}
+
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: #64748b;
+  font-size: 10.5px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 4px;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.nav-item-icon {
+  font-size: 20px;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+
+.nav-item.active {
+  color: var(--primary-deep);
+  font-weight: 800;
+}
+
+.nav-item.active .nav-item-icon {
+  transform: translateY(-2px);
+  color: var(--primary);
+}
+
+.nav-item-indicator {
+  width: 4px;
+  height: 4px;
+  border-radius: 2px;
+  background: transparent;
+  margin-top: 2px;
+}
+
+.nav-item.active .nav-item-indicator {
+  background: var(--primary);
+  width: 14px;
+}
+
+/* ==========================================================================
+   7. PROFILE SCREEN
+   ========================================================================== */
+#screen-profile {
+  padding: 50px 18px 90px 18px;
+}
+
+.profile-header-card {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 22px;
+  text-align: center;
+  margin-bottom: 18px;
+  box-shadow: var(--shadow-sm);
+}
+
+.profile-avatar-large {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 12px auto;
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.25);
+}
+
+.profile-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 2px;
+}
+
+.profile-meta {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.profile-badge-mandaya {
+  display: inline-block;
+  background: #e0f2fe;
+  color: #0369a1;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid #bae6fd;
+}
+
+/* Profile Menu List */
+.profile-menu-list {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+  margin-bottom: 18px;
+  box-shadow: var(--shadow-sm);
+}
+
+.profile-menu-item {
+  width: 100%;
+  padding: 15px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #f1f5f9;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s ease;
+}
+
+.profile-menu-item:last-child {
+  border-bottom: none;
+}
+
+.profile-menu-item:hover {
+  background: #f8fafc;
+}
+
+.menu-item-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.menu-item-icon {
+  font-size: 18px;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-item-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.menu-item-sub {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.menu-item-arrow {
+  color: #94a3b8;
+  font-size: 16px;
+}
+
+/* ==========================================================================
+   8. PLACEHOLDER SCREENS FOR FUTURE MODULES
+   ========================================================================== */
+.placeholder-view {
+  padding: 50px 20px 90px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  min-height: 100%;
+}
+
+.placeholder-badge {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.placeholder-icon-box {
+  width: 80px;
+  height: 80px;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  margin-bottom: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+}
+
+.placeholder-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 8px;
+}
+
+.placeholder-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.55;
+  max-width: 290px;
+  margin-bottom: 24px;
+}
+
+.placeholder-feature-preview {
+  background: #ffffff;
+  border: 1.5px dashed #cbd5e1;
+  border-radius: 16px;
+  padding: 16px;
+  width: 100%;
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.preview-pill-title {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--primary-deep);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.preview-list {
+  font-size: 12px;
+  color: var(--text-body);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ==========================================================================
+   9. MODALS & BOTTOM SHEETS
+   ========================================================================== */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 200;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.modal-backdrop.active {
+  display: flex;
+  opacity: 1;
+}
+
+.modal-content-card {
+  background: #ffffff;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 360px;
+  padding: 24px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+  transform: scale(0.95);
+  transition: transform 0.25s ease;
+  text-align: center;
+}
+
+.modal-backdrop.active .modal-content-card {
+  transform: scale(1);
+}
+
+.modal-icon-badge {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #e0f2fe;
+  color: #0284c7;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px auto;
+}
+
+.modal-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 8px;
+}
+
+.modal-text {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
