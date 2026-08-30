@@ -4,23 +4,23 @@
    Design System & Mobile Styles
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
 
 :root {
   /* Primary & Brand Atmosphere */
-  --primary-deep: #1e3a8a;      /* Deep Royal Navy */
-  --primary: #2563eb;           /* Vibrant Healthcare Blue */
-  --primary-light: #3b82f6;     /* Sky Royal Blue */
-  --primary-subtle: #eff6ff;    /* Soft Tint */
-  --indigo: #4f46e5;            /* Indigo Accent */
-  --purple: #7c3aed;            /* Purple Accent */
-  --cyan: #06b6d4;              /* Soft Turquoise */
-  --cyan-light: #e0f2fe;        /* Cyan tint */
-  --emerald: #10b981;           /* Healthy Green */
+  --primary-deep: #1e3a8a; /* Deep Royal Navy */
+  --primary: #2563eb; /* Vibrant Healthcare Blue */
+  --primary-light: #3b82f6; /* Sky Royal Blue */
+  --primary-subtle: #eff6ff; /* Soft Tint */
+  --indigo: #4f46e5; /* Indigo Accent */
+  --purple: #7c3aed; /* Purple Accent */
+  --cyan: #06b6d4; /* Soft Turquoise */
+  --cyan-light: #e0f2fe; /* Cyan tint */
+  --emerald: #10b981; /* Healthy Green */
   --emerald-subtle: #ecfdf5;
   --amber: #f59e0b;
   --amber-subtle: #fffbeb;
-  
+
   /* Neutral Palette */
   --bg-app: #f8fafc;
   --bg-card: #ffffff;
@@ -33,17 +33,35 @@
   --border-focus: #93c5fd;
 
   /* Gradients */
-  --grad-primary: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #06b6d4 100%);
+  --grad-primary: linear-gradient(
+    135deg,
+    #1e3a8a 0%,
+    #2563eb 50%,
+    #06b6d4 100%
+  );
   --grad-purple-blue: linear-gradient(135deg, #7c3aed 0%, #3b82f6 100%);
-  --grad-card-hero: linear-gradient(145deg, #1e3a8a 0%, #1e40af 60%, #0284c7 100%);
+  --grad-card-hero: linear-gradient(
+    145deg,
+    #1e3a8a 0%,
+    #1e40af 60%,
+    #0284c7 100%
+  );
   --grad-card-mira: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
   --grad-carepoints: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-  --grad-subtle-glow: radial-gradient(circle at top right, rgba(6,182,212,0.12), transparent 70%);
+  --grad-subtle-glow: radial-gradient(
+    circle at top right,
+    rgba(6, 182, 212, 0.12),
+    transparent 70%
+  );
 
   /* Shadows */
   --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05);
-  --shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.08), 0 2px 6px -2px rgba(15, 23, 42, 0.04);
-  --shadow-lg: 0 10px 25px -5px rgba(30, 58, 138, 0.12), 0 8px 10px -6px rgba(30, 58, 138, 0.06);
+  --shadow-md:
+    0 4px 12px -2px rgba(15, 23, 42, 0.08),
+    0 2px 6px -2px rgba(15, 23, 42, 0.04);
+  --shadow-lg:
+    0 10px 25px -5px rgba(30, 58, 138, 0.12),
+    0 8px 10px -6px rgba(30, 58, 138, 0.06);
   --shadow-card: 0 8px 20px -4px rgba(15, 23, 42, 0.06);
 
   /* Dimensions */
@@ -55,15 +73,26 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: 'Plus Jakarta Sans', 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family:
+    "Plus Jakarta Sans",
+    "Poppins",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
   -webkit-tap-highlight-color: transparent;
 }
 
 body {
   background-color: #0b1329;
-  background-image: 
+  background-image:
     radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.18) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(124, 58, 237, 0.15) 0px, transparent 50%),
+    radial-gradient(
+      at 100% 100%,
+      rgba(124, 58, 237, 0.15) 0px,
+      transparent 50%
+    ),
     radial-gradient(at 50% 50%, rgba(6, 182, 212, 0.08) 0px, transparent 50%);
   color: var(--text-main);
   min-height: 100vh;
@@ -100,7 +129,7 @@ body {
   justify-content: space-between;
   gap: 14px;
   color: #ffffff;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   z-index: 100;
 }
 
@@ -160,7 +189,7 @@ body {
   max-height: 92vh;
   background: #0f172a;
   border-radius: 46px;
-  box-shadow: 
+  box-shadow:
     0 0 0 10px #1e293b,
     0 0 0 12px #334155,
     0 25px 60px -10px rgba(0, 0, 0, 0.6),
@@ -266,7 +295,9 @@ body {
   min-height: 100%;
   flex-direction: column;
   opacity: 0;
-  transition: opacity 0.25s ease, transform 0.25s ease;
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
   transform: translateY(8px);
 }
 
@@ -299,8 +330,13 @@ body {
 }
 
 @keyframes pulseLogo {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
 }
 
 .splash-title {
@@ -338,9 +374,17 @@ body {
 }
 
 @keyframes loadProgress {
-  0% { transform: translateX(-100%); width: 30%; }
-  50% { width: 70%; }
-  100% { transform: translateX(300%); width: 40%; }
+  0% {
+    transform: translateX(-100%);
+    width: 30%;
+  }
+  50% {
+    width: 70%;
+  }
+  100% {
+    transform: translateX(300%);
+    width: 40%;
+  }
 }
 
 .splash-skip-hint {
@@ -422,7 +466,9 @@ body {
   align-items: flex-start;
   gap: 14px;
   box-shadow: var(--shadow-sm);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .benefit-card:hover {
@@ -708,8 +754,14 @@ body {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .onboarding-visual-box {
@@ -864,13 +916,13 @@ body {
 }
 
 .care-journey-hero-card::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -40px;
   right: -40px;
   width: 140px;
   height: 140px;
-  background: radial-gradient(circle, rgba(6,182,212,0.3), transparent 70%);
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.3), transparent 70%);
   pointer-events: none;
 }
 
@@ -972,7 +1024,7 @@ body {
 }
 
 .mira-preview-card::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -1369,7 +1421,7 @@ body {
   justify-content: center;
   font-size: 36px;
   margin-bottom: 20px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
 }
 
 .placeholder-title {
@@ -1444,7 +1496,7 @@ body {
   width: 100%;
   max-width: 360px;
   padding: 24px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
   transform: scale(0.95);
   transition: transform 0.25s ease;
   text-align: center;
@@ -1485,4 +1537,1290 @@ body {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+/* ==========================================================================
+   10. MANDAYA CAREPOINT (FEATURE 2) STYLES
+   ========================================================================== */
+
+/* Rewards Screen View Container */
+#screen-rewards {
+  padding: 50px 18px 95px 18px;
+  background: #f8fafc;
+}
+
+.carepoint-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.carepoint-brand-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #eff6ff;
+  border: 1px solid #dbeafe;
+  color: #1e40af;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin-bottom: 6px;
+}
+
+.carepoint-coin-icon {
+  font-size: 13px;
+}
+
+.carepoint-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.4px;
+  line-height: 1.2;
+}
+
+.carepoint-subtitle {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+
+.btn-carepoint-history-icon {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+}
+
+.btn-carepoint-history-icon:active {
+  transform: scale(0.92);
+  background: #f1f5f9;
+}
+
+/* ==========================================================================
+   10.1 CarePoint Hero Card
+   ========================================================================== */
+.carepoint-hero-card {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 55%, #0284c7 100%);
+  color: #ffffff;
+  border-radius: 22px;
+  padding: 20px 20px 18px 20px;
+  box-shadow: 0 10px 28px -6px rgba(30, 58, 138, 0.35);
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.carepoint-hero-card::after {
+  content: "";
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(6, 182, 212, 0.3) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+.hero-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.hero-points-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #bae6fd;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.hero-sparkle {
+  font-size: 13px;
+}
+
+.hero-badge-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(8px);
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.hero-badge-tag.active-mode {
+  background: rgba(16, 185, 129, 0.25);
+  border-color: rgba(16, 185, 129, 0.5);
+  color: #a7f3d0;
+}
+
+.badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #38bdf8;
+}
+
+.hero-badge-tag.active-mode .badge-dot {
+  background: #10b981;
+}
+
+.hero-balance-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.hero-points-number {
+  font-size: 38px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+
+.hero-points-unit {
+  font-size: 15px;
+  font-weight: 600;
+  color: #e0f2fe;
+}
+
+.hero-supporting-text {
+  font-size: 12px;
+  color: #e2e8f0;
+  line-height: 1.45;
+  margin-bottom: 16px;
+  opacity: 0.95;
+}
+
+.hero-footer-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-hero-action {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.btn-hero-action.primary {
+  background: #ffffff;
+  color: #1e3a8a;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-hero-action.primary:active {
+  transform: scale(0.96);
+  background: #f1f5f9;
+}
+
+.btn-hero-action.secondary {
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(8px);
+}
+
+.btn-hero-action.secondary:active {
+  transform: scale(0.96);
+  background: rgba(255, 255, 255, 0.28);
+}
+
+/* ==========================================================================
+   10.2 Point Prescription Card (Personalized Recommendation)
+   ========================================================================== */
+.point-prescription-card {
+  background: #ffffff;
+  border: 1.5px solid #93c5fd;
+  border-radius: 20px;
+  padding: 18px;
+  margin-bottom: 16px;
+  box-shadow: 0 6px 18px -4px rgba(37, 99, 235, 0.1);
+  position: relative;
+}
+
+.prescription-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.prescription-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.prescription-context {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.prescription-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 6px;
+  letter-spacing: -0.2px;
+}
+
+.prescription-desc {
+  font-size: 12.5px;
+  color: var(--text-body);
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+
+.prescription-benefit-box {
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.benefit-box-left {
+  flex: 1;
+}
+
+.benefit-rec-tag {
+  font-size: 10px;
+  color: #64748b;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 2px;
+}
+
+.benefit-rec-name {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--primary-deep);
+  margin-bottom: 4px;
+}
+
+.benefit-rec-cost {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #d97706;
+}
+
+.benefit-eligibility {
+  font-size: 10.5px;
+  color: #059669;
+  background: #d1fae5;
+  padding: 1px 6px;
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+.btn-prescription-use {
+  background: var(--grad-primary);
+  color: #ffffff;
+  border: none;
+  padding: 9px 14px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+  transition: all 0.2s ease;
+}
+
+.btn-prescription-use:active {
+  transform: scale(0.95);
+}
+
+/* ==========================================================================
+   10.3 Care Level Engagement Card
+   ========================================================================== */
+.care-level-card {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.level-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.level-badge-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #7c3aed;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.level-current-name {
+  font-size: 13px;
+  font-weight: 800;
+  color: #1e3a8a;
+  background: #eff6ff;
+  padding: 3px 9px;
+  border-radius: 8px;
+}
+
+.level-progress-bar-wrap {
+  margin-bottom: 10px;
+}
+
+.level-progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin-bottom: 5px;
+}
+
+.level-progress-track {
+  width: 100%;
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.level-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #7c3aed 0%, #2563eb 100%);
+  border-radius: 10px;
+  transition: width 0.4s ease;
+}
+
+.level-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.level-next-info {
+  font-size: 11.5px;
+  color: var(--text-body);
+}
+
+.level-sub-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   10.4 Auto-Use My Points Setting Card
+   ========================================================================== */
+.autouse-setting-card {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+  box-shadow: var(--shadow-sm);
+}
+
+.autouse-left {
+  flex: 1;
+}
+
+.autouse-title-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.autouse-icon {
+  font-size: 15px;
+}
+
+.autouse-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.autouse-desc {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* Switch Toggle Styling */
+.switch-toggle {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.switch-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider-toggle {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #cbd5e1;
+  transition: 0.3s;
+  border-radius: 24px;
+}
+
+.slider-toggle:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+input:checked + .slider-toggle {
+  background-color: #0284c7;
+}
+
+input:checked + .slider-toggle:before {
+  transform: translateX(20px);
+}
+
+/* ==========================================================================
+   10.5 Category Tabs Navigation
+   ========================================================================== */
+.reward-categories-section {
+  width: 100%;
+}
+
+.category-tabs-scroller {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  margin-bottom: 14px;
+  scrollbar-width: none;
+}
+
+.category-tabs-scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.cat-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  border: 1px solid var(--border);
+  padding: 8px 14px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-body);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cat-tab-btn.active {
+  background: #1e3a8a;
+  border-color: #1e3a8a;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(30, 58, 138, 0.2);
+}
+
+.cat-tab-btn:active {
+  transform: scale(0.95);
+}
+
+/* Panels */
+.category-panel {
+  display: none;
+  animation: fadeIn 0.25s ease;
+}
+
+.category-panel.active {
+  display: block;
+}
+
+.category-panel-header {
+  margin-bottom: 14px;
+}
+
+.cat-headline {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 3px;
+  letter-spacing: -0.2px;
+}
+
+.cat-subtext {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* ==========================================================================
+   10.6 Reward Items Grid & Cards
+   ========================================================================== */
+.rewards-items-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.reward-item-card {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: all 0.2s ease;
+}
+
+.reward-item-card.highlight-card {
+  border-color: #93c5fd;
+  background: #f8fbff;
+}
+
+.reward-card-top-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.reward-icon-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #eff6ff;
+  border: 1px solid #dbeafe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.reward-card-info {
+  flex: 1;
+}
+
+.reward-card-header-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.reward-card-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.2px;
+}
+
+.reward-category-badge {
+  font-size: 10px;
+  font-weight: 700;
+  color: #0284c7;
+  background: #e0f2fe;
+  padding: 2px 7px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.reward-card-desc {
+  font-size: 12px;
+  color: var(--text-body);
+  line-height: 1.45;
+}
+
+.reward-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 10px;
+}
+
+.reward-cost-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.reward-points-cost {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 800;
+  color: #d97706;
+}
+
+.reward-status-pill {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.reward-status-pill.eligible {
+  color: #059669;
+}
+
+.reward-status-pill.insufficient {
+  color: #dc2626;
+}
+
+.btn-redeem-item {
+  background: #1e3a8a;
+  color: #ffffff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-redeem-item:active {
+  transform: scale(0.95);
+}
+
+.btn-redeem-item.disabled {
+  background: #e2e8f0;
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+/* ==========================================================================
+   10.7 Family Rewards Card
+   ========================================================================== */
+.family-member-card {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: var(--shadow-sm);
+}
+
+.family-card-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.family-avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.family-name {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.family-relation {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.family-pool-box {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.pool-label {
+  font-size: 12px;
+  color: #1e40af;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.pool-value {
+  font-size: 26px;
+  font-weight: 800;
+  color: #1e3a8a;
+}
+
+.family-transfer-actions {
+  margin-bottom: 14px;
+}
+
+.transfer-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 8px;
+}
+
+.transfer-btn-group {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-transfer-chip {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  padding: 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-transfer-chip.highlight {
+  background: #eff6ff;
+  border-color: #93c5fd;
+  color: #1d4ed8;
+}
+
+.btn-transfer-chip:active {
+  transform: scale(0.95);
+}
+
+.family-disclaimer {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  line-height: 1.45;
+  background: #f8fafc;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px dashed var(--border);
+}
+
+/* ==========================================================================
+   10.8 Care Missions
+   ========================================================================== */
+.missions-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mission-card {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 14px 16px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.mission-card.completed {
+  background: #f8fafc;
+  opacity: 0.85;
+}
+
+.mission-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  flex: 1;
+}
+
+.mission-icon-box {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: #fef3c7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.mission-card.completed .mission-icon-box {
+  background: #dcfce7;
+}
+
+.mission-info-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 2px;
+}
+
+.mission-category-tag {
+  font-size: 10.5px;
+  color: var(--primary);
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+
+.mission-desc {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  line-height: 1.35;
+  margin-bottom: 4px;
+}
+
+.mission-pts-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #d97706;
+  background: #fffbeb;
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+
+.btn-mission-action {
+  background: #1e3a8a;
+  color: #ffffff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.btn-mission-action:active {
+  transform: scale(0.95);
+}
+
+.btn-mission-action.done {
+  background: #10b981;
+  cursor: default;
+}
+
+.btn-mission-action.in-progress {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+  cursor: default;
+}
+
+/* ==========================================================================
+   10.9 My Rewards / Vouchers
+   ========================================================================== */
+.my-rewards-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.voucher-item-card {
+  background: #ffffff;
+  border: 1.5px dashed #93c5fd;
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+}
+
+.voucher-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.voucher-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.voucher-status-ready {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #059669;
+  background: #d1fae5;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.voucher-code-strip {
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.voucher-code-text {
+  font-family: monospace;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--primary-deep);
+  letter-spacing: 1px;
+}
+
+.voucher-copy-btn {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.voucher-expiry-text {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   10.10 Modals Supporting Classes
+   ========================================================================== */
+.modal-category-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: #0284c7;
+  background: #e0f2fe;
+  padding: 3px 9px;
+  border-radius: 8px;
+}
+
+.modal-reward-icon-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #eff6ff;
+  border: 1px solid #dbeafe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+.redemption-calc-card {
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.calc-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12.5px;
+  color: var(--text-body);
+}
+
+.calc-row.highlight {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.calc-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 2px 0;
+}
+
+.modal-small-note {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  line-height: 1.45;
+  margin-bottom: 16px;
+}
+
+/* Voucher Code Card in Success Modal */
+.voucher-code-card {
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+  border: 1.5px dashed #86efac;
+  border-radius: 16px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+.voucher-code-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #166534;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.voucher-code-number {
+  font-family: monospace;
+  font-size: 22px;
+  font-weight: 800;
+  color: #047857;
+  letter-spacing: 1.5px;
+  margin-bottom: 4px;
+}
+
+.voucher-code-expiry {
+  font-size: 11px;
+  color: #15803d;
+  margin-bottom: 10px;
+}
+
+.btn-copy-code {
+  background: #ffffff;
+  border: 1px solid #86efac;
+  color: #166534;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Next Best Action Card */
+.next-best-action-card {
+  background: #eff6ff;
+  border: 1.5px solid #bfdbfe;
+  border-radius: 16px;
+  padding: 14px;
+  text-align: left;
+  margin-bottom: 8px;
+}
+
+.nba-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.nba-badge {
+  font-size: 10.5px;
+  font-weight: 800;
+  color: #1e40af;
+  background: #dbeafe;
+  padding: 2px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+}
+
+.nba-icon {
+  font-size: 16px;
+}
+
+.nba-title {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--primary-deep);
+  margin-bottom: 4px;
+}
+
+.nba-desc {
+  font-size: 12px;
+  color: var(--text-body);
+  line-height: 1.4;
+  margin-bottom: 10px;
+}
+
+.btn-nba-action {
+  width: 100%;
+  background: #1e3a8a;
+  color: #ffffff;
+  border: none;
+  padding: 9px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-nba-action:active {
+  transform: scale(0.96);
+}
+
+/* Point Activity Modal */
+.activity-summary-banner {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+  color: #ffffff;
+  border-radius: 14px;
+  padding: 12px 16px;
+  margin-bottom: 14px;
+}
+
+.act-bal-label {
+  font-size: 11px;
+  color: #bae6fd;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.act-bal-val {
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.activity-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.activity-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  padding: 10px 12px;
+  border-radius: 12px;
+}
+
+.act-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.act-icon-box {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: #ffffff;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.act-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.act-date {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.act-pts-badge {
+  font-size: 13px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.act-pts-badge.positive {
+  color: #16a34a;
+  background: #dcfce7;
+}
+
+.act-pts-badge.negative {
+  color: #ea580c;
+  background: #ffedd5;
 }

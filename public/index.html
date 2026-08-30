@@ -1,912 +1,2326 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Care Dokter - Continuous Care Companion | Mandaya Royal Hospital</title>
-  <meta name="description" content="Care Dokter menemani perjalanan kesehatan Anda sebelum, selama, dan setelah perawatan di Mandaya Royal Hospital Puri.">
-  <meta property="og:title" content="Care Dokter - Continuous Care Companion | Mandaya Royal Hospital">
-  <meta property="og:description" content="Satu Pasien, Satu Riwayat. Pendamping digital perjalanan kesehatan pasien Mandaya Royal Hospital.">
-  <link rel="icon" type="image/png" href="/unnamed.png">
-  <link rel="stylesheet" href="/mobile-styles.css">
-</head>
-<body>
-
-  <!-- ======================================================================
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>
+      Care Dokter - Continuous Care Companion | Mandaya Royal Hospital
+    </title>
+    <meta
+      name="description"
+      content="Care Dokter menemani perjalanan kesehatan Anda sebelum, selama, dan setelah perawatan di Mandaya Royal Hospital Puri."
+    />
+    <meta
+      property="og:title"
+      content="Care Dokter - Continuous Care Companion | Mandaya Royal Hospital"
+    />
+    <meta
+      property="og:description"
+      content="Satu Pasien, Satu Riwayat. Pendamping digital perjalanan kesehatan pasien Mandaya Royal Hospital."
+    />
+    <link rel="icon" type="image/png" href="/unnamed.png" />
+    <link rel="stylesheet" href="/mobile-styles.css" />
+  </head>
+  <body>
+    <!-- ======================================================================
        PROTOTYPE STAGE & DESKTOP PRESENTATION SHELL (For Pitch & Judges)
        ====================================================================== -->
-  <div class="prototype-stage" id="prototype-stage">
-    
-    <!-- Topbar Demo Controller for Live Competition Presentation -->
-    <div class="prototype-topbar">
-      <div class="prototype-topbar-title">
-        <img src="/unnamed.png" alt="Care Dokter Logo" style="width: 24px; height: 24px; object-fit: contain;" onerror="this.src='/logo.svg'">
-        <span>Care Dokter · Feature 1 Prototype</span>
-        <span class="prototype-badge">Patient Role Only</span>
-      </div>
+    <div class="prototype-stage" id="prototype-stage">
+      <!-- Topbar Demo Controller for Live Competition Presentation -->
+      <div class="prototype-topbar">
+        <div class="prototype-topbar-title">
+          <img
+            src="/unnamed.png"
+            alt="Care Dokter Logo"
+            style="width: 24px; height: 24px; object-fit: contain"
+            onerror="this.src = '/logo.svg'"
+          />
+          <span>Care Dokter · Feature 1 Prototype</span>
+          <span class="prototype-badge">Patient Role Only</span>
+        </div>
 
-      <div class="prototype-actions">
-        <button class="btn-topbar" onclick="resetPrototypeDemo()" title="Reset data demo ke kondisi awal">
-          <span>🔄</span> Reset Demo
-        </button>
-        <button class="btn-topbar" id="btn-toggle-frame" onclick="toggleDeviceFrame()" title="Ubah ukuran tampilan">
-          <span>🖥️</span> Mode Luas
-        </button>
-      </div>
-    </div>
-
-    <!-- ====================================================================
-         SMARTPHONE DEVICE FRAME
-         ==================================================================== -->
-    <div class="smartphone-frame" id="smartphone-frame">
-      
-      <!-- Top Dynamic Island & Camera -->
-      <div class="dynamic-island">
-        <div class="camera-lens"></div>
-      </div>
-
-      <!-- Mobile Status Bar -->
-      <div class="mobile-status-bar" id="mobile-status-bar">
-        <span id="status-bar-clock">09:41</span>
-        <div style="display: flex; align-items: center; gap: 6px; font-size: 11px;">
-          <span>Mandaya 5G</span>
-          <span>📶</span>
-          <span>🔋 98%</span>
+        <div class="prototype-actions">
+          <button
+            class="btn-topbar"
+            onclick="resetPrototypeDemo()"
+            title="Reset data demo ke kondisi awal"
+          >
+            <span>🔄</span> Reset Demo
+          </button>
+          <button
+            class="btn-topbar"
+            id="btn-toggle-frame"
+            onclick="toggleDeviceFrame()"
+            title="Ubah ukuran tampilan"
+          >
+            <span>🖥️</span> Mode Luas
+          </button>
         </div>
       </div>
 
-      <!-- Scrollable Mobile Screen Viewport -->
-      <div class="mobile-screen-viewport" id="mobile-viewport">
-        
-        <!-- ================================================================
+      <!-- ====================================================================
+         SMARTPHONE DEVICE FRAME
+         ==================================================================== -->
+      <div class="smartphone-frame" id="smartphone-frame">
+        <!-- Top Dynamic Island & Camera -->
+        <div class="dynamic-island">
+          <div class="camera-lens"></div>
+        </div>
+
+        <!-- Mobile Status Bar -->
+        <div class="mobile-status-bar" id="mobile-status-bar">
+          <span id="status-bar-clock">09:41</span>
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              gap: 6px;
+              font-size: 11px;
+            "
+          >
+            <span>Mandaya 5G</span>
+            <span>📶</span>
+            <span>🔋 98%</span>
+          </div>
+        </div>
+
+        <!-- Scrollable Mobile Screen Viewport -->
+        <div class="mobile-screen-viewport" id="mobile-viewport">
+          <!-- ================================================================
              SCREEN 1: SPLASH SCREEN
              ================================================================ -->
-        <section id="screen-splash" class="screen-view active">
-          <div class="splash-logo-box">
-            <img src="/unnamed.png" alt="Care Dokter Logo" style="width: 100%; height: 100%; object-fit: contain;" onerror="this.src='/logo.svg'">
-          </div>
-          <h1 class="splash-title">Care Dokter</h1>
-          <div class="splash-subtitle">by Mandaya Royal Hospital</div>
-          
-          <div class="splash-loader-bar">
-            <div class="splash-loader-progress"></div>
-          </div>
+          <section id="screen-splash" class="screen-view active">
+            <div class="splash-logo-box">
+              <img
+                src="/unnamed.png"
+                alt="Care Dokter Logo"
+                style="width: 100%; height: 100%; object-fit: contain"
+                onerror="this.src = '/logo.svg'"
+              />
+            </div>
+            <h1 class="splash-title">Care Dokter</h1>
+            <div class="splash-subtitle">by Mandaya Royal Hospital</div>
 
-          <div class="splash-skip-hint">Ketuk layar untuk melanjutkan</div>
-        </section>
+            <div class="splash-loader-bar">
+              <div class="splash-loader-progress"></div>
+            </div>
 
-        <!-- ================================================================
+            <div class="splash-skip-hint">Ketuk layar untuk melanjutkan</div>
+          </section>
+
+          <!-- ================================================================
              SCREEN 2: WELCOME SCREEN
              ================================================================ -->
-        <section id="screen-welcome" class="screen-view">
-          <div>
-            <div class="welcome-header">
-              <div class="welcome-logo-badge">
-                <img src="/unnamed.png" alt="Care Dokter" class="welcome-logo-img" onerror="this.src='/logo.svg'">
-                <span class="welcome-logo-text">Care Dokter</span>
-              </div>
-              <h1 class="welcome-headline">Satu Pasien, Satu Riwayat.</h1>
-              <p class="welcome-desc">
-                Care Dokter menemani perjalanan kesehatan Anda sebelum, selama, dan setelah perawatan.
-              </p>
-            </div>
-
-            <!-- 3 Key Benefits -->
-            <div class="welcome-benefits-list">
-              <!-- Benefit 1: Personalized Care -->
-              <div class="benefit-card">
-                <div class="benefit-icon-box" style="background: #e0f2fe; color: #0284c7;">
-                  <span>🎯</span>
+          <section id="screen-welcome" class="screen-view">
+            <div>
+              <div class="welcome-header">
+                <div class="welcome-logo-badge">
+                  <img
+                    src="/unnamed.png"
+                    alt="Care Dokter"
+                    class="welcome-logo-img"
+                    onerror="this.src = '/logo.svg'"
+                  />
+                  <span class="welcome-logo-text">Care Dokter</span>
                 </div>
-                <div>
-                  <h3 class="benefit-title">Personalized Care</h3>
-                  <p class="benefit-desc">Pendampingan yang relevan dengan perjalanan kesehatan Anda.</p>
-                </div>
-              </div>
-
-              <!-- Benefit 2: Stay Connected -->
-              <div class="benefit-card">
-                <div class="benefit-icon-box" style="background: #f3e8ff; color: #7c3aed;">
-                  <span>🔔</span>
-                </div>
-                <div>
-                  <h3 class="benefit-title">Stay Connected</h3>
-                  <p class="benefit-desc">Pengingat dan check-in untuk membantu Anda tetap terhubung dengan perawatan.</p>
-                </div>
-              </div>
-
-              <!-- Benefit 3: Your Care Journey -->
-              <div class="benefit-card">
-                <div class="benefit-icon-box" style="background: #ecfdf5; color: #10b981;">
-                  <span>🧭</span>
-                </div>
-                <div>
-                  <h3 class="benefit-title">Your Care Journey</h3>
-                  <p class="benefit-desc">Semua perjalanan perawatan Anda dalam satu pengalaman yang lebih terhubung.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Welcome Actions -->
-          <div class="welcome-actions">
-            <button class="btn-primary-mobile" onclick="navigateToScreen('screen-login')">
-              <span>Mulai</span>
-              <span>→</span>
-            </button>
-            <div style="text-align: center; font-size: 13px; color: var(--text-muted);">
-              Sudah memiliki akun? 
-              <button class="text-btn" onclick="navigateToScreen('screen-login')">Masuk</button>
-            </div>
-          </div>
-        </section>
-
-        <!-- ================================================================
-             SCREEN 3: LOGIN SCREEN
-             ================================================================ -->
-        <section id="screen-login" class="screen-view">
-          <div>
-            <div class="login-header">
-              <img src="/unnamed.png" alt="Care Dokter Logo" class="login-logo" onerror="this.src='/logo.svg'">
-              <h2 class="login-title">Masuk ke Care Dokter</h2>
-              <p class="login-subtitle">Akses pendamping perjalanan perawatan Mandaya Anda</p>
-            </div>
-
-            <!-- Login Form -->
-            <form onsubmit="handleLoginSubmit(event)" id="login-form">
-              <div class="form-group">
-                <label class="form-label" for="login-phone">Nomor Handphone</label>
-                <div class="input-wrapper">
-                  <span class="input-icon">📱</span>
-                  <input type="tel" id="login-phone" class="form-input" placeholder="0812 3456 7890" autocomplete="tel">
-                </div>
-              </div>
-
-              <div class="form-group">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                  <label class="form-label" for="login-pass" style="margin-bottom: 0;">Password</label>
-                  <button type="button" class="text-btn" style="font-size: 11.5px;" onclick="openModal('modal-forgot-password')">
-                    Lupa Password?
-                  </button>
-                </div>
-                <div class="input-wrapper">
-                  <span class="input-icon">🔒</span>
-                  <input type="password" id="login-pass" class="form-input" placeholder="••••••••" autocomplete="current-password">
-                </div>
-              </div>
-
-              <!-- Error Alert -->
-              <div id="login-error-msg" style="display: none; background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; border-radius: 10px; padding: 10px 12px; font-size: 12px; margin-bottom: 14px; text-align: center; font-weight: 600;">
-                Gunakan akun demo untuk mencoba prototype.
-              </div>
-
-              <!-- Prototype Demo Box -->
-              <div class="demo-credentials-card">
-                <div class="demo-card-header">
-                  <div class="demo-tag">
-                    <span>✨</span> PROTOTYPE DEMO
-                  </div>
-                  <button type="button" class="demo-autofill-btn" onclick="autofillDemoCredentials()">
-                    Isi Otomatis
-                  </button>
-                </div>
-                <div class="demo-creds-text">
-                  <strong>No. Handphone:</strong> 0812 3456 7890<br>
-                  <strong>Password:</strong> demo123
-                </div>
-              </div>
-
-              <button type="submit" class="btn-primary-mobile" style="margin-top: 8px;">
-                <span>Masuk</span>
-              </button>
-            </form>
-          </div>
-
-          <!-- Registration Link -->
-          <div style="text-align: center; margin-top: 20px;">
-            <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 4px;">
-              Belum memiliki akun?
-            </div>
-            <button class="btn-secondary-mobile" style="padding: 10px;" onclick="openModal('modal-register')">
-              Daftar
-            </button>
-          </div>
-        </section>
-
-        <!-- ================================================================
-             SCREEN 4: FIRST-TIME ONBOARDING (3 SCREENS)
-             ================================================================ -->
-        <section id="screen-onboarding" class="screen-view">
-          <div>
-            <!-- Top Stepper & Skip -->
-            <div class="onboarding-top-bar">
-              <div class="onboarding-dots">
-                <div class="dot active" id="onboarding-dot-1"></div>
-                <div class="dot" id="onboarding-dot-2"></div>
-                <div class="dot" id="onboarding-dot-3"></div>
-              </div>
-              <button class="text-btn" onclick="finishOnboarding()" style="font-size: 12.5px;">
-                Lewati
-              </button>
-            </div>
-
-            <!-- Onboarding Step 1 -->
-            <div class="onboarding-step-content active" id="onboarding-step-1">
-              <div class="onboarding-visual-box">
-                <div style="text-align: center;">
-                  <div style="width: 84px; height: 84px; border-radius: 50%; background: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 40px; margin: 0 auto 12px auto; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.15);">
-                    🧭
-                  </div>
-                  <span style="font-size: 11.5px; font-weight: 700; color: #0284c7; background: #ffffff; padding: 4px 12px; border-radius: 20px; border: 1px solid #bae6fd;">
-                    Continuous Care
-                  </span>
-                </div>
-              </div>
-              <h2 class="onboarding-title">Kenali Perjalanan Perawatan Anda</h2>
-              <p class="onboarding-desc">
-                Kami membantu Anda tetap terhubung dengan perjalanan kesehatan dan informasi yang relevan.
-              </p>
-            </div>
-
-            <!-- Onboarding Step 2 -->
-            <div class="onboarding-step-content" id="onboarding-step-2">
-              <div class="onboarding-visual-box">
-                <!-- Journey Flow Graphic -->
-                <div class="journey-flow-diagram">
-                  <div class="flow-step-pill">
-                    <span>🏥 Hospital Visit</span>
-                    <span style="color: #10b981;">✓ Selesai</span>
-                  </div>
-                  <div class="flow-arrow-down">↓</div>
-                  <div class="flow-step-pill highlight">
-                    <span>🩹 Recovery (Saat Ini)</span>
-                    <span>70%</span>
-                  </div>
-                  <div class="flow-arrow-down">↓</div>
-                  <div class="flow-step-pill">
-                    <span>🩺 Follow-up (7 Sep)</span>
-                    <span style="color: #64748b;">Terjadwal</span>
-                  </div>
-                  <div class="flow-arrow-down">↓</div>
-                  <div class="flow-step-pill">
-                    <span>✨ Better Health</span>
-                    <span>Goal</span>
-                  </div>
-                </div>
-              </div>
-              <h2 class="onboarding-title">Tetap Terhubung dengan Perawatan Anda</h2>
-              <p class="onboarding-desc">
-                Dapatkan pengingat, check-in, dan dukungan yang sesuai dengan perjalanan perawatan Anda.
-              </p>
-            </div>
-
-            <!-- Onboarding Step 3 -->
-            <div class="onboarding-step-content" id="onboarding-step-3">
-              <div class="onboarding-visual-box">
-                <div style="text-align: center;">
-                  <img src="/unnamed.png" alt="Care Dokter Logo" style="width: 76px; height: 76px; margin-bottom: 12px; object-fit: contain;" onerror="this.src='/logo.svg'">
-                  <div style="font-size: 13px; font-weight: 800; color: #1e3a8a;">Care Dokter Companion</div>
-                  <div style="font-size: 11px; color: #0284c7;">Mandaya Royal Hospital Puri</div>
-                </div>
-              </div>
-              <h2 class="onboarding-title">Your Care Journey Starts Here</h2>
-              <p class="onboarding-desc">
-                Care Dokter membantu Anda tetap terhubung dengan setiap langkah perjalanan kesehatan Anda.
-              </p>
-            </div>
-          </div>
-
-          <!-- Bottom Actions -->
-          <div style="margin-top: 24px;">
-            <button class="btn-primary-mobile" onclick="nextOnboardingStep()" id="btn-onboarding-next">
-              <span>Lanjut</span>
-              <span>→</span>
-            </button>
-          </div>
-        </section>
-
-        <!-- ================================================================
-             SCREEN 5: HOME SCREEN (CONTINUOUS CARE DASHBOARD)
-             ================================================================ -->
-        <section id="screen-home" class="screen-view">
-          
-          <!-- Home Header -->
-          <div class="home-header">
-            <div class="home-brand-mini">
-              <img src="/unnamed.png" alt="Care Dokter Logo" class="home-brand-logo" onerror="this.src='/logo.svg'">
-              <div>
-                <div class="home-brand-title">Care Dokter</div>
-                <div class="home-brand-sub">Mandaya Royal Hospital</div>
-              </div>
-            </div>
-            <div class="patient-avatar-badge" onclick="switchTab('profile')" title="Buka Profil">
-              BS
-            </div>
-          </div>
-
-          <!-- Top Greeting -->
-          <div class="home-greeting-box">
-            <h2 class="greeting-name">Selamat datang kembali, Budi</h2>
-            <p class="greeting-sub">Bagaimana perjalanan pemulihan Anda hari ini?</p>
-          </div>
-
-          <!-- SECTION 1: CARE JOURNEY CARD (Hero) -->
-          <div class="care-journey-hero-card" onclick="switchTab('journey')" style="cursor: pointer;" title="Lihat detail perjalanan perawatan">
-            <div class="journey-top-pill">
-              <span class="journey-label">Perjalanan Perawatan Anda</span>
-              <span class="journey-status-tag">Recovery Phase</span>
-            </div>
-
-            <h3 class="journey-name">Orthopedic Recovery</h3>
-
-            <!-- Progress Indicator -->
-            <div class="journey-progress-container">
-              <div class="progress-labels">
-                <span>Progres Pemulihan</span>
-                <strong>70% Selesai</strong>
-              </div>
-              <div class="progress-track">
-                <div class="progress-fill" style="width: 70%;"></div>
-              </div>
-            </div>
-
-            <!-- Next Appointment Ribbon -->
-            <div class="journey-next-appointment">
-              <div>
-                <span class="next-apt-label">Kontrol berikutnya:</span>
-                <span class="next-apt-date">7 September 2026</span>
-              </div>
-              <span style="font-size: 11.5px; color: #7dd3fc; font-weight: 700;">Lihat Jadwal →</span>
-            </div>
-          </div>
-
-          <!-- SECTION 2: MIRA PREVIEW CARD -->
-          <div class="mira-preview-card">
-            <div class="mira-card-header">
-              <img src="/assets/mira/mira_avatar.jpg" alt="MIRA Assistant" class="mira-avatar-img" onerror="this.src='/assets/care-dokter-logo.svg'">
-              <div>
-                <div class="mira-title-badge">
-                  <span>MIRA</span>
-                  <span class="mira-ai-tag">AI Recovery Assistant</span>
-                </div>
-                <div style="font-size: 11px; color: var(--text-muted);">Protokol Klinis DPJP Mandaya</div>
-              </div>
-            </div>
-
-            <div class="mira-prompt-bubble">
-              "Halo Budi, bagaimana kondisi lutut Anda hari ini?"
-            </div>
-
-            <button class="btn-mira-checkin" onclick="openModal('modal-mira-preview')">
-              <span>🩺</span>
-              <span>Check-in Sekarang</span>
-            </button>
-          </div>
-
-          <!-- GRID SECTION 3 & 4: CAREPOINT & UPCOMING APPOINTMENT -->
-          <div class="card-grid-2">
-            
-            <!-- SECTION 3: CAREPOINT PREVIEW -->
-            <div class="carepoints-card">
-              <div>
-                <div class="points-header">
-                  <div class="points-badge">
-                    <span>🪙</span> CarePoints
-                  </div>
-                  <span style="font-size: 11px; color: #16a34a; background: #dcfce7; padding: 2px 6px; border-radius: 6px; font-weight: 700;">Aktif</span>
-                </div>
-                <div class="points-value">450 <span style="font-size: 14px; font-weight: 600; color: var(--text-muted);">Points</span></div>
-                <p class="points-desc">
-                  Terus aktif dalam perjalanan kesehatan Anda untuk mendapatkan lebih banyak poin.
+                <h1 class="welcome-headline">Satu Pasien, Satu Riwayat.</h1>
+                <p class="welcome-desc">
+                  Care Dokter menemani perjalanan kesehatan Anda sebelum,
+                  selama, dan setelah perawatan.
                 </p>
               </div>
-              <button class="btn-secondary-mobile" style="padding: 10px; font-size: 13px;" onclick="switchTab('rewards')">
-                Lihat CarePoints
-              </button>
-            </div>
 
-            <!-- SECTION 4: UPCOMING CARE -->
-            <div class="upcoming-care-card">
-              <div class="apt-header">
-                <span class="apt-badge">Upcoming Appointment</span>
-                <span style="font-size: 11px; color: var(--primary); font-weight: 700;">Poli Mandaya</span>
+              <!-- 3 Key Benefits -->
+              <div class="welcome-benefits-list">
+                <!-- Benefit 1: Personalized Care -->
+                <div class="benefit-card">
+                  <div
+                    class="benefit-icon-box"
+                    style="background: #e0f2fe; color: #0284c7"
+                  >
+                    <span>🎯</span>
+                  </div>
+                  <div>
+                    <h3 class="benefit-title">Personalized Care</h3>
+                    <p class="benefit-desc">
+                      Pendampingan yang relevan dengan perjalanan kesehatan
+                      Anda.
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Benefit 2: Stay Connected -->
+                <div class="benefit-card">
+                  <div
+                    class="benefit-icon-box"
+                    style="background: #f3e8ff; color: #7c3aed"
+                  >
+                    <span>🔔</span>
+                  </div>
+                  <div>
+                    <h3 class="benefit-title">Stay Connected</h3>
+                    <p class="benefit-desc">
+                      Pengingat dan check-in untuk membantu Anda tetap terhubung
+                      dengan perawatan.
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Benefit 3: Your Care Journey -->
+                <div class="benefit-card">
+                  <div
+                    class="benefit-icon-box"
+                    style="background: #ecfdf5; color: #10b981"
+                  >
+                    <span>🧭</span>
+                  </div>
+                  <div>
+                    <h3 class="benefit-title">Your Care Journey</h3>
+                    <p class="benefit-desc">
+                      Semua perjalanan perawatan Anda dalam satu pengalaman yang
+                      lebih terhubung.
+                    </p>
+                  </div>
+                </div>
               </div>
-              <h4 class="apt-title">Orthopedic Follow-up</h4>
-              <div class="apt-date-text">📅 7 September 2026 · 10:00 WIB</div>
-              <div class="apt-doctor">👨‍⚕️ Dr. Andi Pratama, Sp.OT</div>
-              <button class="btn-secondary-mobile" style="padding: 10px; font-size: 13px;" onclick="openModal('modal-appointment-detail')">
-                Lihat Detail
+            </div>
+
+            <!-- Welcome Actions -->
+            <div class="welcome-actions">
+              <button
+                class="btn-primary-mobile"
+                onclick="navigateToScreen('screen-login')"
+              >
+                <span>Mulai</span>
+                <span>→</span>
+              </button>
+              <div
+                style="
+                  text-align: center;
+                  font-size: 13px;
+                  color: var(--text-muted);
+                "
+              >
+                Sudah memiliki akun?
+                <button
+                  class="text-btn"
+                  onclick="navigateToScreen('screen-login')"
+                >
+                  Masuk
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <!-- ================================================================
+             SCREEN 3: LOGIN SCREEN
+             ================================================================ -->
+          <section id="screen-login" class="screen-view">
+            <div>
+              <div class="login-header">
+                <img
+                  src="/unnamed.png"
+                  alt="Care Dokter Logo"
+                  class="login-logo"
+                  onerror="this.src = '/logo.svg'"
+                />
+                <h2 class="login-title">Masuk ke Care Dokter</h2>
+                <p class="login-subtitle">
+                  Akses pendamping perjalanan perawatan Mandaya Anda
+                </p>
+              </div>
+
+              <!-- Login Form -->
+              <form onsubmit="handleLoginSubmit(event)" id="login-form">
+                <div class="form-group">
+                  <label class="form-label" for="login-phone"
+                    >Nomor Handphone</label
+                  >
+                  <div class="input-wrapper">
+                    <span class="input-icon">📱</span>
+                    <input
+                      type="tel"
+                      id="login-phone"
+                      class="form-input"
+                      placeholder="0812 3456 7890"
+                      autocomplete="tel"
+                    />
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <div
+                    style="
+                      display: flex;
+                      justify-content: space-between;
+                      align-items: center;
+                      margin-bottom: 6px;
+                    "
+                  >
+                    <label
+                      class="form-label"
+                      for="login-pass"
+                      style="margin-bottom: 0"
+                      >Password</label
+                    >
+                    <button
+                      type="button"
+                      class="text-btn"
+                      style="font-size: 11.5px"
+                      onclick="openModal('modal-forgot-password')"
+                    >
+                      Lupa Password?
+                    </button>
+                  </div>
+                  <div class="input-wrapper">
+                    <span class="input-icon">🔒</span>
+                    <input
+                      type="password"
+                      id="login-pass"
+                      class="form-input"
+                      placeholder="••••••••"
+                      autocomplete="current-password"
+                    />
+                  </div>
+                </div>
+
+                <!-- Error Alert -->
+                <div
+                  id="login-error-msg"
+                  style="
+                    display: none;
+                    background: #fef2f2;
+                    color: #b91c1c;
+                    border: 1px solid #fecaca;
+                    border-radius: 10px;
+                    padding: 10px 12px;
+                    font-size: 12px;
+                    margin-bottom: 14px;
+                    text-align: center;
+                    font-weight: 600;
+                  "
+                >
+                  Gunakan akun demo untuk mencoba prototype.
+                </div>
+
+                <!-- Prototype Demo Box -->
+                <div class="demo-credentials-card">
+                  <div class="demo-card-header">
+                    <div class="demo-tag"><span>✨</span> PROTOTYPE DEMO</div>
+                    <button
+                      type="button"
+                      class="demo-autofill-btn"
+                      onclick="autofillDemoCredentials()"
+                    >
+                      Isi Otomatis
+                    </button>
+                  </div>
+                  <div class="demo-creds-text">
+                    <strong>No. Handphone:</strong> 0812 3456 7890<br />
+                    <strong>Password:</strong> demo123
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  class="btn-primary-mobile"
+                  style="margin-top: 8px"
+                >
+                  <span>Masuk</span>
+                </button>
+              </form>
+            </div>
+
+            <!-- Registration Link -->
+            <div style="text-align: center; margin-top: 20px">
+              <div
+                style="
+                  font-size: 13px;
+                  color: var(--text-muted);
+                  margin-bottom: 4px;
+                "
+              >
+                Belum memiliki akun?
+              </div>
+              <button
+                class="btn-secondary-mobile"
+                style="padding: 10px"
+                onclick="openModal('modal-register')"
+              >
+                Daftar
+              </button>
+            </div>
+          </section>
+
+          <!-- ================================================================
+             SCREEN 4: FIRST-TIME ONBOARDING (3 SCREENS)
+             ================================================================ -->
+          <section id="screen-onboarding" class="screen-view">
+            <div>
+              <!-- Top Stepper & Skip -->
+              <div class="onboarding-top-bar">
+                <div class="onboarding-dots">
+                  <div class="dot active" id="onboarding-dot-1"></div>
+                  <div class="dot" id="onboarding-dot-2"></div>
+                  <div class="dot" id="onboarding-dot-3"></div>
+                </div>
+                <button
+                  class="text-btn"
+                  onclick="finishOnboarding()"
+                  style="font-size: 12.5px"
+                >
+                  Lewati
+                </button>
+              </div>
+
+              <!-- Onboarding Step 1 -->
+              <div
+                class="onboarding-step-content active"
+                id="onboarding-step-1"
+              >
+                <div class="onboarding-visual-box">
+                  <div style="text-align: center">
+                    <div
+                      style="
+                        width: 84px;
+                        height: 84px;
+                        border-radius: 50%;
+                        background: #ffffff;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 40px;
+                        margin: 0 auto 12px auto;
+                        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.15);
+                      "
+                    >
+                      🧭
+                    </div>
+                    <span
+                      style="
+                        font-size: 11.5px;
+                        font-weight: 700;
+                        color: #0284c7;
+                        background: #ffffff;
+                        padding: 4px 12px;
+                        border-radius: 20px;
+                        border: 1px solid #bae6fd;
+                      "
+                    >
+                      Continuous Care
+                    </span>
+                  </div>
+                </div>
+                <h2 class="onboarding-title">
+                  Kenali Perjalanan Perawatan Anda
+                </h2>
+                <p class="onboarding-desc">
+                  Kami membantu Anda tetap terhubung dengan perjalanan kesehatan
+                  dan informasi yang relevan.
+                </p>
+              </div>
+
+              <!-- Onboarding Step 2 -->
+              <div class="onboarding-step-content" id="onboarding-step-2">
+                <div class="onboarding-visual-box">
+                  <!-- Journey Flow Graphic -->
+                  <div class="journey-flow-diagram">
+                    <div class="flow-step-pill">
+                      <span>🏥 Hospital Visit</span>
+                      <span style="color: #10b981">✓ Selesai</span>
+                    </div>
+                    <div class="flow-arrow-down">↓</div>
+                    <div class="flow-step-pill highlight">
+                      <span>🩹 Recovery (Saat Ini)</span>
+                      <span>70%</span>
+                    </div>
+                    <div class="flow-arrow-down">↓</div>
+                    <div class="flow-step-pill">
+                      <span>🩺 Follow-up (7 Sep)</span>
+                      <span style="color: #64748b">Terjadwal</span>
+                    </div>
+                    <div class="flow-arrow-down">↓</div>
+                    <div class="flow-step-pill">
+                      <span>✨ Better Health</span>
+                      <span>Goal</span>
+                    </div>
+                  </div>
+                </div>
+                <h2 class="onboarding-title">
+                  Tetap Terhubung dengan Perawatan Anda
+                </h2>
+                <p class="onboarding-desc">
+                  Dapatkan pengingat, check-in, dan dukungan yang sesuai dengan
+                  perjalanan perawatan Anda.
+                </p>
+              </div>
+
+              <!-- Onboarding Step 3 -->
+              <div class="onboarding-step-content" id="onboarding-step-3">
+                <div class="onboarding-visual-box">
+                  <div style="text-align: center">
+                    <img
+                      src="/unnamed.png"
+                      alt="Care Dokter Logo"
+                      style="
+                        width: 76px;
+                        height: 76px;
+                        margin-bottom: 12px;
+                        object-fit: contain;
+                      "
+                      onerror="this.src = '/logo.svg'"
+                    />
+                    <div
+                      style="font-size: 13px; font-weight: 800; color: #1e3a8a"
+                    >
+                      Care Dokter Companion
+                    </div>
+                    <div style="font-size: 11px; color: #0284c7">
+                      Mandaya Royal Hospital Puri
+                    </div>
+                  </div>
+                </div>
+                <h2 class="onboarding-title">Your Care Journey Starts Here</h2>
+                <p class="onboarding-desc">
+                  Care Dokter membantu Anda tetap terhubung dengan setiap
+                  langkah perjalanan kesehatan Anda.
+                </p>
+              </div>
+            </div>
+
+            <!-- Bottom Actions -->
+            <div style="margin-top: 24px">
+              <button
+                class="btn-primary-mobile"
+                onclick="nextOnboardingStep()"
+                id="btn-onboarding-next"
+              >
+                <span>Lanjut</span>
+                <span>→</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- ================================================================
+             SCREEN 5: HOME SCREEN (CONTINUOUS CARE DASHBOARD)
+             ================================================================ -->
+          <section id="screen-home" class="screen-view">
+            <!-- Home Header -->
+            <div class="home-header">
+              <div class="home-brand-mini">
+                <img
+                  src="/unnamed.png"
+                  alt="Care Dokter Logo"
+                  class="home-brand-logo"
+                  onerror="this.src = '/logo.svg'"
+                />
+                <div>
+                  <div class="home-brand-title">Care Dokter</div>
+                  <div class="home-brand-sub">Mandaya Royal Hospital</div>
+                </div>
+              </div>
+              <div
+                class="patient-avatar-badge"
+                onclick="switchTab('profile')"
+                title="Buka Profil"
+              >
+                BS
+              </div>
+            </div>
+
+            <!-- Top Greeting -->
+            <div class="home-greeting-box">
+              <h2 class="greeting-name">Selamat datang kembali, Budi</h2>
+              <p class="greeting-sub">
+                Bagaimana perjalanan pemulihan Anda hari ini?
+              </p>
+            </div>
+
+            <!-- SECTION 1: CARE JOURNEY CARD (Hero) -->
+            <div
+              class="care-journey-hero-card"
+              onclick="switchTab('journey')"
+              style="cursor: pointer"
+              title="Lihat detail perjalanan perawatan"
+            >
+              <div class="journey-top-pill">
+                <span class="journey-label">Perjalanan Perawatan Anda</span>
+                <span class="journey-status-tag">Recovery Phase</span>
+              </div>
+
+              <h3 class="journey-name">Orthopedic Recovery</h3>
+
+              <!-- Progress Indicator -->
+              <div class="journey-progress-container">
+                <div class="progress-labels">
+                  <span>Progres Pemulihan</span>
+                  <strong>70% Selesai</strong>
+                </div>
+                <div class="progress-track">
+                  <div class="progress-fill" style="width: 70%"></div>
+                </div>
+              </div>
+
+              <!-- Next Appointment Ribbon -->
+              <div class="journey-next-appointment">
+                <div>
+                  <span class="next-apt-label">Kontrol berikutnya:</span>
+                  <span class="next-apt-date">7 September 2026</span>
+                </div>
+                <span
+                  style="font-size: 11.5px; color: #7dd3fc; font-weight: 700"
+                  >Lihat Jadwal →</span
+                >
+              </div>
+            </div>
+
+            <!-- SECTION 2: MIRA PREVIEW CARD -->
+            <div class="mira-preview-card">
+              <div class="mira-card-header">
+                <img
+                  src="/assets/mira/mira_avatar.jpg"
+                  alt="MIRA Assistant"
+                  class="mira-avatar-img"
+                  onerror="this.src = '/assets/care-dokter-logo.svg'"
+                />
+                <div>
+                  <div class="mira-title-badge">
+                    <span>MIRA</span>
+                    <span class="mira-ai-tag">AI Recovery Assistant</span>
+                  </div>
+                  <div style="font-size: 11px; color: var(--text-muted)">
+                    Protokol Klinis DPJP Mandaya
+                  </div>
+                </div>
+              </div>
+
+              <div class="mira-prompt-bubble">
+                "Halo Budi, bagaimana kondisi lutut Anda hari ini?"
+              </div>
+
+              <button
+                class="btn-mira-checkin"
+                onclick="openModal('modal-mira-preview')"
+              >
+                <span>🩺</span>
+                <span>Check-in Sekarang</span>
               </button>
             </div>
 
-          </div>
+            <!-- GRID SECTION 3 & 4: CAREPOINT & UPCOMING APPOINTMENT -->
+            <div class="card-grid-2">
+              <!-- SECTION 3: CAREPOINT PREVIEW -->
+              <div class="carepoints-card">
+                <div>
+                  <div class="points-header">
+                    <div class="points-badge"><span>🪙</span> CarePoints</div>
+                    <span
+                      style="
+                        font-size: 11px;
+                        color: #16a34a;
+                        background: #dcfce7;
+                        padding: 2px 6px;
+                        border-radius: 6px;
+                        font-weight: 700;
+                      "
+                      >Aktif</span
+                    >
+                  </div>
+                  <div class="points-value">
+                    <span id="home-carepoints-val">450</span>
+                    <span
+                      style="
+                        font-size: 14px;
+                        font-weight: 600;
+                        color: var(--text-muted);
+                      "
+                      >Points</span
+                    >
+                  </div>
+                  <p class="points-desc">
+                    Gunakan poin Anda untuk mendukung perjalanan kesehatan.
+                  </p>
+                </div>
+                <button
+                  class="btn-secondary-mobile"
+                  style="padding: 10px; font-size: 13px"
+                  onclick="switchTab('rewards')"
+                >
+                  Lihat Rewards →
+                </button>
+              </div>
 
-        </section>
+              <!-- SECTION 4: UPCOMING CARE -->
+              <div class="upcoming-care-card">
+                <div class="apt-header">
+                  <span class="apt-badge">Upcoming Appointment</span>
+                  <span
+                    style="
+                      font-size: 11px;
+                      color: var(--primary);
+                      font-weight: 700;
+                    "
+                    >Poli Mandaya</span
+                  >
+                </div>
+                <h4 class="apt-title">Orthopedic Follow-up</h4>
+                <div class="apt-date-text">📅 7 September 2026 · 10:00 WIB</div>
+                <div class="apt-doctor">👨‍⚕️ Dr. Andi Pratama, Sp.OT</div>
+                <button
+                  class="btn-secondary-mobile"
+                  style="padding: 10px; font-size: 13px"
+                  onclick="openModal('modal-appointment-detail')"
+                >
+                  Lihat Detail
+                </button>
+              </div>
+            </div>
+          </section>
 
-        <!-- ================================================================
+          <!-- ================================================================
              SCREEN 6: CARE JOURNEY TAB (PLACEHOLDER FOR FUTURE MODULE)
              ================================================================ -->
-        <section id="screen-care-journey" class="screen-view placeholder-view">
-          <div class="placeholder-icon-box" style="background: #e0f2fe; color: #0284c7;">
-            🧭
-          </div>
-          <div class="placeholder-badge">Modul Perjalanan Perawatan</div>
-          <h2 class="placeholder-title">Care Journey Tracking</h2>
-          <p class="placeholder-desc">
-            Fitur pelacakan menyeluruh perjalanan klinis pasien dari pra-rawat, fase pemulihan, hingga kontrol berkala.
-          </p>
-
-          <div class="placeholder-feature-preview">
-            <div class="preview-pill-title">Rencana Fitur Mendatang:</div>
-            <div class="preview-list">
-              <div>✓ Timeline visual fase pemulihan ortopedi (H+1 s/d H+30)</div>
-              <div>✓ Panduan latihan fisioterapi & mobilitas pasca operasi</div>
-              <div>✓ Rekam riwayat visit & instruksi DPJP konsultan</div>
-              <div>✓ Sinkronisasi rekam medis Mandaya Royal Hospital</div>
+          <section
+            id="screen-care-journey"
+            class="screen-view placeholder-view"
+          >
+            <div
+              class="placeholder-icon-box"
+              style="background: #e0f2fe; color: #0284c7"
+            >
+              🧭
             </div>
-          </div>
-
-          <button class="btn-secondary-mobile" onclick="switchTab('home')">
-            ← Kembali ke Beranda
-          </button>
-        </section>
-
-        <!-- ================================================================
-             SCREEN 7: MIRA TAB (PLACEHOLDER FOR FUTURE MODULE)
-             ================================================================ -->
-        <section id="screen-mira" class="screen-view placeholder-view">
-          <div class="placeholder-icon-box" style="background: #f0f9ff; border: 2px solid #bae6fd;">
-            <img src="/assets/mira/mira_avatar.jpg" alt="MIRA Assistant" style="width: 100%; height: 100%; border-radius: 20px; object-fit: cover;" onerror="this.src='/assets/care-dokter-logo.svg'">
-          </div>
-          <div class="placeholder-badge" style="background: #e0f2fe; color: #0369a1; border-color: #bae6fd;">
-            MIRA AI Companion
-          </div>
-          <h2 class="placeholder-title">Mandaya Intelligent Recovery Assistant</h2>
-          <p class="placeholder-desc">
-            <em>"Your care, continued."</em><br>
-            Asisten cerdas proaktif yang menyapa terjadwal di tiap fase pemulihan, edukasi obat, dan triase klinis DPJP.
-          </p>
-
-          <div class="placeholder-feature-preview">
-            <div class="preview-pill-title">4 Pilar Utama MIRA:</div>
-            <div class="preview-list">
-              <div>💙 <strong>Caring:</strong> Selalu hadir menyapa kondisi harian pasien</div>
-              <div>🧠 <strong>Intelligent:</strong> Memahami protokol klinis DPJP</div>
-              <div>🔔 <strong>Proactive:</strong> Pengingat obat & jadwal kontrol</div>
-              <div>👥 <strong>Human-centered:</strong> Terhubung dengan Tim Tele-Nurse IGD</div>
-            </div>
-          </div>
-
-          <button class="btn-primary-mobile" onclick="openModal('modal-mira-preview')">
-            Lihat Preview Check-in
-          </button>
-        </section>
-
-        <!-- ================================================================
-             SCREEN 8: REWARDS / CAREPOINTS TAB (PLACEHOLDER)
-             ================================================================ -->
-        <section id="screen-rewards" class="screen-view placeholder-view">
-          <div class="placeholder-icon-box" style="background: #fef3c7; color: #d97706;">
-            🪙
-          </div>
-          <div class="placeholder-badge" style="background: #fef3c7; color: #92400e; border-color: #fde68a;">
-            CarePoints Loyalty Engine
-          </div>
-          <h2 class="placeholder-title">Mandaya CarePoints</h2>
-          <p class="placeholder-desc">
-            Saldo Anda: <strong>450 Poin</strong><br>
-            Apresiasi nyata atas kepatuhan pemulihan dan aktivitas kesehatan Anda di ekosistem Mandaya.
-          </p>
-
-          <div class="placeholder-feature-preview">
-            <div class="preview-pill-title">Katalog & Perolehan Poin:</div>
-            <div class="preview-list">
-              <div>🪙 +150 Pts: Check-in Harian MIRA Selesai</div>
-              <div>🪙 +200 Pts: Hadir Kontrol Tepat Waktu (7 Sep 2026)</div>
-              <div>🎁 Diskon Layanan Poli & Wellness Center Mandaya</div>
-              <div>🎁 Voucher Medical Check-Up & Family Health Pool</div>
-            </div>
-          </div>
-
-          <button class="btn-secondary-mobile" onclick="switchTab('home')">
-            ← Kembali ke Beranda
-          </button>
-        </section>
-
-        <!-- ================================================================
-             SCREEN 9: PROFILE SCREEN
-             ================================================================ -->
-        <section id="screen-profile" class="screen-view">
-          
-          <!-- Profile Card -->
-          <div class="profile-header-card">
-            <div class="profile-avatar-large">
-              BS
-            </div>
-            <h3 class="profile-name">Budi Santoso</h3>
-            <div class="profile-meta">45 Tahun · Laki-laki</div>
-            <span class="profile-badge-mandaya">
-              Mandaya Patient · MRN: MRN-2026-0881
-            </span>
-          </div>
-
-          <!-- Profile Menu Items -->
-          <div class="profile-menu-list">
-            
-            <!-- My Profile -->
-            <button class="profile-menu-item" onclick="navigateToScreen('screen-profile-detail')">
-              <div class="menu-item-left">
-                <div class="menu-item-icon" style="color: #0284c7;">👤</div>
-                <div>
-                  <div class="menu-item-title">My Profile</div>
-                  <div class="menu-item-sub">Data pribadi & status klinis pasien</div>
-                </div>
-              </div>
-              <span class="menu-item-arrow">→</span>
-            </button>
-
-            <!-- Privacy & Consent -->
-            <button class="profile-menu-item" onclick="navigateToScreen('screen-privacy')">
-              <div class="menu-item-left">
-                <div class="menu-item-icon" style="color: #7c3aed;">🔒</div>
-                <div>
-                  <div class="menu-item-title">Privacy & Consent</div>
-                  <div class="menu-item-sub">Pengaturan izin data & komunikasi</div>
-                </div>
-              </div>
-              <span class="menu-item-arrow">→</span>
-            </button>
-
-            <!-- Notifications -->
-            <button class="profile-menu-item" onclick="openModal('modal-notifications')">
-              <div class="menu-item-left">
-                <div class="menu-item-icon" style="color: #d97706;">🔔</div>
-                <div>
-                  <div class="menu-item-title">Notifications</div>
-                  <div class="menu-item-sub">Pengingat jadwal kontrol & MIRA</div>
-                </div>
-              </div>
-              <span class="menu-item-arrow">→</span>
-            </button>
-
-            <!-- Help Center -->
-            <button class="profile-menu-item" onclick="openModal('modal-help-center')">
-              <div class="menu-item-left">
-                <div class="menu-item-icon" style="color: #10b981;">💬</div>
-                <div>
-                  <div class="menu-item-title">Help Center</div>
-                  <div class="menu-item-sub">Hotline Mandaya & Bantuan Darurat</div>
-                </div>
-              </div>
-              <span class="menu-item-arrow">→</span>
-            </button>
-
-            <!-- Logout -->
-            <button class="profile-menu-item" onclick="openModal('modal-logout-confirm')">
-              <div class="menu-item-left">
-                <div class="menu-item-icon" style="color: #ef4444; background: #fef2f2;">🚪</div>
-                <div>
-                  <div class="menu-item-title" style="color: #ef4444;">Logout</div>
-                  <div class="menu-item-sub">Keluar dari akun pasien demo</div>
-                </div>
-              </div>
-              <span class="menu-item-arrow" style="color: #ef4444;">→</span>
-            </button>
-
-          </div>
-
-        </section>
-
-        <!-- ================================================================
-             SCREEN 10: PRIVACY & CONSENT SCREEN
-             ================================================================ -->
-        <section id="screen-privacy" class="screen-view" style="padding: 50px 18px 90px 18px;">
-          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
-            <button class="text-btn" onclick="navigateToScreen('screen-profile')" style="font-size: 16px; padding: 4px;">
-              ←
-            </button>
-            <h2 style="font-size: 18px; font-weight: 800; color: var(--text-main);">Privasi & Persetujuan</h2>
-          </div>
-
-          <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 18px; padding: 18px; margin-bottom: 16px; box-shadow: var(--shadow-sm);">
-            <div style="font-size: 14px; font-weight: 700; color: var(--primary-deep); margin-bottom: 6px;">
-              🛡️ Kontrol Privasi Pasien Mandaya
-            </div>
-            <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px;">
-              Anda dapat mengatur preferensi penggunaan data dan komunikasi Anda.
+            <div class="placeholder-badge">Modul Perjalanan Perawatan</div>
+            <h2 class="placeholder-title">Care Journey Tracking</h2>
+            <p class="placeholder-desc">
+              Fitur pelacakan menyeluruh perjalanan klinis pasien dari
+              pra-rawat, fase pemulihan, hingga kontrol berkala.
             </p>
 
-            <div style="display: flex; flex-direction: column; gap: 14px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
+            <div class="placeholder-feature-preview">
+              <div class="preview-pill-title">Rencana Fitur Mendatang:</div>
+              <div class="preview-list">
                 <div>
-                  <div style="font-size: 13px; font-weight: 700; color: var(--text-main);">Satu Pasien, Satu Riwayat</div>
-                  <div style="font-size: 11.5px; color: var(--text-muted);">Integrasi data poli, rawat inap, & radiologi</div>
+                  ✓ Timeline visual fase pemulihan ortopedi (H+1 s/d H+30)
                 </div>
-                <input type="checkbox" checked style="accent-color: var(--primary); width: 18px; height: 18px;">
-              </div>
-
-              <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
                 <div>
-                  <div style="font-size: 13px; font-weight: 700; color: var(--text-main);">Notifikasi Perawatan MIRA</div>
-                  <div style="font-size: 11.5px; color: var(--text-muted);">Pengingat check-in harian & jadwal obat</div>
+                  ✓ Panduan latihan fisioterapi & mobilitas pasca operasi
                 </div>
-                <input type="checkbox" checked style="accent-color: var(--primary); width: 18px; height: 18px;">
-              </div>
-
-              <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                  <div style="font-size: 13px; font-weight: 700; color: var(--text-main);">Personalisasi Rekomendasi Medis</div>
-                  <div style="font-size: 11.5px; color: var(--text-muted);">Tips pemulihan berbasis diagnosa DPJP</div>
-                </div>
-                <input type="checkbox" checked style="accent-color: var(--primary); width: 18px; height: 18px;">
+                <div>✓ Rekam riwayat visit & instruksi DPJP konsultan</div>
+                <div>✓ Sinkronisasi rekam medis Mandaya Royal Hospital</div>
               </div>
             </div>
-          </div>
 
-          <button class="btn-primary-mobile" onclick="navigateToScreen('screen-profile')">
-            Simpan Pengaturan
-          </button>
-        </section>
+            <button class="btn-secondary-mobile" onclick="switchTab('home')">
+              ← Kembali ke Beranda
+            </button>
+          </section>
 
-        <!-- ================================================================
+          <!-- ================================================================
+             SCREEN 7: MIRA TAB (PLACEHOLDER FOR FUTURE MODULE)
+             ================================================================ -->
+          <section id="screen-mira" class="screen-view placeholder-view">
+            <div
+              class="placeholder-icon-box"
+              style="background: #f0f9ff; border: 2px solid #bae6fd"
+            >
+              <img
+                src="/assets/mira/mira_avatar.jpg"
+                alt="MIRA Assistant"
+                style="
+                  width: 100%;
+                  height: 100%;
+                  border-radius: 20px;
+                  object-fit: cover;
+                "
+                onerror="this.src = '/assets/care-dokter-logo.svg'"
+              />
+            </div>
+            <div
+              class="placeholder-badge"
+              style="background: #e0f2fe; color: #0369a1; border-color: #bae6fd"
+            >
+              MIRA AI Companion
+            </div>
+            <h2 class="placeholder-title">
+              Mandaya Intelligent Recovery Assistant
+            </h2>
+            <p class="placeholder-desc">
+              <em>"Your care, continued."</em><br />
+              Asisten cerdas proaktif yang menyapa terjadwal di tiap fase
+              pemulihan, edukasi obat, dan triase klinis DPJP.
+            </p>
+
+            <div class="placeholder-feature-preview">
+              <div class="preview-pill-title">4 Pilar Utama MIRA:</div>
+              <div class="preview-list">
+                <div>
+                  💙 <strong>Caring:</strong> Selalu hadir menyapa kondisi
+                  harian pasien
+                </div>
+                <div>
+                  🧠 <strong>Intelligent:</strong> Memahami protokol klinis DPJP
+                </div>
+                <div>
+                  🔔 <strong>Proactive:</strong> Pengingat obat & jadwal kontrol
+                </div>
+                <div>
+                  👥 <strong>Human-centered:</strong> Terhubung dengan Tim
+                  Tele-Nurse IGD
+                </div>
+              </div>
+            </div>
+
+            <button
+              class="btn-primary-mobile"
+              onclick="openModal('modal-mira-preview')"
+            >
+              Lihat Preview Check-in
+            </button>
+          </section>
+
+          <!-- ================================================================
+             SCREEN 8: REWARDS / MANDAYA CAREPOINT DASHBOARD (FEATURE 2)
+             ================================================================ -->
+          <section id="screen-rewards" class="screen-view">
+            <!-- Rewards Top Header -->
+            <div class="carepoint-header">
+              <div class="carepoint-header-left">
+                <div class="carepoint-brand-badge">
+                  <span class="carepoint-coin-icon">🪙</span>
+                  <span>Mandaya CarePoint</span>
+                </div>
+                <h2 class="carepoint-title">Continuous Care Rewards</h2>
+                <p class="carepoint-subtitle">
+                  Apresiasi keterlibatan perjalanan pemulihan Anda
+                </p>
+              </div>
+              <div class="carepoint-header-right">
+                <button
+                  class="btn-carepoint-history-icon"
+                  onclick="openPointActivityModal()"
+                  title="Lihat Riwayat Poin"
+                >
+                  📜
+                </button>
+              </div>
+            </div>
+
+            <!-- ==============================================================
+               SECTION 1: CAREPOINT HERO CARD
+               ============================================================== -->
+            <div class="carepoint-hero-card" id="carepoint-hero-card">
+              <div class="hero-top-row">
+                <div class="hero-points-label">
+                  <span class="hero-sparkle">✨</span>
+                  <span>CarePoints Pasien</span>
+                </div>
+                <div class="hero-badge-tag" id="auto-use-hero-badge">
+                  <span class="badge-dot"></span>
+                  <span id="hero-auto-use-text">Manual Mode</span>
+                </div>
+              </div>
+
+              <div class="hero-balance-row">
+                <div class="hero-points-number" id="carepoint-balance-val">
+                  450
+                </div>
+                <div class="hero-points-unit">Points</div>
+              </div>
+
+              <p class="hero-supporting-text">
+                Poin Anda dapat digunakan untuk mendukung perjalanan kesehatan
+                Anda.
+              </p>
+
+              <div class="hero-footer-actions">
+                <button
+                  class="btn-hero-action primary"
+                  onclick="openPointActivityModal()"
+                >
+                  <span>📜</span>
+                  <span>Lihat Aktivitas</span>
+                </button>
+                <button
+                  class="btn-hero-action secondary"
+                  onclick="switchCarePointCategory('my-rewards')"
+                >
+                  <span>🎟️</span>
+                  <span
+                    >My Rewards (<span id="hero-my-rewards-count">1</span
+                    >)</span
+                  >
+                </button>
+              </div>
+            </div>
+
+            <!-- ==============================================================
+               SECTION 2: PERSONALIZED RECOMMENDATION ("POINT PRESCRIPTION")
+               ============================================================== -->
+            <div class="point-prescription-card" id="point-prescription-card">
+              <div class="prescription-header">
+                <div class="prescription-pill">
+                  <span>🩺</span>
+                  <span>Point Prescription</span>
+                </div>
+                <span class="prescription-context"
+                  >Orthopedic Recovery · H+14</span
+                >
+              </div>
+
+              <h3 class="prescription-title" id="rx-title">
+                Gunakan poin Anda untuk Follow-up Care
+              </h3>
+              <p class="prescription-desc" id="rx-desc">
+                Anda memiliki kontrol lanjutan yang akan datang (7 September
+                2026). Poin Anda dapat digunakan untuk mendapatkan manfaat
+                terkait perjalanan pemulihan Anda.
+              </p>
+
+              <!-- Recommended Benefit Box -->
+              <div class="prescription-benefit-box">
+                <div class="benefit-box-left">
+                  <div class="benefit-rec-tag">Recommended Benefit</div>
+                  <div class="benefit-rec-name" id="rx-benefit-name">
+                    Potongan Follow-up Consultation
+                  </div>
+                  <div class="benefit-rec-cost">
+                    <span class="cost-coin">🪙</span>
+                    <span id="rx-cost-val">300 Points</span>
+                    <span class="benefit-eligibility" id="rx-eligibility-tag"
+                      >✓ Memenuhi Syarat</span
+                    >
+                  </div>
+                </div>
+                <button
+                  class="btn-prescription-use"
+                  id="btn-prescription-action"
+                  onclick="triggerRedeem('reward-care-1')"
+                >
+                  Gunakan 300 Poin
+                </button>
+              </div>
+            </div>
+
+            <!-- ==============================================================
+               SECTION 3: CARE LEVEL ENGAGEMENT CARD
+               ============================================================== -->
+            <div class="care-level-card">
+              <div class="level-header">
+                <div class="level-badge-title">
+                  <span>🏆</span>
+                  <span>CARE LEVEL</span>
+                </div>
+                <span class="level-current-name" id="care-level-name"
+                  >Recovery Partner</span
+                >
+              </div>
+
+              <div class="level-progress-bar-wrap">
+                <div class="level-progress-labels">
+                  <span>Progres Level</span>
+                  <strong id="care-level-progress-text"
+                    >450 / 700 Points</strong
+                  >
+                </div>
+                <div class="level-progress-track">
+                  <div
+                    class="level-progress-fill"
+                    id="care-level-progress-fill"
+                    style="width: 64%"
+                  ></div>
+                </div>
+              </div>
+
+              <div class="level-footer">
+                <span class="level-next-info"
+                  >Level Berikutnya: <strong>Care Champion</strong></span
+                >
+                <p class="level-sub-desc">
+                  Terus aktif dalam perjalanan kesehatan Anda.
+                </p>
+              </div>
+            </div>
+
+            <!-- ==============================================================
+               SECTION 4: AUTO-USE MY POINTS SETTING
+               ============================================================== -->
+            <div class="autouse-setting-card">
+              <div class="autouse-left">
+                <div class="autouse-title-row">
+                  <span class="autouse-icon">⚡</span>
+                  <span class="autouse-title">Gunakan Poin Otomatis</span>
+                </div>
+                <p class="autouse-desc">
+                  Gunakan CarePoints secara otomatis ketika tersedia manfaat
+                  yang relevan dan Anda memenuhi syarat.
+                </p>
+              </div>
+              <div class="autouse-toggle-wrap">
+                <label class="switch-toggle" for="autouse-switch">
+                  <input
+                    type="checkbox"
+                    id="autouse-switch"
+                    onchange="handleAutoUseToggle(event)"
+                  />
+                  <span class="slider-toggle"></span>
+                </label>
+              </div>
+            </div>
+
+            <!-- ==============================================================
+               SECTION 5: REWARD CATEGORIES TABS & LISTINGS
+               ============================================================== -->
+            <div class="reward-categories-section">
+              <!-- Horizontal Category Tabs -->
+              <div class="category-tabs-scroller">
+                <button
+                  class="cat-tab-btn active"
+                  id="tab-cat-care"
+                  onclick="switchCarePointCategory('care')"
+                >
+                  <span>🩺</span>
+                  <span>Care Rewards</span>
+                </button>
+                <button
+                  class="cat-tab-btn"
+                  id="tab-cat-family"
+                  onclick="switchCarePointCategory('family')"
+                >
+                  <span>👥</span>
+                  <span>Family Rewards</span>
+                </button>
+                <button
+                  class="cat-tab-btn"
+                  id="tab-cat-lifestyle"
+                  onclick="switchCarePointCategory('lifestyle')"
+                >
+                  <span>🌿</span>
+                  <span>Lifestyle Rewards</span>
+                </button>
+                <button
+                  class="cat-tab-btn"
+                  id="tab-cat-missions"
+                  onclick="switchCarePointCategory('missions')"
+                >
+                  <span>🎯</span>
+                  <span>Care Missions</span>
+                </button>
+                <button
+                  class="cat-tab-btn"
+                  id="tab-cat-my-rewards"
+                  onclick="switchCarePointCategory('my-rewards')"
+                >
+                  <span>🎟️</span>
+                  <span>My Rewards</span>
+                </button>
+              </div>
+
+              <!-- ============================================================
+                 CATEGORY 1: CARE REWARDS PANEL (PRIMARY)
+                 ============================================================ -->
+              <div class="category-panel active" id="panel-care-rewards">
+                <div class="category-panel-header">
+                  <h4 class="cat-headline">
+                    Rewards untuk Perjalanan Kesehatan Anda
+                  </h4>
+                  <p class="cat-subtext">
+                    Gunakan CarePoints untuk manfaat yang mendukung kebutuhan
+                    kesehatan Anda.
+                  </p>
+                </div>
+
+                <!-- List of Care Rewards -->
+                <div class="rewards-items-grid" id="care-rewards-list">
+                  <!-- Dynamically rendered or static fallback initialized by JS -->
+                </div>
+              </div>
+
+              <!-- ============================================================
+                 CATEGORY 2: FAMILY REWARDS PANEL
+                 ============================================================ -->
+              <div class="category-panel" id="panel-family-rewards">
+                <div class="category-panel-header">
+                  <h4 class="cat-headline">Family Rewards</h4>
+                  <p class="cat-subtext">
+                    Bagikan manfaat CarePoints untuk mendukung kesehatan
+                    keluarga Anda.
+                  </p>
+                </div>
+
+                <!-- Family Member Card -->
+                <div class="family-member-card">
+                  <div class="family-card-top">
+                    <div class="family-avatar">SS</div>
+                    <div>
+                      <div class="family-name">Siti Santoso</div>
+                      <div class="family-relation">
+                        Istri (Spouse) · Terdaftar di Ekosistem Mandaya
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="family-pool-box">
+                    <div class="pool-label">
+                      Saldo Family Pool Siti Santoso:
+                    </div>
+                    <div class="pool-value">
+                      <span id="family-pool-display">0</span>
+                      <span
+                        style="
+                          font-size: 14px;
+                          font-weight: 600;
+                          color: var(--text-muted);
+                        "
+                        >Points</span
+                      >
+                    </div>
+                  </div>
+
+                  <div class="family-transfer-actions">
+                    <div class="transfer-label">
+                      Pilih jumlah poin untuk ditransfer:
+                    </div>
+                    <div class="transfer-btn-group">
+                      <button
+                        class="btn-transfer-chip"
+                        onclick="openFamilyTransferModal(50)"
+                      >
+                        <span>🎁</span> Transfer 50 Poin
+                      </button>
+                      <button
+                        class="btn-transfer-chip highlight"
+                        onclick="openFamilyTransferModal(100)"
+                      >
+                        <span>✨</span> Transfer 100 Poin
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="family-disclaimer">
+                    🔒 Transfer langsung menghubungkan manfaat kesehatan
+                    keluarga tanpa memerlukan login terpisah.
+                  </div>
+                </div>
+              </div>
+
+              <!-- ============================================================
+                 CATEGORY 3: LIFESTYLE REWARDS PANEL
+                 ============================================================ -->
+              <div class="category-panel" id="panel-lifestyle-rewards">
+                <div class="category-panel-header">
+                  <h4 class="cat-headline">
+                    Rewards untuk Aktivitas Sehari-hari
+                  </h4>
+                  <p class="cat-subtext">
+                    Gunakan poin Anda untuk manfaat pendukung dalam keseharian.
+                  </p>
+                </div>
+
+                <!-- List of Lifestyle Rewards -->
+                <div class="rewards-items-grid" id="lifestyle-rewards-list">
+                  <!-- Dynamically rendered by JS -->
+                </div>
+              </div>
+
+              <!-- ============================================================
+                 CATEGORY 4: CARE JOURNEY MISSIONS PANEL
+                 ============================================================ -->
+              <div class="category-panel" id="panel-missions-rewards">
+                <div class="category-panel-header">
+                  <h4 class="cat-headline">Care Missions</h4>
+                  <p class="cat-subtext">
+                    Selesaikan aktivitas perawatan untuk mendapatkan apresiasi
+                    CarePoints.
+                  </p>
+                </div>
+
+                <!-- List of Missions -->
+                <div
+                  class="missions-list-container"
+                  id="missions-list-container"
+                >
+                  <!-- Dynamically rendered by JS -->
+                </div>
+              </div>
+
+              <!-- ============================================================
+                 CATEGORY 5: MY REDEEMED REWARDS PANEL
+                 ============================================================ -->
+              <div class="category-panel" id="panel-my-rewards">
+                <div class="category-panel-header">
+                  <h4 class="cat-headline">My Rewards</h4>
+                  <p class="cat-subtext">
+                    Daftar voucher manfaat kesehatan yang telah berhasil Anda
+                    tukarkan.
+                  </p>
+                </div>
+
+                <!-- List of Active Vouchers -->
+                <div
+                  class="my-rewards-list-container"
+                  id="my-rewards-list-container"
+                >
+                  <!-- Dynamically rendered by JS -->
+                </div>
+              </div>
+            </div>
+            <!-- End reward-categories-section -->
+          </section>
+
+          <!-- ================================================================
+             SCREEN 9: PROFILE SCREEN
+             ================================================================ -->
+          <section id="screen-profile" class="screen-view">
+            <!-- Profile Card -->
+            <div class="profile-header-card">
+              <div class="profile-avatar-large">BS</div>
+              <h3 class="profile-name">Budi Santoso</h3>
+              <div class="profile-meta">45 Tahun · Laki-laki</div>
+              <span class="profile-badge-mandaya">
+                Mandaya Patient · MRN: MRN-2026-0881
+              </span>
+            </div>
+
+            <!-- Profile Menu Items -->
+            <div class="profile-menu-list">
+              <!-- My Profile -->
+              <button
+                class="profile-menu-item"
+                onclick="navigateToScreen('screen-profile-detail')"
+              >
+                <div class="menu-item-left">
+                  <div class="menu-item-icon" style="color: #0284c7">👤</div>
+                  <div>
+                    <div class="menu-item-title">My Profile</div>
+                    <div class="menu-item-sub">
+                      Data pribadi & status klinis pasien
+                    </div>
+                  </div>
+                </div>
+                <span class="menu-item-arrow">→</span>
+              </button>
+
+              <!-- Privacy & Consent -->
+              <button
+                class="profile-menu-item"
+                onclick="navigateToScreen('screen-privacy')"
+              >
+                <div class="menu-item-left">
+                  <div class="menu-item-icon" style="color: #7c3aed">🔒</div>
+                  <div>
+                    <div class="menu-item-title">Privacy & Consent</div>
+                    <div class="menu-item-sub">
+                      Pengaturan izin data & komunikasi
+                    </div>
+                  </div>
+                </div>
+                <span class="menu-item-arrow">→</span>
+              </button>
+
+              <!-- Notifications -->
+              <button
+                class="profile-menu-item"
+                onclick="openModal('modal-notifications')"
+              >
+                <div class="menu-item-left">
+                  <div class="menu-item-icon" style="color: #d97706">🔔</div>
+                  <div>
+                    <div class="menu-item-title">Notifications</div>
+                    <div class="menu-item-sub">
+                      Pengingat jadwal kontrol & MIRA
+                    </div>
+                  </div>
+                </div>
+                <span class="menu-item-arrow">→</span>
+              </button>
+
+              <!-- Help Center -->
+              <button
+                class="profile-menu-item"
+                onclick="openModal('modal-help-center')"
+              >
+                <div class="menu-item-left">
+                  <div class="menu-item-icon" style="color: #10b981">💬</div>
+                  <div>
+                    <div class="menu-item-title">Help Center</div>
+                    <div class="menu-item-sub">
+                      Hotline Mandaya & Bantuan Darurat
+                    </div>
+                  </div>
+                </div>
+                <span class="menu-item-arrow">→</span>
+              </button>
+
+              <!-- Logout -->
+              <button
+                class="profile-menu-item"
+                onclick="openModal('modal-logout-confirm')"
+              >
+                <div class="menu-item-left">
+                  <div
+                    class="menu-item-icon"
+                    style="color: #ef4444; background: #fef2f2"
+                  >
+                    🚪
+                  </div>
+                  <div>
+                    <div class="menu-item-title" style="color: #ef4444">
+                      Logout
+                    </div>
+                    <div class="menu-item-sub">
+                      Keluar dari akun pasien demo
+                    </div>
+                  </div>
+                </div>
+                <span class="menu-item-arrow" style="color: #ef4444">→</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- ================================================================
+             SCREEN 10: PRIVACY & CONSENT SCREEN
+             ================================================================ -->
+          <section
+            id="screen-privacy"
+            class="screen-view"
+            style="padding: 50px 18px 90px 18px"
+          >
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 20px;
+              "
+            >
+              <button
+                class="text-btn"
+                onclick="navigateToScreen('screen-profile')"
+                style="font-size: 16px; padding: 4px"
+              >
+                ←
+              </button>
+              <h2
+                style="
+                  font-size: 18px;
+                  font-weight: 800;
+                  color: var(--text-main);
+                "
+              >
+                Privasi & Persetujuan
+              </h2>
+            </div>
+
+            <div
+              style="
+                background: #ffffff;
+                border: 1px solid var(--border);
+                border-radius: 18px;
+                padding: 18px;
+                margin-bottom: 16px;
+                box-shadow: var(--shadow-sm);
+              "
+            >
+              <div
+                style="
+                  font-size: 14px;
+                  font-weight: 700;
+                  color: var(--primary-deep);
+                  margin-bottom: 6px;
+                "
+              >
+                🛡️ Kontrol Privasi Pasien Mandaya
+              </div>
+              <p
+                style="
+                  font-size: 13px;
+                  color: var(--text-muted);
+                  line-height: 1.5;
+                  margin-bottom: 16px;
+                "
+              >
+                Anda dapat mengatur preferensi penggunaan data dan komunikasi
+                Anda.
+              </p>
+
+              <div style="display: flex; flex-direction: column; gap: 14px">
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding-bottom: 12px;
+                    border-bottom: 1px solid #f1f5f9;
+                  "
+                >
+                  <div>
+                    <div
+                      style="
+                        font-size: 13px;
+                        font-weight: 700;
+                        color: var(--text-main);
+                      "
+                    >
+                      Satu Pasien, Satu Riwayat
+                    </div>
+                    <div style="font-size: 11.5px; color: var(--text-muted)">
+                      Integrasi data poli, rawat inap, & radiologi
+                    </div>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked
+                    style="
+                      accent-color: var(--primary);
+                      width: 18px;
+                      height: 18px;
+                    "
+                  />
+                </div>
+
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding-bottom: 12px;
+                    border-bottom: 1px solid #f1f5f9;
+                  "
+                >
+                  <div>
+                    <div
+                      style="
+                        font-size: 13px;
+                        font-weight: 700;
+                        color: var(--text-main);
+                      "
+                    >
+                      Notifikasi Perawatan MIRA
+                    </div>
+                    <div style="font-size: 11.5px; color: var(--text-muted)">
+                      Pengingat check-in harian & jadwal obat
+                    </div>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked
+                    style="
+                      accent-color: var(--primary);
+                      width: 18px;
+                      height: 18px;
+                    "
+                  />
+                </div>
+
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                  "
+                >
+                  <div>
+                    <div
+                      style="
+                        font-size: 13px;
+                        font-weight: 700;
+                        color: var(--text-main);
+                      "
+                    >
+                      Personalisasi Rekomendasi Medis
+                    </div>
+                    <div style="font-size: 11.5px; color: var(--text-muted)">
+                      Tips pemulihan berbasis diagnosa DPJP
+                    </div>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked
+                    style="
+                      accent-color: var(--primary);
+                      width: 18px;
+                      height: 18px;
+                    "
+                  />
+                </div>
+              </div>
+            </div>
+
+            <button
+              class="btn-primary-mobile"
+              onclick="navigateToScreen('screen-profile')"
+            >
+              Simpan Pengaturan
+            </button>
+          </section>
+
+          <!-- ================================================================
              SCREEN 11: PATIENT PROFILE DETAIL SCREEN
              ================================================================ -->
-        <section id="screen-profile-detail" class="screen-view" style="padding: 50px 18px 90px 18px;">
-          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
-            <button class="text-btn" onclick="navigateToScreen('screen-profile')" style="font-size: 16px; padding: 4px;">
-              ←
-            </button>
-            <h2 style="font-size: 18px; font-weight: 800; color: var(--text-main);">Detail Profil Pasien</h2>
-          </div>
+          <section
+            id="screen-profile-detail"
+            class="screen-view"
+            style="padding: 50px 18px 90px 18px"
+          >
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 20px;
+              "
+            >
+              <button
+                class="text-btn"
+                onclick="navigateToScreen('screen-profile')"
+                style="font-size: 16px; padding: 4px"
+              >
+                ←
+              </button>
+              <h2
+                style="
+                  font-size: 18px;
+                  font-weight: 800;
+                  color: var(--text-main);
+                "
+              >
+                Detail Profil Pasien
+              </h2>
+            </div>
 
-          <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 18px; padding: 18px; margin-bottom: 16px; box-shadow: var(--shadow-sm);">
-            <div style="display: flex; flex-direction: column; gap: 12px; font-size: 13px;">
-              <div>
-                <span style="color: var(--text-muted); font-size: 11.5px;">Nama Lengkap:</span>
-                <div style="font-weight: 700; color: var(--text-main);">Budi Santoso</div>
-              </div>
-              <div>
-                <span style="color: var(--text-muted); font-size: 11.5px;">Nomor Rekam Medis (MRN):</span>
-                <div style="font-weight: 700; color: var(--primary);">MRN-2026-0881</div>
-              </div>
-              <div>
-                <span style="color: var(--text-muted); font-size: 11.5px;">Usia / Jenis Kelamin:</span>
-                <div style="font-weight: 700; color: var(--text-main);">45 Tahun · Laki-laki</div>
-              </div>
-              <div>
-                <span style="color: var(--text-muted); font-size: 11.5px;">Perjalanan Perawatan:</span>
-                <div style="font-weight: 700; color: var(--text-main);">Orthopedic Recovery (Progres: 70%)</div>
-              </div>
-              <div>
-                <span style="color: var(--text-muted); font-size: 11.5px;">Dokter DPJP Penanggung Jawab:</span>
-                <div style="font-weight: 700; color: var(--text-main);">Dr. Andi Pratama, Sp.OT</div>
-              </div>
-              <div>
-                <span style="color: var(--text-muted); font-size: 11.5px;">Jadwal Kontrol Berikutnya:</span>
-                <div style="font-weight: 700; color: #10b981;">7 September 2026 · Poli Ortopedi</div>
+            <div
+              style="
+                background: #ffffff;
+                border: 1px solid var(--border);
+                border-radius: 18px;
+                padding: 18px;
+                margin-bottom: 16px;
+                box-shadow: var(--shadow-sm);
+              "
+            >
+              <div
+                style="
+                  display: flex;
+                  flex-direction: column;
+                  gap: 12px;
+                  font-size: 13px;
+                "
+              >
+                <div>
+                  <span style="color: var(--text-muted); font-size: 11.5px"
+                    >Nama Lengkap:</span
+                  >
+                  <div style="font-weight: 700; color: var(--text-main)">
+                    Budi Santoso
+                  </div>
+                </div>
+                <div>
+                  <span style="color: var(--text-muted); font-size: 11.5px"
+                    >Nomor Rekam Medis (MRN):</span
+                  >
+                  <div style="font-weight: 700; color: var(--primary)">
+                    MRN-2026-0881
+                  </div>
+                </div>
+                <div>
+                  <span style="color: var(--text-muted); font-size: 11.5px"
+                    >Usia / Jenis Kelamin:</span
+                  >
+                  <div style="font-weight: 700; color: var(--text-main)">
+                    45 Tahun · Laki-laki
+                  </div>
+                </div>
+                <div>
+                  <span style="color: var(--text-muted); font-size: 11.5px"
+                    >Perjalanan Perawatan:</span
+                  >
+                  <div style="font-weight: 700; color: var(--text-main)">
+                    Orthopedic Recovery (Progres: 70%)
+                  </div>
+                </div>
+                <div>
+                  <span style="color: var(--text-muted); font-size: 11.5px"
+                    >Dokter DPJP Penanggung Jawab:</span
+                  >
+                  <div style="font-weight: 700; color: var(--text-main)">
+                    Dr. Andi Pratama, Sp.OT
+                  </div>
+                </div>
+                <div>
+                  <span style="color: var(--text-muted); font-size: 11.5px"
+                    >Jadwal Kontrol Berikutnya:</span
+                  >
+                  <div style="font-weight: 700; color: #10b981">
+                    7 September 2026 · Poli Ortopedi
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
 
-          <button class="btn-secondary-mobile" onclick="navigateToScreen('screen-profile')">
-            ← Kembali ke Profil
-          </button>
-        </section>
+            <button
+              class="btn-secondary-mobile"
+              onclick="navigateToScreen('screen-profile')"
+            >
+              ← Kembali ke Profil
+            </button>
+          </section>
+        </div>
+        <!-- End mobile-screen-viewport -->
 
-      </div><!-- End mobile-screen-viewport -->
-
-      <!-- ================================================================
+        <!-- ================================================================
            PERSISTENT BOTTOM NAVIGATION BAR (5 TABS)
            ================================================================ -->
-      <nav class="bottom-nav-mobile" id="bottom-nav-mobile" style="display: none;">
-        
-        <!-- Tab 1: Home (Fully Functional) -->
-        <button class="nav-item active" id="tab-home" onclick="switchTab('home')">
-          <span class="nav-item-icon">🏠</span>
-          <span>Home</span>
-          <div class="nav-item-indicator"></div>
-        </button>
+        <nav
+          class="bottom-nav-mobile"
+          id="bottom-nav-mobile"
+          style="display: none"
+        >
+          <!-- Tab 1: Home (Fully Functional) -->
+          <button
+            class="nav-item active"
+            id="tab-home"
+            onclick="switchTab('home')"
+          >
+            <span class="nav-item-icon">🏠</span>
+            <span>Home</span>
+            <div class="nav-item-indicator"></div>
+          </button>
 
-        <!-- Tab 2: Care Journey (Placeholder) -->
-        <button class="nav-item" id="tab-journey" onclick="switchTab('journey')">
-          <span class="nav-item-icon">🧭</span>
-          <span>Journey</span>
-          <div class="nav-item-indicator"></div>
-        </button>
+          <!-- Tab 2: Care Journey (Placeholder) -->
+          <button
+            class="nav-item"
+            id="tab-journey"
+            onclick="switchTab('journey')"
+          >
+            <span class="nav-item-icon">🧭</span>
+            <span>Journey</span>
+            <div class="nav-item-indicator"></div>
+          </button>
 
-        <!-- Tab 3: MIRA (Placeholder) -->
-        <button class="nav-item" id="tab-mira" onclick="switchTab('mira')">
-          <span class="nav-item-icon">🤖</span>
-          <span>MIRA</span>
-          <div class="nav-item-indicator"></div>
-        </button>
+          <!-- Tab 3: MIRA (Placeholder) -->
+          <button class="nav-item" id="tab-mira" onclick="switchTab('mira')">
+            <span class="nav-item-icon">🤖</span>
+            <span>MIRA</span>
+            <div class="nav-item-indicator"></div>
+          </button>
 
-        <!-- Tab 4: Rewards (Placeholder) -->
-        <button class="nav-item" id="tab-rewards" onclick="switchTab('rewards')">
-          <span class="nav-item-icon">🎁</span>
-          <span>Rewards</span>
-          <div class="nav-item-indicator"></div>
-        </button>
+          <!-- Tab 4: Rewards (Placeholder) -->
+          <button
+            class="nav-item"
+            id="tab-rewards"
+            onclick="switchTab('rewards')"
+          >
+            <span class="nav-item-icon">🎁</span>
+            <span>Rewards</span>
+            <div class="nav-item-indicator"></div>
+          </button>
 
-        <!-- Tab 5: Profile (Fully Functional) -->
-        <button class="nav-item" id="tab-profile" onclick="switchTab('profile')">
-          <span class="nav-item-icon">👤</span>
-          <span>Profile</span>
-          <div class="nav-item-indicator"></div>
-        </button>
+          <!-- Tab 5: Profile (Fully Functional) -->
+          <button
+            class="nav-item"
+            id="tab-profile"
+            onclick="switchTab('profile')"
+          >
+            <span class="nav-item-icon">👤</span>
+            <span>Profile</span>
+            <div class="nav-item-indicator"></div>
+          </button>
+        </nav>
+      </div>
+      <!-- End smartphone-frame -->
+    </div>
+    <!-- End prototype-stage -->
 
-      </nav>
-
-    </div><!-- End smartphone-frame -->
-
-  </div><!-- End prototype-stage -->
-
-  <!-- ======================================================================
+    <!-- ======================================================================
        INTERACTIVE MODALS & BOTTOM SHEETS
        ====================================================================== -->
 
-  <!-- 1. MIRA Preview Modal -->
-  <div class="modal-backdrop" id="modal-mira-preview">
-    <div class="modal-content-card">
-      <div class="modal-icon-badge" style="background: #e0f2fe; color: #0284c7;">
-        🤖
-      </div>
-      <h3 class="modal-title">MIRA Recovery Check-in</h3>
-      <p class="modal-text">
-        Fitur MIRA Check-in akan tersedia pada modul berikutnya.<br><br>
-        Pada modul mendatang, MIRA akan menyapa Anda secara proaktif sesuai fase pemulihan lutut Anda (H+14), memberikan edukasi obat, dan menghubungkan Anda langsung dengan tim Tele-Nurse Mandaya.
-      </p>
-      <div class="modal-actions">
-        <button class="btn-primary-mobile" onclick="closeModal('modal-mira-preview')">
-          Mengerti
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 2. Appointment Detail Modal -->
-  <div class="modal-backdrop" id="modal-appointment-detail">
-    <div class="modal-content-card" style="text-align: left;">
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-        <span style="font-size: 11px; font-weight: 700; color: #0284c7; background: #e0f2fe; padding: 3px 8px; border-radius: 6px;">
-          KONTROL POLI TERJADWAL
-        </span>
-        <button class="text-btn" onclick="closeModal('modal-appointment-detail')" style="font-size: 18px;">✕</button>
-      </div>
-      <h3 class="modal-title" style="margin-bottom: 4px;">Orthopedic Follow-up</h3>
-      <div style="font-size: 13px; color: var(--primary); font-weight: 700; margin-bottom: 14px;">
-        📅 Senin, 7 September 2026 · 10:00 WIB
-      </div>
-
-      <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-bottom: 16px; font-size: 12.5px; line-height: 1.5;">
-        <div><strong>Dokter:</strong> Dr. Andi Pratama, Sp.OT</div>
-        <div><strong>Lokasi:</strong> Poli Ortopedi, Lantai 3, Mandaya Royal Hospital Puri</div>
-        <div><strong>Persiapan:</strong> Membawa hasil rontgen lutut terakhir & kartu rekam medis.</div>
-      </div>
-
-      <div class="modal-actions">
-        <button class="btn-primary-mobile" onclick="closeModal('modal-appointment-detail')">
-          Tutup Detail
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 3. Registration Modal -->
-  <div class="modal-backdrop" id="modal-register">
-    <div class="modal-content-card">
-      <div class="modal-icon-badge" style="background: #eff6ff; color: #1e3a8a;">
-        🏥
-      </div>
-      <h3 class="modal-title">Pendaftaran Pasien Mandaya</h3>
-      <p class="modal-text">
-        Pada implementasi sebenarnya, akun Care Dokter akan terhubung dengan identitas pasien Mandaya.
-      </p>
-      <div class="modal-actions">
-        <button class="btn-primary-mobile" onclick="closeModal('modal-register'); quickDemoLogin();">
-          Masuk sebagai Pasien Demo
-        </button>
-        <button class="btn-secondary-mobile" onclick="closeModal('modal-register')">
-          Batal
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 4. Forgot Password Modal -->
-  <div class="modal-backdrop" id="modal-forgot-password">
-    <div class="modal-content-card">
-      <div class="modal-icon-badge" style="background: #fef3c7; color: #d97706;">
-        🔑
-      </div>
-      <h3 class="modal-title">Bantuan Akses Akun</h3>
-      <p class="modal-text">
-        Untuk mencoba prototype ini, silakan gunakan kredensial demo:<br><br>
-        <strong>No. HP:</strong> 0812 3456 7890<br>
-        <strong>Password:</strong> demo123
-      </p>
-      <div class="modal-actions">
-        <button class="btn-primary-mobile" onclick="closeModal('modal-forgot-password'); autofillDemoCredentials();">
-          Gunakan Kredensial Demo
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 5. Notifications Modal -->
-  <div class="modal-backdrop" id="modal-notifications">
-    <div class="modal-content-card">
-      <div class="modal-icon-badge" style="background: #fef3c7; color: #d97706;">
-        🔔
-      </div>
-      <h3 class="modal-title">Pengaturan Notifikasi</h3>
-      <p class="modal-text">
-        Notifikasi otomatis aktif untuk pengingat jadwal kontrol (7 Sep 2026), sapaan harian MIRA, dan perolehan CarePoints.
-      </p>
-      <div class="modal-actions">
-        <button class="btn-primary-mobile" onclick="closeModal('modal-notifications')">
-          Simpan & Tutup
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 6. Help Center Modal -->
-  <div class="modal-backdrop" id="modal-help-center">
-    <div class="modal-content-card" style="text-align: left;">
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-        <span style="font-size: 11px; font-weight: 700; color: #10b981; background: #ecfdf5; padding: 3px 8px; border-radius: 6px;">
-          PUSAT BANTUAN MANDAYA
-        </span>
-        <button class="text-btn" onclick="closeModal('modal-help-center')" style="font-size: 18px;">✕</button>
-      </div>
-      <h3 class="modal-title" style="margin-bottom: 6px;">Layanan Darurat & Informasi</h3>
-      <p class="modal-text" style="margin-bottom: 14px;">
-        Hubungi tim medis Mandaya Royal Hospital Puri kapan pun Anda membutuhkan pendampingan:
-      </p>
-      
-      <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; font-size: 13px;">
-        <div style="background: #f8fafc; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border);">
-          <strong>🚨 IGD 24 Jam:</strong> 1500-111
+    <!-- 1. MIRA Preview Modal -->
+    <div class="modal-backdrop" id="modal-mira-preview">
+      <div class="modal-content-card">
+        <div
+          class="modal-icon-badge"
+          style="background: #e0f2fe; color: #0284c7"
+        >
+          🤖
         </div>
-        <div style="background: #f8fafc; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border);">
-          <strong>💬 WhatsApp Patient Care:</strong> +62 811-1900-8888
-        </div>
-        <div style="background: #f8fafc; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border);">
-          <strong>🏥 Lokasi:</strong> Jl. Metland Boulevard No. 1, Puri, Tangerang
+        <h3 class="modal-title">MIRA Recovery Check-in</h3>
+        <p class="modal-text">
+          Fitur MIRA Check-in akan tersedia pada modul berikutnya.<br /><br />
+          Pada modul mendatang, MIRA akan menyapa Anda secara proaktif sesuai
+          fase pemulihan lutut Anda (H+14), memberikan edukasi obat, dan
+          menghubungkan Anda langsung dengan tim Tele-Nurse Mandaya.
+        </p>
+        <div class="modal-actions">
+          <button
+            class="btn-primary-mobile"
+            onclick="closeModal('modal-mira-preview')"
+          >
+            Mengerti
+          </button>
         </div>
       </div>
+    </div>
 
-      <div class="modal-actions">
-        <button class="btn-primary-mobile" onclick="closeModal('modal-help-center')">
-          Tutup
-        </button>
+    <!-- 2. Appointment Detail Modal -->
+    <div class="modal-backdrop" id="modal-appointment-detail">
+      <div class="modal-content-card" style="text-align: left">
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+          "
+        >
+          <span
+            style="
+              font-size: 11px;
+              font-weight: 700;
+              color: #0284c7;
+              background: #e0f2fe;
+              padding: 3px 8px;
+              border-radius: 6px;
+            "
+          >
+            KONTROL POLI TERJADWAL
+          </span>
+          <button
+            class="text-btn"
+            onclick="closeModal('modal-appointment-detail')"
+            style="font-size: 18px"
+          >
+            ✕
+          </button>
+        </div>
+        <h3 class="modal-title" style="margin-bottom: 4px">
+          Orthopedic Follow-up
+        </h3>
+        <div
+          style="
+            font-size: 13px;
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 14px;
+          "
+        >
+          📅 Senin, 7 September 2026 · 10:00 WIB
+        </div>
+
+        <div
+          style="
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 16px;
+            font-size: 12.5px;
+            line-height: 1.5;
+          "
+        >
+          <div><strong>Dokter:</strong> Dr. Andi Pratama, Sp.OT</div>
+          <div>
+            <strong>Lokasi:</strong> Poli Ortopedi, Lantai 3, Mandaya Royal
+            Hospital Puri
+          </div>
+          <div>
+            <strong>Persiapan:</strong> Membawa hasil rontgen lutut terakhir &
+            kartu rekam medis.
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button
+            class="btn-primary-mobile"
+            onclick="closeModal('modal-appointment-detail')"
+          >
+            Tutup Detail
+          </button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- 7. Logout Confirmation Modal -->
-  <div class="modal-backdrop" id="modal-logout-confirm">
-    <div class="modal-content-card">
-      <div class="modal-icon-badge" style="background: #fef2f2; color: #ef4444;">
-        🚪
-      </div>
-      <h3 class="modal-title">Keluar dari Akun?</h3>
-      <p class="modal-text">
-        Anda akan diarahkan kembali ke layar masuk. Anda dapat masuk kembali kapan saja menggunakan akun demo.
-      </p>
-      <div class="modal-actions">
-        <button class="btn-primary-mobile" style="background: #ef4444;" onclick="handleLogout()">
-          Ya, Keluar
-        </button>
-        <button class="btn-secondary-mobile" onclick="closeModal('modal-logout-confirm')">
-          Batal
-        </button>
+    <!-- 3. Registration Modal -->
+    <div class="modal-backdrop" id="modal-register">
+      <div class="modal-content-card">
+        <div
+          class="modal-icon-badge"
+          style="background: #eff6ff; color: #1e3a8a"
+        >
+          🏥
+        </div>
+        <h3 class="modal-title">Pendaftaran Pasien Mandaya</h3>
+        <p class="modal-text">
+          Pada implementasi sebenarnya, akun Care Dokter akan terhubung dengan
+          identitas pasien Mandaya.
+        </p>
+        <div class="modal-actions">
+          <button
+            class="btn-primary-mobile"
+            onclick="
+              closeModal('modal-register');
+              quickDemoLogin();
+            "
+          >
+            Masuk sebagai Pasien Demo
+          </button>
+          <button
+            class="btn-secondary-mobile"
+            onclick="closeModal('modal-register')"
+          >
+            Batal
+          </button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Mobile App Core JavaScript -->
-  <script src="/mobile-app.js"></script>
-</body>
+    <!-- 4. Forgot Password Modal -->
+    <div class="modal-backdrop" id="modal-forgot-password">
+      <div class="modal-content-card">
+        <div
+          class="modal-icon-badge"
+          style="background: #fef3c7; color: #d97706"
+        >
+          🔑
+        </div>
+        <h3 class="modal-title">Bantuan Akses Akun</h3>
+        <p class="modal-text">
+          Untuk mencoba prototype ini, silakan gunakan kredensial demo:<br /><br />
+          <strong>No. HP:</strong> 0812 3456 7890<br />
+          <strong>Password:</strong> demo123
+        </p>
+        <div class="modal-actions">
+          <button
+            class="btn-primary-mobile"
+            onclick="
+              closeModal('modal-forgot-password');
+              autofillDemoCredentials();
+            "
+          >
+            Gunakan Kredensial Demo
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Notifications Modal -->
+    <div class="modal-backdrop" id="modal-notifications">
+      <div class="modal-content-card">
+        <div
+          class="modal-icon-badge"
+          style="background: #fef3c7; color: #d97706"
+        >
+          🔔
+        </div>
+        <h3 class="modal-title">Pengaturan Notifikasi</h3>
+        <p class="modal-text">
+          Notifikasi otomatis aktif untuk pengingat jadwal kontrol (7 Sep 2026),
+          sapaan harian MIRA, dan perolehan CarePoints.
+        </p>
+        <div class="modal-actions">
+          <button
+            class="btn-primary-mobile"
+            onclick="closeModal('modal-notifications')"
+          >
+            Simpan & Tutup
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. Help Center Modal -->
+    <div class="modal-backdrop" id="modal-help-center">
+      <div class="modal-content-card" style="text-align: left">
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+          "
+        >
+          <span
+            style="
+              font-size: 11px;
+              font-weight: 700;
+              color: #10b981;
+              background: #ecfdf5;
+              padding: 3px 8px;
+              border-radius: 6px;
+            "
+          >
+            PUSAT BANTUAN MANDAYA
+          </span>
+          <button
+            class="text-btn"
+            onclick="closeModal('modal-help-center')"
+            style="font-size: 18px"
+          >
+            ✕
+          </button>
+        </div>
+        <h3 class="modal-title" style="margin-bottom: 6px">
+          Layanan Darurat & Informasi
+        </h3>
+        <p class="modal-text" style="margin-bottom: 14px">
+          Hubungi tim medis Mandaya Royal Hospital Puri kapan pun Anda
+          membutuhkan pendampingan:
+        </p>
+
+        <div
+          style="
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 16px;
+            font-size: 13px;
+          "
+        >
+          <div
+            style="
+              background: #f8fafc;
+              padding: 10px 12px;
+              border-radius: 10px;
+              border: 1px solid var(--border);
+            "
+          >
+            <strong>🚨 IGD 24 Jam:</strong> 1500-111
+          </div>
+          <div
+            style="
+              background: #f8fafc;
+              padding: 10px 12px;
+              border-radius: 10px;
+              border: 1px solid var(--border);
+            "
+          >
+            <strong>💬 WhatsApp Patient Care:</strong> +62 811-1900-8888
+          </div>
+          <div
+            style="
+              background: #f8fafc;
+              padding: 10px 12px;
+              border-radius: 10px;
+              border: 1px solid var(--border);
+            "
+          >
+            <strong>🏥 Lokasi:</strong> Jl. Metland Boulevard No. 1, Puri,
+            Tangerang
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button
+            class="btn-primary-mobile"
+            onclick="closeModal('modal-help-center')"
+          >
+            Tutup
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. Logout Confirmation Modal -->
+    <div class="modal-backdrop" id="modal-logout-confirm">
+      <div class="modal-content-card">
+        <div
+          class="modal-icon-badge"
+          style="background: #fef2f2; color: #ef4444"
+        >
+          🚪
+        </div>
+        <h3 class="modal-title">Keluar dari Akun?</h3>
+        <p class="modal-text">
+          Anda akan diarahkan kembali ke layar masuk. Anda dapat masuk kembali
+          kapan saja menggunakan akun demo.
+        </p>
+        <div class="modal-actions">
+          <button
+            class="btn-primary-mobile"
+            style="background: #ef4444"
+            onclick="handleLogout()"
+          >
+            Ya, Keluar
+          </button>
+          <button
+            class="btn-secondary-mobile"
+            onclick="closeModal('modal-logout-confirm')"
+          >
+            Batal
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================================
+       FEATURE 2: MANDAYA CAREPOINT MODALS
+       ====================================================================== -->
+
+    <!-- 8. Reward Redemption Confirmation Modal -->
+    <div class="modal-backdrop" id="modal-reward-confirm">
+      <div class="modal-content-card" style="text-align: left">
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+          "
+        >
+          <span class="modal-category-badge" id="confirm-reward-badge"
+            >Care Reward</span
+          >
+          <button
+            class="text-btn"
+            onclick="closeModal('modal-reward-confirm')"
+            style="font-size: 18px"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+          "
+        >
+          <div class="modal-reward-icon-box" id="confirm-reward-icon">🩺</div>
+          <div>
+            <h3
+              class="modal-title"
+              style="margin-bottom: 2px"
+              id="confirm-reward-name"
+            >
+              Follow-up Consultation
+            </h3>
+            <p
+              style="font-size: 12px; color: var(--text-muted)"
+              id="confirm-reward-desc"
+            >
+              Manfaat untuk mendukung konsultasi lanjutan Anda.
+            </p>
+          </div>
+        </div>
+
+        <!-- Point Calculation Summary Card -->
+        <div class="redemption-calc-card">
+          <div class="calc-row">
+            <span>Poin yang dibutuhkan:</span>
+            <strong style="color: var(--amber)" id="confirm-cost-val"
+              >300 Poin</strong
+            >
+          </div>
+          <div class="calc-row">
+            <span>Saldo CarePoints saat ini:</span>
+            <span id="confirm-current-bal">450 Poin</span>
+          </div>
+          <div class="calc-divider"></div>
+          <div class="calc-row highlight">
+            <span>Sisa saldo setelah penukaran:</span>
+            <strong style="color: var(--primary-deep)" id="confirm-after-bal"
+              >150 Poin</strong
+            >
+          </div>
+        </div>
+
+        <p class="modal-small-note">
+          🔒 Voucher manfaat akan langsung tersimpan di menu
+          <strong>My Rewards</strong> dan siap digunakan saat registrasi RS.
+        </p>
+
+        <div class="modal-actions">
+          <button
+            class="btn-primary-mobile"
+            id="btn-confirm-redemption"
+            onclick="executeRedemption()"
+          >
+            Konfirmasi & Gunakan Poin
+          </button>
+          <button
+            class="btn-secondary-mobile"
+            onclick="closeModal('modal-reward-confirm')"
+          >
+            Batalkan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9. Reward Redemption Success Modal with Next Best Action -->
+    <div class="modal-backdrop" id="modal-reward-success">
+      <div class="modal-content-card" style="text-align: center">
+        <div
+          class="modal-icon-badge"
+          style="background: #ecfdf5; color: #10b981; font-size: 28px"
+        >
+          ✨
+        </div>
+        <h3 class="modal-title" style="color: #047857">Berhasil Digunakan!</h3>
+        <p class="modal-text" style="margin-bottom: 14px">
+          Anda telah menggunakan
+          <strong id="success-cost-text">300 CarePoints</strong> untuk
+          <strong id="success-reward-name">Follow-up Consultation</strong>.
+        </p>
+
+        <!-- Unique Voucher Code Box -->
+        <div class="voucher-code-card">
+          <div class="voucher-code-label">KODE MANFAAT ANDA</div>
+          <div class="voucher-code-number" id="success-voucher-code">
+            CARE-7294
+          </div>
+          <div class="voucher-code-expiry" id="success-voucher-expiry">
+            Berlaku s/d 30 September 2026
+          </div>
+          <button class="btn-copy-code" onclick="copyVoucherCode()">
+            📋 Salin Kode Manfaat
+          </button>
+        </div>
+
+        <!-- POST-REDEMPTION NEXT BEST ACTION -->
+        <div class="next-best-action-card">
+          <div class="nba-header">
+            <span class="nba-badge">What's Next?</span>
+            <span class="nba-icon">🩺</span>
+          </div>
+          <h4 class="nba-title">Konfirmasi Jadwal Kontrol Anda</h4>
+          <p class="nba-desc">
+            Pastikan jadwal kontrol lanjutan ortopedi (7 Sep 2026) terkonfirmasi
+            untuk kelancaran penggunaan voucher manfaat ini.
+          </p>
+          <button class="btn-nba-action" onclick="handlePostRedemptionAction()">
+            📅 Konfirmasi Kontrol Sekarang (+20 Pts)
+          </button>
+        </div>
+
+        <div class="modal-actions" style="margin-top: 12px">
+          <button
+            class="btn-primary-mobile"
+            onclick="
+              closeModal('modal-reward-success');
+              switchCarePointCategory('my-rewards');
+            "
+          >
+            Lihat di My Rewards
+          </button>
+          <button
+            class="btn-secondary-mobile"
+            onclick="closeModal('modal-reward-success')"
+          >
+            Selesai
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10. Family Transfer Modal -->
+    <div class="modal-backdrop" id="modal-family-transfer">
+      <div class="modal-content-card" style="text-align: left">
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+          "
+        >
+          <span
+            class="modal-category-badge"
+            style="background: #eff6ff; color: #1d4ed8"
+            >Family Rewards Pool</span
+          >
+          <button
+            class="text-btn"
+            onclick="closeModal('modal-family-transfer')"
+            style="font-size: 18px"
+          >
+            ✕
+          </button>
+        </div>
+
+        <h3 class="modal-title" style="margin-bottom: 4px">
+          Transfer CarePoints Keluarga
+        </h3>
+        <p class="modal-text" style="margin-bottom: 14px">
+          Transfer
+          <strong id="transfer-amount-display">100 CarePoints</strong> ke akun
+          keluarga <strong>Siti Santoso</strong> (Istri).
+        </p>
+
+        <div class="redemption-calc-card" style="margin-bottom: 16px">
+          <div class="calc-row">
+            <span>Jumlah Transfer:</span>
+            <strong style="color: var(--primary)" id="transfer-summary-amount"
+              >100 Poin</strong
+            >
+          </div>
+          <div class="calc-row">
+            <span>Saldo Anda Setelah Transfer:</span>
+            <span id="transfer-sender-bal">350 Poin</span>
+          </div>
+          <div class="calc-divider"></div>
+          <div class="calc-row highlight">
+            <span>Saldo Family Pool Siti Santoso:</span>
+            <strong style="color: #10b981" id="transfer-receiver-bal"
+              >100 Poin</strong
+            >
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn-primary-mobile" onclick="executeFamilyTransfer()">
+            Konfirmasi Transfer
+          </button>
+          <button
+            class="btn-secondary-mobile"
+            onclick="closeModal('modal-family-transfer')"
+          >
+            Batal
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 11. Auto-Use Points Confirmation Modal -->
+    <div class="modal-backdrop" id="modal-autouse-confirm">
+      <div class="modal-content-card">
+        <div
+          class="modal-icon-badge"
+          style="background: #e0f2fe; color: #0284c7"
+        >
+          ⚡
+        </div>
+        <h3 class="modal-title">Aktifkan Penggunaan Poin Otomatis?</h3>
+        <p class="modal-text">
+          Care Dokter akan merekomendasikan dan menerapkan potongan poin secara
+          otomatis untuk manfaat perawatan yang relevan sesuai preferensi
+          perjalanan kesehatan Anda.
+        </p>
+        <div class="modal-actions">
+          <button
+            class="btn-primary-mobile"
+            onclick="confirmAutoUseActivation()"
+          >
+            Aktifkan Otomatis
+          </button>
+          <button
+            class="btn-secondary-mobile"
+            onclick="cancelAutoUseActivation()"
+          >
+            Batal
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 12. Point Activity History Modal -->
+    <div class="modal-backdrop" id="modal-point-activity">
+      <div
+        class="modal-content-card"
+        style="
+          text-align: left;
+          max-height: 85vh;
+          display: flex;
+          flex-direction: column;
+        "
+      >
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+          "
+        >
+          <div>
+            <h3 class="modal-title" style="margin-bottom: 2px">
+              CarePoint Activity
+            </h3>
+            <p style="font-size: 11.5px; color: var(--text-muted)">
+              Riwayat perolehan & penukaran poin
+            </p>
+          </div>
+          <button
+            class="text-btn"
+            onclick="closeModal('modal-point-activity')"
+            style="font-size: 18px"
+          >
+            ✕
+          </button>
+        </div>
+
+        <!-- Point Activity Summary Banner -->
+        <div class="activity-summary-banner">
+          <div class="act-bal-label">Total Saldo Aktif</div>
+          <div class="act-bal-val">
+            <span id="activity-modal-bal">450</span>
+            <span style="font-size: 13px; font-weight: 500">Points</span>
+          </div>
+        </div>
+
+        <!-- Scrollable History List -->
+        <div
+          class="activity-history-list"
+          id="activity-history-list"
+          style="overflow-y: auto; flex: 1; padding-right: 4px"
+        >
+          <!-- Dynamically rendered by JS -->
+        </div>
+
+        <div class="modal-actions" style="margin-top: 14px">
+          <button
+            class="btn-secondary-mobile"
+            onclick="closeModal('modal-point-activity')"
+          >
+            Tutup Riwayat
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 13. Mission MIRA Check-in Info Modal -->
+    <div class="modal-backdrop" id="modal-mission-mira-info">
+      <div class="modal-content-card">
+        <div
+          class="modal-icon-badge"
+          style="background: #e0f2fe; color: #0369a1"
+        >
+          🤖
+        </div>
+        <h3 class="modal-title">MIRA Recovery Check-in</h3>
+        <p class="modal-text">
+          Misi ini terhubung dengan fitur <strong>MIRA Check-in</strong>. Pada
+          implementasi lengkap, setiap kali Anda menjawab sapaan kondisi
+          pemulihan lutut H+14 bersama MIRA, Anda akan otomatis mendapatkan
+          <strong>+25 CarePoints</strong>!
+        </p>
+        <div class="modal-actions">
+          <button
+            class="btn-primary-mobile"
+            onclick="
+              closeModal('modal-mission-mira-info');
+              openModal('modal-mira-preview');
+            "
+          >
+            Buka Preview MIRA
+          </button>
+          <button
+            class="btn-secondary-mobile"
+            onclick="closeModal('modal-mission-mira-info')"
+          >
+            Mengerti
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile App Core JavaScript -->
+    <script src="/mobile-app.js"></script>
+  </body>
 </html>
