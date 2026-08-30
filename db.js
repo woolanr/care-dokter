@@ -10,7 +10,6 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { createRequire } from "module";
-import { DatabaseSync } from "node:sqlite";
 
 const require = createRequire(import.meta.url);
 const __filename = fileURLToPath(import.meta.url);
@@ -29,19 +28,32 @@ if (process.env.VERCEL) {
   }
 }
 
+let DatabaseSyncClass = null;
+try {
+  const nodeSqlite = require("node:sqlite");
+  DatabaseSyncClass = nodeSqlite.DatabaseSync;
+} catch (e) {
+  console.warn("[DB] node:sqlite not natively found:", e.message);
+}
+
 let dbInstance = null;
 
 /**
  * Inisialisasi driver SQLite
  */
 function createDatabaseConnection() {
-  try {
-    const db = new DatabaseSync(DB_PATH);
-    return wrapNodeSqlite(db);
-  } catch (e) {
-    console.warn("[DB] Fallback SQLite initialized:", e.message);
-    return createFallbackDb();
+  if (DatabaseSyncClass) {
+    try {
+      const db = new DatabaseSyncClass(DB_PATH);
+      return wrapNodeSqlite(db);
+    } catch (e) {
+      console.warn(
+        "[DB] DatabaseSync initialization failed, creating memory store:",
+        e.message,
+      );
+    }
   }
+  return createFallbackDb();
 }
 
 /**
