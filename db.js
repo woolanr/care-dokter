@@ -1,21 +1,33 @@
 /**
  * db.js - Koneksi Database SQLite & Skema
  * "Satu Pasien, Satu Riwayat" - Mandaya Royal Hospital Puri
- * 
+ *
  * Menggunakan SQLite murni (node:sqlite bawaan Node 22 dengan fallback sql.js)
  * Menyediakan antarmuka prepare(), run(), get(), all(), exec(), transaction()
  */
 
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { createRequire } from 'module';
-import { DatabaseSync } from 'node:sqlite';
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import { createRequire } from "module";
+import { DatabaseSync } from "node:sqlite";
 
 const require = createRequire(import.meta.url);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const DB_PATH = path.join(__dirname, 'data.db');
+let DB_PATH = path.join(__dirname, "data.db");
+
+if (process.env.VERCEL) {
+  try {
+    const tmpDbPath = path.join("/tmp", "data.db");
+    if (!fs.existsSync(tmpDbPath) && fs.existsSync(DB_PATH)) {
+      fs.copyFileSync(DB_PATH, tmpDbPath);
+    }
+    DB_PATH = tmpDbPath;
+  } catch (err) {
+    console.warn("[DB] Could not copy DB to /tmp:", err);
+  }
+}
 
 let dbInstance = null;
 
@@ -27,7 +39,7 @@ function createDatabaseConnection() {
     const db = new DatabaseSync(DB_PATH);
     return wrapNodeSqlite(db);
   } catch (e) {
-    console.warn('[DB] Fallback SQLite initialized:', e.message);
+    console.warn("[DB] Fallback SQLite initialized:", e.message);
     return createFallbackDb();
   }
 }
@@ -44,36 +56,45 @@ function wrapNodeSqlite(db) {
       const stmt = db.prepare(sql);
       return {
         run(...params) {
-          const flatParams = params.length === 1 && Array.isArray(params[0]) ? params[0] : params;
+          const flatParams =
+            params.length === 1 && Array.isArray(params[0])
+              ? params[0]
+              : params;
           const result = stmt.run(...flatParams);
           return {
             changes: result.changes,
-            lastInsertRowid: Number(result.lastInsertRowid)
+            lastInsertRowid: Number(result.lastInsertRowid),
           };
         },
         get(...params) {
-          const flatParams = params.length === 1 && Array.isArray(params[0]) ? params[0] : params;
+          const flatParams =
+            params.length === 1 && Array.isArray(params[0])
+              ? params[0]
+              : params;
           return stmt.get(...flatParams) || null;
         },
         all(...params) {
-          const flatParams = params.length === 1 && Array.isArray(params[0]) ? params[0] : params;
+          const flatParams =
+            params.length === 1 && Array.isArray(params[0])
+              ? params[0]
+              : params;
           return stmt.all(...flatParams) || [];
-        }
+        },
       };
     },
     transaction(fn) {
       return (...args) => {
-        db.exec('BEGIN TRANSACTION;');
+        db.exec("BEGIN TRANSACTION;");
         try {
           const res = fn(...args);
-          db.exec('COMMIT;');
+          db.exec("COMMIT;");
           return res;
         } catch (err) {
-          db.exec('ROLLBACK;');
+          db.exec("ROLLBACK;");
           throw err;
         }
       };
-    }
+    },
   };
 }
 
@@ -82,9 +103,9 @@ function wrapNodeSqlite(db) {
  */
 function createFallbackDb() {
   // Menggunakan sql.js yang sudah terpasang
-  const { createRequire } = awaitImport('module');
+  const { createRequire } = awaitImport("module");
   const require = createRequire(import.meta.url);
-  const initSqlJs = require('sql.js');
+  const initSqlJs = require("sql.js");
 
   let SQL = null;
   let sqlDb = null;
@@ -92,7 +113,7 @@ function createFallbackDb() {
   // Inisialisasi sinkron jika mungkin atau siapkan wrapper
   // sql.js async initialization:
   // Untuk kepraktisan, sediakan inisialisasi state
-  console.log('[DB] Menggunakan SQLite storage engine');
+  console.log("[DB] Menggunakan SQLite storage engine");
 }
 
 /**
@@ -324,18 +345,43 @@ export function initSchema() {
  */
 function seedPurposes() {
   const db = getDb();
-  const count = db.prepare('SELECT COUNT(*) as c FROM purposes').get().c;
+  const count = db.prepare("SELECT COUNT(*) as c FROM purposes").get().c;
   if (count === 0) {
     const insert = db.prepare(`
       INSERT INTO purposes (id, nama, basis_hukum, dapat_dicabut)
       VALUES (?, ?, ?, ?)
     `);
 
-    insert.run('klinis', 'Pelayanan Klinis & Terapi Medis', 'Pelaksanaan Perjanjian Layanan Kesehatan', 0);
-    insert.run('pengingat', 'Pengingat Obat & Kontrol Pasca Rawat', 'Persetujuan Pasien (Consent)', 1);
-    insert.run('personalisasi', 'Personalisasi Layanan & Edukasi', 'Persetujuan Pasien (Consent)', 1);
-    insert.run('analitik', 'Analitik & Peningkatan Mutu Medis (AI Training)', 'Persetujuan Pasien (Consent)', 1);
-    insert.run('pemasaran', 'Informasi Promo & Program Khusus', 'Persetujuan Pasien (Consent)', 1);
+    insert.run(
+      "klinis",
+      "Pelayanan Klinis & Terapi Medis",
+      "Pelaksanaan Perjanjian Layanan Kesehatan",
+      0,
+    );
+    insert.run(
+      "pengingat",
+      "Pengingat Obat & Kontrol Pasca Rawat",
+      "Persetujuan Pasien (Consent)",
+      1,
+    );
+    insert.run(
+      "personalisasi",
+      "Personalisasi Layanan & Edukasi",
+      "Persetujuan Pasien (Consent)",
+      1,
+    );
+    insert.run(
+      "analitik",
+      "Analitik & Peningkatan Mutu Medis (AI Training)",
+      "Persetujuan Pasien (Consent)",
+      1,
+    );
+    insert.run(
+      "pemasaran",
+      "Informasi Promo & Program Khusus",
+      "Persetujuan Pasien (Consent)",
+      1,
+    );
   }
 }
 
@@ -344,11 +390,17 @@ function seedPurposes() {
  */
 function seedInitialSimulationState() {
   const db = getDb();
-  const existing = db.prepare('SELECT value FROM simulation_state WHERE key = ?').get('current_date');
+  const existing = db
+    .prepare("SELECT value FROM simulation_state WHERE key = ?")
+    .get("current_date");
   if (!existing) {
-    const today = new Date().toISOString().split('T')[0];
-    db.prepare('INSERT OR REPLACE INTO simulation_state (key, value) VALUES (?, ?)').run('current_date', today);
-    db.prepare('INSERT OR REPLACE INTO simulation_state (key, value) VALUES (?, ?)').run('day_offset', '0');
+    const today = new Date().toISOString().split("T")[0];
+    db.prepare(
+      "INSERT OR REPLACE INTO simulation_state (key, value) VALUES (?, ?)",
+    ).run("current_date", today);
+    db.prepare(
+      "INSERT OR REPLACE INTO simulation_state (key, value) VALUES (?, ?)",
+    ).run("day_offset", "0");
   }
 }
 
@@ -357,11 +409,11 @@ function seedInitialSimulationState() {
  */
 export function seedSources() {
   const db = getDb();
-  const count = db.prepare('SELECT COUNT(*) as c FROM source_records').get().c;
+  const count = db.prepare("SELECT COUNT(*) as c FROM source_records").get().c;
   if (count === 0) {
-    const jsonPath = path.join(__dirname, 'seed', 'sources.json');
+    const jsonPath = path.join(__dirname, "seed", "sources.json");
     if (fs.existsSync(jsonPath)) {
-      const data = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+      const data = JSON.parse(fs.readFileSync(jsonPath, "utf8"));
       const insert = db.prepare(`
         INSERT INTO source_records (sistem, local_id, nik, nama, tgl_lahir, telepon, jenis_kelamin, raw)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
@@ -376,10 +428,12 @@ export function seedSources() {
           item.tgl_lahir || null,
           item.telepon || null,
           item.jenis_kelamin || null,
-          JSON.stringify(item.raw || {})
+          JSON.stringify(item.raw || {}),
         );
       }
-      console.log(`[DB] Berhasil memasukkan ${data.length} data sumber mentah.`);
+      console.log(
+        `[DB] Berhasil memasukkan ${data.length} data sumber mentah.`,
+      );
     }
   }
 }
@@ -389,23 +443,49 @@ export function seedSources() {
  */
 export function seedDoctorsAndProfiles() {
   const db = getDb();
-  const docCount = db.prepare('SELECT COUNT(*) as c FROM doctors').get().c;
+  const docCount = db.prepare("SELECT COUNT(*) as c FROM doctors").get().c;
   if (docCount === 0) {
     const insertDoctor = db.prepare(
-      'INSERT INTO doctors (name, spec, exp, avail, img) VALUES (?, ?, ?, ?, ?)'
+      "INSERT INTO doctors (name, spec, exp, avail, img) VALUES (?, ?, ?, ?, ?)",
     );
-    insertDoctor.run("dr. Anisa Putri, Sp.A", "Spesialis Anak", 8, "yes", "/anisa.jpg");
-    insertDoctor.run("dr. Bagas Santoso, Sp.PD", "Spesialis Penyakit Dalam", 12, "yes", "/bagas.jpg");
-    insertDoctor.run("dr. Citra Lestari, Sp.KK", "Spesialis Kulit & Kelamin", 5, "no", "/citra.jpg");
-    insertDoctor.run("dr. Dimas Pratama, Sp.JP", "Spesialis Jantung & Pembuluh Darah", 15, "yes", "/dimas.jpg");
+    insertDoctor.run(
+      "dr. Anisa Putri, Sp.A",
+      "Spesialis Anak",
+      8,
+      "yes",
+      "/anisa.jpg",
+    );
+    insertDoctor.run(
+      "dr. Bagas Santoso, Sp.PD",
+      "Spesialis Penyakit Dalam",
+      12,
+      "yes",
+      "/bagas.jpg",
+    );
+    insertDoctor.run(
+      "dr. Citra Lestari, Sp.KK",
+      "Spesialis Kulit & Kelamin",
+      5,
+      "no",
+      "/citra.jpg",
+    );
+    insertDoctor.run(
+      "dr. Dimas Pratama, Sp.JP",
+      "Spesialis Jantung & Pembuluh Darah",
+      15,
+      "yes",
+      "/dimas.jpg",
+    );
   }
 
-  const profCount = db.prepare('SELECT COUNT(*) as c FROM profiles').get().c;
+  const profCount = db.prepare("SELECT COUNT(*) as c FROM profiles").get().c;
   if (profCount === 0) {
-    db.prepare(`
+    db.prepare(
+      `
       INSERT INTO profiles (mpi_id, name, birth, gender, phone, email, nik, kk, passport, isMain)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
-    `).run(
+    `,
+    ).run(
       "MPI-0001",
       "Siti Aminah Rahayu",
       "1985-04-12",
@@ -417,10 +497,12 @@ export function seedDoctorsAndProfiles() {
       "",
     );
 
-    db.prepare(`
+    db.prepare(
+      `
       INSERT INTO profiles (mpi_id, name, birth, gender, phone, email, nik, kk, passport, isMain)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
-    `).run(
+    `,
+    ).run(
       "MPI-0002",
       "Budi Santoso",
       "1982-08-20",
@@ -439,44 +521,75 @@ export function seedDoctorsAndProfiles() {
  */
 export function seedLoyalty() {
   const db = getDb();
-  const countAcc = db.prepare('SELECT COUNT(*) as c FROM loyalty_accounts').get().c;
+  const countAcc = db
+    .prepare("SELECT COUNT(*) as c FROM loyalty_accounts")
+    .get().c;
   if (countAcc === 0) {
-    const todayStr = new Date().toISOString().split('T')[0];
-    const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
+    const todayStr = new Date().toISOString().split("T")[0];
+    const now = new Date().toISOString().replace("T", " ").substring(0, 19);
 
     // Akun Pasien Utama
-    db.prepare(`
+    db.prepare(
+      `
       INSERT INTO loyalty_accounts (mpi_id, points_balance, tier, care_streak_days, last_streak_date, auto_use_points, family_pool_id)
       VALUES ('MPI-0001', 2450, 'Gold Care', 5, ?, 1, 'FAM-001')
-    `).run(todayStr);
+    `,
+    ).run(todayStr);
 
     // Akun Pasien Kedua
-    db.prepare(`
+    db.prepare(
+      `
       INSERT INTO loyalty_accounts (mpi_id, points_balance, tier, care_streak_days, last_streak_date, auto_use_points, family_pool_id)
       VALUES ('MPI-0002', 1200, 'Gold Care', 3, ?, 0, 'FAM-001')
-    `).run(todayStr);
+    `,
+    ).run(todayStr);
 
     // Family Health Pool
     const defaultMembers = [
-      { id: 1, name: 'Siti Aminah Rahayu', relation: 'Pasien Utama (Ibu)', mpiId: 'MPI-0001', contributedPoints: 1800, avatar: '👩' },
-      { id: 2, name: 'Bambang Sudiro', relation: 'Suami', mpiId: 'MPI-0002', contributedPoints: 1200, avatar: '👨' },
-      { id: 3, name: 'Rian Pratama', relation: 'Anak (14 Thn)', mpiId: 'MPI-0003', contributedPoints: 800, avatar: '👦' }
+      {
+        id: 1,
+        name: "Siti Aminah Rahayu",
+        relation: "Pasien Utama (Ibu)",
+        mpiId: "MPI-0001",
+        contributedPoints: 1800,
+        avatar: "👩",
+      },
+      {
+        id: 2,
+        name: "Bambang Sudiro",
+        relation: "Suami",
+        mpiId: "MPI-0002",
+        contributedPoints: 1200,
+        avatar: "👨",
+      },
+      {
+        id: 3,
+        name: "Rian Pratama",
+        relation: "Anak (14 Thn)",
+        mpiId: "MPI-0003",
+        contributedPoints: 800,
+        avatar: "👦",
+      },
     ];
 
-    db.prepare(`
+    db.prepare(
+      `
       INSERT INTO family_pools (id, name, total_points, members_json)
       VALUES ('FAM-001', 'Keluarga Rahayu Sudiro', 3800, ?)
-    `).run(JSON.stringify(defaultMembers));
+    `,
+    ).run(JSON.stringify(defaultMembers));
 
     // Transaksi Awal
-    db.prepare(`
+    db.prepare(
+      `
       INSERT INTO point_transactions (mpi_id, type, category, points, title, detail, created_at)
       VALUES 
       ('MPI-0001', 'earn', 'clinical', 500, 'Kunjungan Rawat Inap & Tindakan RS', 'Akumulasi transaksi paket rawat inap kardiologi', ?),
       ('MPI-0001', 'earn', 'mission', 150, 'Bonus Care Streak 7 Hari', 'Kepatuhan minum obat & check-in mandiri 7 hari', ?),
       ('MPI-0001', 'earn', 'mission', 50, 'Konfirmasi Kontrol Dokter', 'Konfirmasi kehadiran jadwal poli kardiologi', ?),
       ('MPI-0001', 'redeem', 'lifestyle', -100, 'Gratis Parkir VIP / Valet Mandaya', 'Penggunaan tiket valet di lobby utama', ?)
-    `).run(now, now, now, now);
+    `,
+    ).run(now, now, now, now);
   }
 }
 
@@ -506,5 +619,5 @@ export function resetDatabase() {
   seedSources();
   seedDoctorsAndProfiles();
   seedLoyalty();
-  console.log('[DB] Database berhasil di-reset ke kondisi awal.');
+  console.log("[DB] Database berhasil di-reset ke kondisi awal.");
 }
