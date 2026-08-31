@@ -2839,3 +2839,1144 @@ input:checked + .slider-toggle:before {
   color: #ea580c;
   background: #ffedd5;
 }
+
+/* ==========================================================================
+   FEATURE 3: MIRA AI CARE & RECOVERY CHECK-IN STYLES
+   ========================================================================== */
+
+/* 1. Care Journey Pathway Hero & Timeline */
+.journey-pathway-hero {
+  background: linear-gradient(145deg, #0f172a 0%, #1e3a8a 60%, #0369a1 100%);
+  color: #ffffff;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 8px;
+}
+
+.pathway-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin-bottom: 8px;
+}
+
+.pathway-hero-title {
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  letter-spacing: -0.3px;
+}
+
+.pathway-hero-sub {
+  font-size: 12px;
+  color: #bae6fd;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+
+.pathway-progress-wrap {
+  background: rgba(15, 23, 42, 0.4);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+}
+
+.pathway-progress-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-bottom: 8px;
+  color: #e2e8f0;
+}
+
+.pathway-progress-track {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.pathway-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #38bdf8 0%, #4ade80 100%);
+  border-radius: 6px;
+  transition: width 0.8s ease;
+}
+
+.pathway-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.pathway-meta-item {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 8px 12px;
+}
+
+.pathway-meta-item .meta-label {
+  display: block;
+  font-size: 10.5px;
+  color: #94a3b8;
+}
+
+.pathway-meta-item .meta-val {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+/* Care Journey Timeline */
+.journey-timeline-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+}
+
+.timeline-milestone-card {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 14px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  gap: 12px;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.timeline-milestone-card.active-today {
+  border-color: #38bdf8;
+  background: #f0f9ff;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.12);
+}
+
+.timeline-milestone-card.completed {
+  border-color: #bbf7d0;
+  background: #fcfdfc;
+}
+
+.milestone-icon-indicator {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.milestone-icon-indicator.done {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.milestone-icon-indicator.today {
+  background: #e0f2fe;
+  color: #0284c7;
+  border: 2px solid #38bdf8;
+}
+
+.milestone-icon-indicator.future {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.milestone-content-wrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.milestone-header-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.milestone-phase-badge {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+
+.milestone-phase-badge.done {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.milestone-phase-badge.today {
+  background: #0284c7;
+  color: #ffffff;
+}
+
+.milestone-phase-badge.future {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.milestone-date-text {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.milestone-title {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 3px;
+}
+
+.milestone-desc {
+  font-size: 12px;
+  color: var(--text-body);
+  line-height: 1.4;
+}
+
+.milestone-checkin-action-btn {
+  margin-top: 10px;
+  width: 100%;
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  color: #ffffff;
+  border: none;
+  padding: 9px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: transform 0.15s ease;
+}
+
+.milestone-checkin-action-btn:active {
+  transform: scale(0.97);
+}
+
+/* 2. MIRA Main Screen Styles */
+.mira-main-header-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+  border: 1.5px solid #bae6fd;
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.mira-main-avatar-wrap {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+}
+
+.mira-main-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 16px;
+  object-fit: cover;
+  border: 2px solid #38bdf8;
+  box-shadow: 0 4px 10px rgba(6, 182, 212, 0.2);
+}
+
+.mira-status-pulse-dot {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #10b981;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3);
+}
+
+.mira-main-header-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.mira-main-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+.mira-main-name {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--primary-deep);
+  margin: 0;
+}
+
+.mira-main-tag {
+  font-size: 10px;
+  font-weight: 700;
+  color: #0369a1;
+  background: #e0f2fe;
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+
+.mira-main-tagline {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin: 0 0 4px 0;
+}
+
+.mira-mandaya-badge {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Greeting Banner */
+.mira-greeting-box {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow-sm);
+}
+
+.greeting-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 4px;
+}
+
+.greeting-desc {
+  font-size: 12.5px;
+  color: var(--text-body);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* MIRA Status Card */
+.mira-status-card {
+  background: #ffffff;
+  border: 1.5px solid #bae6fd;
+  border-radius: 20px;
+  padding: 18px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow-md);
+  position: relative;
+}
+
+.mira-status-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.status-card-badge {
+  font-size: 10px;
+  font-weight: 800;
+  color: #0284c7;
+  background: #e0f2fe;
+  padding: 2px 8px;
+  border-radius: 6px;
+  display: inline-block;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.status-card-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 0 0 2px 0;
+}
+
+.status-card-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.status-card-icon-box {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.checkin-state-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 14px;
+  font-size: 12.5px;
+}
+
+.checkin-state-box.done {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.state-box-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.state-status-tag {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.state-status-tag.pending {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.state-status-tag.completed {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.state-status-date {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.state-box-text {
+  font-size: 12px;
+  color: var(--text-body);
+  line-height: 1.4;
+}
+
+.btn-mira-primary-action {
+  width: 100%;
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  color: #ffffff;
+  border: none;
+  padding: 13px 18px;
+  border-radius: 14px;
+  font-size: 13.5px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+  transition: all 0.2s ease;
+}
+
+.btn-mira-primary-action:active {
+  transform: scale(0.97);
+}
+
+.btn-mira-primary-action.done-state {
+  background: #f1f5f9;
+  color: #334155;
+  border: 1px solid var(--border);
+  box-shadow: none;
+}
+
+.mira-guardrail-note {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 11.5px;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+/* Overview Card */
+.mira-overview-card {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow-sm);
+}
+
+.overview-header-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.overview-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.overview-link-btn {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+}
+
+.overview-items-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.overview-grid-item {
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+
+.overview-grid-item.full-width {
+  grid-column: 1 / -1;
+}
+
+.overview-item-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+
+.overview-item-val {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 2px;
+}
+
+.overview-item-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.overview-mini-progress {
+  height: 5px;
+  background: #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.mini-progress-fill {
+  height: 100%;
+  background: #10b981;
+  border-radius: 4px;
+}
+
+/* Trend Insight Card */
+.mira-trend-card {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow-sm);
+}
+
+.trend-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.trend-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.trend-badge {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #0284c7;
+  background: #e0f2fe;
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+
+.trend-insight-text {
+  font-size: 12.5px;
+  color: var(--text-body);
+  line-height: 1.45;
+  margin: 0 0 10px 0;
+}
+
+.trend-chips-container {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.trend-chip {
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-size: 11px;
+  color: var(--text-main);
+}
+
+/* Check-in History Section */
+.mira-history-section {
+  margin-bottom: 16px;
+}
+
+.history-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.history-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.history-count-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.mira-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mira-history-item-card {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 14px;
+  box-shadow: var(--shadow-sm);
+}
+
+.history-item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.history-item-date {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--primary-deep);
+}
+
+.history-item-badge {
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+
+.history-item-badge.scenario-A {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.history-item-badge.scenario-B {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.history-item-badge.scenario-C {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.history-item-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  font-size: 11.5px;
+  margin-bottom: 6px;
+}
+
+.history-grid-row {
+  color: var(--text-muted);
+}
+
+.history-grid-row strong {
+  color: var(--text-main);
+}
+
+.history-item-note {
+  background: #f8fafc;
+  border-left: 2px solid #38bdf8;
+  padding: 4px 8px;
+  border-radius: 0 6px 6px 0;
+  font-size: 11.5px;
+  color: var(--text-body);
+  font-style: italic;
+}
+
+/* ==========================================================================
+   CONVERSATIONAL CHECK-IN FLOW MODAL STYLES
+   ========================================================================== */
+
+.mira-flow-card {
+  width: 95%;
+  max-width: 410px;
+  padding: 16px;
+  border-radius: 22px;
+  box-sizing: border-box;
+}
+
+.mira-flow-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.mira-flow-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mira-flow-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1.5px solid #38bdf8;
+}
+
+.mira-flow-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--primary-deep);
+}
+
+.mira-flow-step-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.mira-flow-progress-track {
+  height: 4px;
+  background: #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.mira-flow-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #0284c7 0%, #10b981 100%);
+  transition: width 0.3s ease;
+}
+
+.mira-step-container {
+  display: none;
+}
+
+.mira-step-container.active {
+  display: block;
+  animation: fadeInStep 0.25s ease;
+}
+
+@keyframes fadeInStep {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mira-bubble-msg {
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-size: 13.5px;
+  color: #0369a1;
+  line-height: 1.45;
+  margin-bottom: 10px;
+}
+
+.mira-step-hint {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin: 0 0 12px 0;
+}
+
+/* Option Tiles */
+.mira-options-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.mira-option-tile {
+  background: #ffffff;
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 11px 13px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.mira-option-tile:hover,
+.mira-option-tile:active {
+  border-color: #38bdf8;
+  background: #f0f9ff;
+  transform: translateY(-1px);
+}
+
+.opt-emoji {
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.opt-text-wrap {
+  flex: 1;
+}
+
+.opt-title {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 2px;
+}
+
+.opt-sub {
+  display: block;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* Pain Scale Grid */
+.mira-pain-scale-list {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.mira-pain-scale-item {
+  background: #ffffff;
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.mira-pain-scale-item:hover,
+.mira-pain-scale-item:active {
+  border-color: #38bdf8;
+  background: #f0f9ff;
+}
+
+.pain-num-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.pain-num-badge.pain-0 {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.pain-num-badge.pain-mild {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.pain-num-badge.pain-mod {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.pain-num-badge.pain-sev {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.pain-info-wrap {
+  flex: 1;
+}
+
+.pain-level-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 2px;
+}
+
+.pain-level-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* Step 5 Textarea */
+.mira-note-input-wrap {
+  margin-bottom: 10px;
+}
+
+.mira-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  background: #f8fafc;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--text-main);
+  resize: vertical;
+}
+
+.mira-textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: #ffffff;
+}
+
+/* Step 6 Summary & Response Box */
+.summary-top-banner {
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.summary-answers-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px;
+  margin-bottom: 14px;
+}
+
+.summary-ans-item {
+  font-size: 11.5px;
+}
+
+.summary-ans-item.full-width {
+  grid-column: 1 / -1;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 8px;
+  margin-top: 2px;
+}
+
+.ans-label {
+  display: block;
+  color: var(--text-muted);
+  font-size: 10.5px;
+  margin-bottom: 2px;
+}
+
+.ans-val {
+  display: block;
+  color: var(--text-main);
+  font-size: 12px;
+}
+
+.ans-val-note {
+  color: var(--text-body);
+  font-size: 11.5px;
+  font-style: italic;
+}
+
+/* Contextual Response Card */
+.mira-ai-response-card {
+  border-radius: 16px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.mira-ai-response-card.scenario-positive {
+  background: #f0fdf4;
+  border: 1.5px solid #bbf7d0;
+}
+
+.mira-ai-response-card.scenario-stable {
+  background: #f0f9ff;
+  border: 1.5px solid #bae6fd;
+}
+
+.mira-ai-response-card.scenario-alert {
+  background: #fef2f2;
+  border: 1.5px solid #fecaca;
+}
+
+.response-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.response-card-title {
+  font-size: 13.5px;
+  font-weight: 800;
+  margin: 0;
+}
+
+.scenario-positive .response-card-title {
+  color: #166534;
+}
+
+.scenario-stable .response-card-title {
+  color: #0369a1;
+}
+
+.scenario-alert .response-card-title {
+  color: #991b1b;
+}
+
+.response-card-msg {
+  font-size: 12.5px;
+  line-height: 1.45;
+  margin: 0 0 10px 0;
+}
+
+.scenario-positive .response-card-msg {
+  color: #14532d;
+}
+
+.scenario-stable .response-card-msg {
+  color: #0c4a6e;
+}
+
+.scenario-alert .response-card-msg {
+  color: #7f1d1d;
+}
+
+.response-alert-box {
+  background: #ffffff;
+  border: 1px solid #f87171;
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-size: 11.5px;
+  color: #b91c1c;
+  line-height: 1.4;
+  margin-bottom: 10px;
+}
+
+.btn-smart-next-action {
+  width: 100%;
+  border: none;
+  padding: 9px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.scenario-positive .btn-smart-next-action {
+  background: #16a34a;
+  color: #ffffff;
+}
+
+.scenario-stable .btn-smart-next-action {
+  background: #0284c7;
+  color: #ffffff;
+}
+
+.scenario-alert .btn-smart-next-action {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+/* Success Points Box */
+.success-points-box {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+  margin: 12px 0;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);
+}
+
+.points-plus-val {
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 2px;
+}
+
+.points-plus-sub {
+  font-size: 12px;
+  color: #d1fae5;
+}

@@ -38,7 +38,7 @@
             style="width: 24px; height: 24px; object-fit: contain"
             onerror="this.src = '/logo.svg'"
           />
-          <span>Care Dokter · Feature 1 Prototype</span>
+          <span>Care Dokter · Continuous Care Companion</span>
           <span class="prototype-badge">Patient Role Only</span>
         </div>
 
@@ -557,7 +557,8 @@
             <!-- SECTION 2: MIRA PREVIEW CARD -->
             <div
               class="mira-preview-card"
-              onclick="openModal('modal-mira-preview')"
+              id="home-mira-card"
+              onclick="openMiraCheckin()"
               style="cursor: pointer"
               title="Buka MIRA Check-in"
             >
@@ -566,30 +567,35 @@
                   src="/assets/mira/mira_avatar.jpg"
                   alt="MIRA Assistant"
                   class="mira-avatar-img"
-                  onerror="this.src = '/unnamed.png'"
+                  onerror="this.src = '/assets/care-dokter-logo.svg'"
                 />
                 <div class="mira-header-text">
                   <div class="mira-title-badge">
                     <span>MIRA</span>
-                    <span class="mira-ai-tag">AI Recovery Assistant</span>
+                    <span class="mira-ai-tag" id="home-mira-badge"
+                      >AI Recovery Assistant</span
+                    >
                   </div>
                   <div class="mira-sub-label">Protokol Klinis DPJP Mandaya</div>
                 </div>
               </div>
 
-              <div class="mira-prompt-bubble">
+              <div class="mira-prompt-bubble" id="home-mira-bubble">
                 💬 "Halo Budi, bagaimana kondisi lutut Anda hari ini?"
               </div>
 
               <button
                 class="btn-mira-checkin"
+                id="home-mira-btn"
                 onclick="
                   event.stopPropagation();
-                  openModal('modal-mira-preview');
+                  openMiraCheckin();
                 "
               >
                 <span>🩺</span>
-                <span>Check-in Sekarang (+25 CarePoints)</span>
+                <span id="home-mira-btn-text"
+                  >Check-in Sekarang (+25 CarePoints)</span
+                >
               </button>
             </div>
 
@@ -664,105 +670,259 @@
           </section>
 
           <!-- ================================================================
-             SCREEN 6: CARE JOURNEY TAB (PLACEHOLDER FOR FUTURE MODULE)
+             SCREEN 6: CARE JOURNEY TAB (INTEGRATED WITH MIRA CHECK-IN)
              ================================================================ -->
           <section
             id="screen-care-journey"
-            class="screen-view placeholder-view"
+            class="screen-view"
+            style="padding: 20px 18px calc(var(--nav-height) + 36px) 18px"
           >
-            <div
-              class="placeholder-icon-box"
-              style="background: #e0f2fe; color: #0284c7"
-            >
-              🧭
-            </div>
-            <div class="placeholder-badge">Modul Perjalanan Perawatan</div>
-            <h2 class="placeholder-title">Care Journey Tracking</h2>
-            <p class="placeholder-desc">
-              Fitur pelacakan menyeluruh perjalanan klinis pasien dari
-              pra-rawat, fase pemulihan, hingga kontrol berkala.
-            </p>
+            <!-- Care Journey Pathway Header Card -->
+            <div class="journey-pathway-hero">
+              <div class="pathway-hero-badge">
+                <span>🧭</span> Perjalanan Klinis Pasien
+              </div>
+              <h2 class="pathway-hero-title">Orthopedic Recovery</h2>
+              <p class="pathway-hero-sub">
+                Pasca Rekonstruksi ACL & Artroskopi Lutut · Dr. Andi Pratama,
+                Sp.OT
+              </p>
 
-            <div class="placeholder-feature-preview">
-              <div class="preview-pill-title">Rencana Fitur Mendatang:</div>
-              <div class="preview-list">
-                <div>
-                  ✓ Timeline visual fase pemulihan ortopedi (H+1 s/d H+30)
+              <!-- Progress Bar -->
+              <div class="pathway-progress-wrap">
+                <div class="pathway-progress-info">
+                  <span>Fase Pemulihan H+14</span>
+                  <strong id="journey-progress-text">70% Selesai</strong>
                 </div>
-                <div>
-                  ✓ Panduan latihan fisioterapi & mobilitas pasca operasi
+                <div class="pathway-progress-track">
+                  <div class="pathway-progress-bar" style="width: 70%"></div>
                 </div>
-                <div>✓ Rekam riwayat visit & instruksi DPJP konsultan</div>
-                <div>✓ Sinkronisasi rekam medis Mandaya Royal Hospital</div>
+              </div>
+
+              <div class="pathway-meta-grid">
+                <div class="pathway-meta-item">
+                  <span class="meta-label">MRN Pasien</span>
+                  <span class="meta-val">MRN-2026-0881</span>
+                </div>
+                <div class="pathway-meta-item">
+                  <span class="meta-label">Kontrol Berikutnya</span>
+                  <span class="meta-val">7 Sep 2026</span>
+                </div>
               </div>
             </div>
 
-            <button class="btn-secondary-mobile" onclick="switchTab('home')">
-              ← Kembali ke Beranda
-            </button>
+            <!-- Section: Care Journey Activity Timeline -->
+            <div
+              class="section-title-wrap"
+              style="
+                margin-top: 20px;
+                margin-bottom: 12px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              <h3
+                style="
+                  font-size: 15px;
+                  font-weight: 800;
+                  color: var(--text-main);
+                "
+              >
+                Timeline & Aktivitas Perawatan
+              </h3>
+              <span
+                style="
+                  font-size: 11px;
+                  font-weight: 700;
+                  color: var(--primary);
+                  background: #e0f2fe;
+                  padding: 2px 8px;
+                  border-radius: 6px;
+                "
+                >Continuous Care</span
+              >
+            </div>
+
+            <!-- Dynamic Milestone List Container -->
+            <div class="journey-timeline-list" id="journey-timeline-list">
+              <!-- Dynamically populated by JS renderCareJourneyTimeline() -->
+            </div>
           </section>
 
           <!-- ================================================================
-             SCREEN 7: MIRA TAB (PLACEHOLDER FOR FUTURE MODULE)
+             SCREEN 7: MIRA MAIN SCREEN (FEATURE 3: AI CARE & RECOVERY CHECK-IN)
              ================================================================ -->
-          <section id="screen-mira" class="screen-view placeholder-view">
-            <div
-              class="placeholder-icon-box"
-              style="background: #f0f9ff; border: 2px solid #bae6fd"
-            >
-              <img
-                src="/assets/mira/mira_avatar.jpg"
-                alt="MIRA Assistant"
-                style="
-                  width: 100%;
-                  height: 100%;
-                  border-radius: 20px;
-                  object-fit: cover;
-                "
-                onerror="this.src = '/assets/care-dokter-logo.svg'"
-              />
-            </div>
-            <div
-              class="placeholder-badge"
-              style="background: #e0f2fe; color: #0369a1; border-color: #bae6fd"
-            >
-              MIRA AI Companion
-            </div>
-            <h2 class="placeholder-title">
-              Mandaya Intelligent Recovery Assistant
-            </h2>
-            <p class="placeholder-desc">
-              <em>"Your care, continued."</em><br />
-              Asisten cerdas proaktif yang menyapa terjadwal di tiap fase
-              pemulihan, edukasi obat, dan triase klinis DPJP.
-            </p>
-
-            <div class="placeholder-feature-preview">
-              <div class="preview-pill-title">4 Pilar Utama MIRA:</div>
-              <div class="preview-list">
-                <div>
-                  💙 <strong>Caring:</strong> Selalu hadir menyapa kondisi
-                  harian pasien
+          <section
+            id="screen-mira"
+            class="screen-view"
+            style="padding: 20px 18px calc(var(--nav-height) + 36px) 18px"
+          >
+            <!-- MIRA Identity Header Card -->
+            <div class="mira-main-header-card">
+              <div class="mira-main-avatar-wrap">
+                <img
+                  src="/assets/mira/mira_avatar.jpg"
+                  alt="MIRA AI"
+                  class="mira-main-avatar-img"
+                  onerror="this.src = '/assets/care-dokter-logo.svg'"
+                />
+                <div class="mira-status-pulse-dot" title="MIRA Aktif"></div>
+              </div>
+              <div class="mira-main-header-info">
+                <div class="mira-main-title-row">
+                  <h3 class="mira-main-name">MIRA</h3>
+                  <span class="mira-main-tag">AI Recovery Assistant</span>
                 </div>
-                <div>
-                  🧠 <strong>Intelligent:</strong> Memahami protokol klinis DPJP
-                </div>
-                <div>
-                  🔔 <strong>Proactive:</strong> Pengingat obat & jadwal kontrol
-                </div>
-                <div>
-                  👥 <strong>Human-centered:</strong> Terhubung dengan Tim
-                  Tele-Nurse IGD
+                <p class="mira-main-tagline">
+                  Mandaya Intelligent Recovery Assistant
+                </p>
+                <div class="mira-mandaya-badge">
+                  <span>🏥</span> Continuous Care Companion · Mandaya Royal
+                  Hospital
                 </div>
               </div>
             </div>
 
-            <button
-              class="btn-primary-mobile"
-              onclick="openModal('modal-mira-preview')"
-            >
-              Lihat Preview Check-in
-            </button>
+            <!-- Personalized Greeting Banner -->
+            <div class="mira-greeting-box">
+              <div class="greeting-title">Halo, Budi 👋</div>
+              <p class="greeting-desc">
+                Saya MIRA. Saya akan membantu Anda memantau perjalanan pemulihan
+                Anda antara kunjungan rumah sakit.
+              </p>
+            </div>
+
+            <!-- Primary Recovery Check-in Status Card -->
+            <div class="mira-status-card" id="mira-status-card">
+              <div class="mira-status-card-header">
+                <div>
+                  <span class="status-card-badge" id="mira-status-badge"
+                    >RECOVERY CHECK-IN</span
+                  >
+                  <h4 class="status-card-title">Recovery Check-in</h4>
+                  <p class="status-card-sub" id="mira-status-sub">
+                    Ceritakan bagaimana kondisi Anda hari ini.
+                  </p>
+                </div>
+                <div class="status-card-icon-box" id="mira-status-icon">🩺</div>
+              </div>
+
+              <!-- Dynamic Check-in Status Preview Box -->
+              <div class="checkin-state-box" id="mira-checkin-state-box">
+                <!-- Dynamically populated by renderMiraScreen() -->
+              </div>
+
+              <!-- Primary Action Button -->
+              <button
+                class="btn-mira-primary-action"
+                id="btn-mira-main-checkin"
+                onclick="openMiraCheckin()"
+              >
+                <span id="btn-mira-main-icon">🩺</span>
+                <span id="btn-mira-main-label"
+                  >Mulai Check-in (+25 CarePoints)</span
+                >
+              </button>
+
+              <!-- Safety Disclaimer Card -->
+              <div class="mira-guardrail-note">
+                <span>🛡️</span>
+                <div>
+                  <strong>Panduan Keselamatan:</strong> MIRA membantu mencatat
+                  kondisi Anda dan memberikan panduan umum. MIRA tidak
+                  menggantikan konsultasi dengan dokter atau tenaga kesehatan.
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Recovery Overview Card -->
+            <div class="mira-overview-card">
+              <div class="overview-header-line">
+                <h4 class="overview-title">Ringkasan Pemulihan Anda</h4>
+                <button
+                  class="overview-link-btn"
+                  onclick="switchTab('journey')"
+                >
+                  Lihat Journey →
+                </button>
+              </div>
+
+              <div class="overview-items-grid">
+                <div class="overview-grid-item">
+                  <div class="overview-item-label">Care Journey</div>
+                  <div class="overview-item-val" style="color: var(--primary)">
+                    Orthopedic Recovery
+                  </div>
+                  <div class="overview-item-sub">Fase H+14 Pasca Operasi</div>
+                </div>
+
+                <div class="overview-grid-item">
+                  <div class="overview-item-label">Progres Pemulihan</div>
+                  <div class="overview-item-val" style="color: #10b981">
+                    70% Selesai
+                  </div>
+                  <div class="overview-mini-progress">
+                    <div class="mini-progress-fill" style="width: 70%"></div>
+                  </div>
+                </div>
+
+                <div class="overview-grid-item full-width">
+                  <div class="overview-item-label">
+                    Jadwal Kontrol Berikutnya
+                  </div>
+                  <div
+                    class="overview-item-val"
+                    style="color: var(--text-main)"
+                  >
+                    7 September 2026 · 10:00 WIB
+                  </div>
+                  <div class="overview-item-sub">
+                    Dr. Andi Pratama, Sp.OT · Poli Ortopedi Mandaya Puri
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recovery Trend Insight Section -->
+            <div class="mira-trend-card" id="mira-trend-card">
+              <div class="trend-card-header">
+                <div style="display: flex; align-items: center; gap: 8px">
+                  <span style="font-size: 16px">📈</span>
+                  <h4 class="trend-title">Perkembangan Anda</h4>
+                </div>
+                <span class="trend-badge" id="mira-trend-badge"
+                  >Trend Stabil</span
+                >
+              </div>
+
+              <p class="trend-insight-text" id="mira-trend-text">
+                Berdasarkan catatan check-in yang Anda isi, secara umum kondisi
+                Anda relatif stabil dalam beberapa check-in terakhir.
+              </p>
+
+              <div class="trend-chips-container" id="mira-trend-chips">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
+
+            <!-- Check-in History Section -->
+            <div class="mira-history-section">
+              <div class="history-section-header">
+                <div style="display: flex; align-items: center; gap: 8px">
+                  <span style="font-size: 16px">📋</span>
+                  <h4 class="history-title">Riwayat Check-in</h4>
+                </div>
+                <span class="history-count-badge" id="mira-history-count"
+                  >2 Catatan</span
+                >
+              </div>
+
+              <!-- History List Container -->
+              <div class="mira-history-list" id="mira-history-list">
+                <!-- Dynamically populated by JS -->
+              </div>
+            </div>
           </section>
 
           <!-- ================================================================
@@ -2321,26 +2481,596 @@
         </div>
         <h3 class="modal-title">MIRA Recovery Check-in</h3>
         <p class="modal-text">
-          Misi ini terhubung dengan fitur <strong>MIRA Check-in</strong>. Pada
-          implementasi lengkap, setiap kali Anda menjawab sapaan kondisi
-          pemulihan lutut H+14 bersama MIRA, Anda akan otomatis mendapatkan
-          <strong>+25 CarePoints</strong>!
+          Misi ini terhubung dengan fitur <strong>MIRA Check-in</strong>. Setiap
+          kali Anda menjawab sapaan kondisi pemulihan lutut H+14 bersama MIRA,
+          Anda akan otomatis mendapatkan <strong>+25 CarePoints</strong>!
         </p>
         <div class="modal-actions">
           <button
             class="btn-primary-mobile"
             onclick="
               closeModal('modal-mission-mira-info');
-              openModal('modal-mira-preview');
+              openMiraCheckin();
             "
           >
-            Buka Preview MIRA
+            Mulai Check-in Sekarang (+25 Pts)
           </button>
           <button
             class="btn-secondary-mobile"
             onclick="closeModal('modal-mission-mira-info')"
           >
-            Mengerti
+            Tutup
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================================
+       FEATURE 3: MIRA INTERACTIVE RECOVERY CHECK-IN CONVERSATIONAL MODALS
+       ====================================================================== -->
+
+    <!-- 14. Conversational Check-in Flow Modal (5-Step + Summary & AI Response) -->
+    <div class="modal-backdrop" id="modal-mira-checkin-flow">
+      <div
+        class="modal-content-card mira-flow-card"
+        style="
+          text-align: left;
+          max-height: 90vh;
+          display: flex;
+          flex-direction: column;
+        "
+      >
+        <!-- Flow Top Navigation Bar -->
+        <div class="mira-flow-header">
+          <div class="mira-flow-header-left">
+            <img
+              src="/assets/mira/mira_avatar.jpg"
+              alt="MIRA Assistant"
+              class="mira-flow-avatar"
+              onerror="this.src = '/assets/care-dokter-logo.svg'"
+            />
+            <div>
+              <div class="mira-flow-title">MIRA Recovery Assistant</div>
+              <div class="mira-flow-step-label" id="mira-step-counter">
+                Pertanyaan 1 dari 5
+              </div>
+            </div>
+          </div>
+          <button
+            class="text-btn"
+            onclick="closeModal('modal-mira-checkin-flow')"
+            style="font-size: 18px"
+          >
+            ✕
+          </button>
+        </div>
+
+        <!-- Step Progress Bar -->
+        <div class="mira-flow-progress-track">
+          <div
+            class="mira-flow-progress-bar"
+            id="mira-flow-progress-bar"
+            style="width: 20%"
+          ></div>
+        </div>
+
+        <!-- Scrollable Question & Content Area -->
+        <div
+          class="mira-flow-body"
+          id="mira-flow-body"
+          style="overflow-y: auto; flex: 1; padding: 14px 4px"
+        >
+          <!-- STEP 1: General Condition -->
+          <div class="mira-step-container active" id="mira-step-1">
+            <div class="mira-bubble-msg">
+              👋 <strong>Halo Budi</strong>, bagaimana kondisi lutut Anda hari
+              ini?
+            </div>
+            <p class="mira-step-hint">
+              Pilih kondisi yang paling menggambarkan keadaan Anda:
+            </p>
+
+            <div class="mira-options-grid">
+              <button
+                class="mira-option-tile"
+                onclick="selectMiraOption(1, 'Lebih Baik', '😊 Lebih Baik')"
+              >
+                <span class="opt-emoji">😊</span>
+                <div class="opt-text-wrap">
+                  <span class="opt-title">Lebih Baik</span>
+                  <span class="opt-sub"
+                    >Ada perbaikan signifikan pada lutut</span
+                  >
+                </div>
+              </button>
+
+              <button
+                class="mira-option-tile"
+                onclick="
+                  selectMiraOption(
+                    1,
+                    'Sama Seperti Sebelumnya',
+                    '🙂 Sama Seperti Sebelumnya',
+                  )
+                "
+              >
+                <span class="opt-emoji">🙂</span>
+                <div class="opt-text-wrap">
+                  <span class="opt-title">Sama Seperti Sebelumnya</span>
+                  <span class="opt-sub"
+                    >Kondisi relatif stabil tanpa perubahan besar</span
+                  >
+                </div>
+              </button>
+
+              <button
+                class="mira-option-tile"
+                onclick="selectMiraOption(1, 'Masih Nyeri', '😣 Masih Nyeri')"
+              >
+                <span class="opt-emoji">😣</span>
+                <div class="opt-text-wrap">
+                  <span class="opt-title">Masih Nyeri</span>
+                  <span class="opt-sub"
+                    >Masih terasa nyeri yang mengganggu</span
+                  >
+                </div>
+              </button>
+
+              <button
+                class="mira-option-tile"
+                onclick="selectMiraOption(1, 'Lebih Buruk', '😟 Lebih Buruk')"
+              >
+                <span class="opt-emoji">😟</span>
+                <div class="opt-text-wrap">
+                  <span class="opt-title">Lebih Buruk</span>
+                  <span class="opt-sub">Keluhan bertambah atau membengkak</span>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 2: Pain Level Scale -->
+          <div class="mira-step-container" id="mira-step-2">
+            <div class="mira-bubble-msg">
+              🩺 Seberapa besar rasa tidak nyaman yang Anda rasakan?
+            </div>
+            <p class="mira-step-hint">
+              Pilih skala tingkat nyeri yang Anda alami hari ini:
+            </p>
+
+            <div class="mira-pain-scale-list">
+              <button
+                class="mira-pain-scale-item"
+                onclick="selectMiraPain(0, 'Tidak Ada Nyeri (0)')"
+              >
+                <div class="pain-num-badge pain-0">0</div>
+                <div class="pain-info-wrap">
+                  <div class="pain-level-title">Tidak Ada Nyeri</div>
+                  <div class="pain-level-desc">
+                    Merasa nyaman sepenuhnya tanpa rasa sakit
+                  </div>
+                </div>
+              </button>
+
+              <button
+                class="mira-pain-scale-item"
+                onclick="selectMiraPain(2, 'Ringan (1-3)')"
+              >
+                <div class="pain-num-badge pain-mild">1–3</div>
+                <div class="pain-info-wrap">
+                  <div class="pain-level-title">Nyeri Ringan</div>
+                  <div class="pain-level-desc">
+                    Rasa ngilu ringan, tidak mengganggu aktivitas rutin
+                  </div>
+                </div>
+              </button>
+
+              <button
+                class="mira-pain-scale-item"
+                onclick="selectMiraPain(5, 'Sedang (4-6)')"
+              >
+                <div class="pain-num-badge pain-mod">4–6</div>
+                <div class="pain-info-wrap">
+                  <div class="pain-level-title">Nyeri Sedang</div>
+                  <div class="pain-level-desc">
+                    Nyeri terasa saat bergerak dan membutuhkan istirahat
+                  </div>
+                </div>
+              </button>
+
+              <button
+                class="mira-pain-scale-item"
+                onclick="selectMiraPain(8, 'Berat (7-10)')"
+              >
+                <div class="pain-num-badge pain-sev">7–10</div>
+                <div class="pain-info-wrap">
+                  <div class="pain-level-title">Nyeri Berat</div>
+                  <div class="pain-level-desc">
+                    Nyeri hebat yang sangat mengganggu aktivitas
+                  </div>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 3: Daily Activity -->
+          <div class="mira-step-container" id="mira-step-3">
+            <div class="mira-bubble-msg">
+              🚶‍♂️ Bagaimana aktivitas harian Anda hari ini?
+            </div>
+            <p class="mira-step-hint">
+              Pilih tingkat mobilitas fisik Anda hari ini:
+            </p>
+
+            <div class="mira-options-grid">
+              <button
+                class="mira-option-tile"
+                onclick="
+                  selectMiraOption(
+                    3,
+                    'Lebih aktif dari sebelumnya',
+                    '✓ Lebih aktif dari sebelumnya',
+                  )
+                "
+              >
+                <span class="opt-emoji">🏃‍♂️</span>
+                <div class="opt-text-wrap">
+                  <span class="opt-title">Lebih aktif dari sebelumnya</span>
+                  <span class="opt-sub"
+                    >Bisa berjalan lebih jauh dan mandiri</span
+                  >
+                </div>
+              </button>
+
+              <button
+                class="mira-option-tile"
+                onclick="
+                  selectMiraOption(3, 'Aktivitas normal', '✓ Aktivitas normal')
+                "
+              >
+                <span class="opt-emoji">🚶‍♂️</span>
+                <div class="opt-text-wrap">
+                  <span class="opt-title">Aktivitas normal</span>
+                  <span class="opt-sub"
+                    >Sesuai rutinitas pemulihan yang dianjurkan</span
+                  >
+                </div>
+              </button>
+
+              <button
+                class="mira-option-tile"
+                onclick="
+                  selectMiraOption(3, 'Masih terbatas', '✓ Masih terbatas')
+                "
+              >
+                <span class="opt-emoji">🦿</span>
+                <div class="opt-text-wrap">
+                  <span class="opt-title">Masih terbatas</span>
+                  <span class="opt-sub"
+                    >Perlu tongkat penyangga atau bantuan saat jalan</span
+                  >
+                </div>
+              </button>
+
+              <button
+                class="mira-option-tile"
+                onclick="
+                  selectMiraOption(3, 'Sangat terbatas', '✓ Sangat terbatas')
+                "
+              >
+                <span class="opt-emoji">🛏️</span>
+                <div class="opt-text-wrap">
+                  <span class="opt-title">Sangat terbatas</span>
+                  <span class="opt-sub"
+                    >Sebagian besar waktu di tempat tidur/duduk</span
+                  >
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 4: Recovery Confidence -->
+          <div class="mira-step-container" id="mira-step-4">
+            <div class="mira-bubble-msg">
+              ✨ Seberapa yakin Anda dengan perkembangan pemulihan Anda?
+            </div>
+            <p class="mira-step-hint">
+              Pilih tingkat keyakinan Anda terhadap proses pemulihan:
+            </p>
+
+            <div class="mira-options-grid">
+              <button
+                class="mira-option-tile"
+                onclick="selectMiraOption(4, 'Sangat Yakin', '😊 Sangat Yakin')"
+              >
+                <span class="opt-emoji">😊</span>
+                <div class="opt-text-wrap">
+                  <span class="opt-title">Sangat Yakin</span>
+                  <span class="opt-sub"
+                    >Merasa optimis dengan kemajuan lutut</span
+                  >
+                </div>
+              </button>
+
+              <button
+                class="mira-option-tile"
+                onclick="selectMiraOption(4, 'Cukup Yakin', '🙂 Cukup Yakin')"
+              >
+                <span class="opt-emoji">🙂</span>
+                <div class="opt-text-wrap">
+                  <span class="opt-title">Cukup Yakin</span>
+                  <span class="opt-sub"
+                    >Cukup nyaman mengikuti proses pemulihan</span
+                  >
+                </div>
+              </button>
+
+              <button
+                class="mira-option-tile"
+                onclick="selectMiraOption(4, 'Belum Yakin', '😐 Belum Yakin')"
+              >
+                <span class="opt-emoji">😐</span>
+                <div class="opt-text-wrap">
+                  <span class="opt-title">Belum Yakin</span>
+                  <span class="opt-sub"
+                    >Ragu apakah perkembangan sudah sesuai target</span
+                  >
+                </div>
+              </button>
+
+              <button
+                class="mira-option-tile"
+                onclick="selectMiraOption(4, 'Khawatir', '😟 Khawatir')"
+              >
+                <span class="opt-emoji">😟</span>
+                <div class="opt-text-wrap">
+                  <span class="opt-title">Khawatir</span>
+                  <span class="opt-sub"
+                    >Merasa cemas dengan kondisi pemulihan</span
+                  >
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 5: Patient Note (Optional) -->
+          <div class="mira-step-container" id="mira-step-5">
+            <div class="mira-bubble-msg">
+              📝 Apakah ada hal lain yang ingin Anda ceritakan?
+            </div>
+            <p class="mira-step-hint">
+              Catatan tambahan opsional untuk riwayat perawatan Anda:
+            </p>
+
+            <div class="mira-note-input-wrap">
+              <textarea
+                id="mira-patient-note-input"
+                class="mira-textarea"
+                placeholder="Contoh: Lutut terasa lebih kaku saat pagi hari, namun membaik setelah kompres hangat..."
+                rows="4"
+              ></textarea>
+            </div>
+
+            <div
+              style="
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                margin-top: 14px;
+              "
+            >
+              <button class="btn-primary-mobile" onclick="submitMiraStep5()">
+                Lihat Ringkasan & Respon MIRA →
+              </button>
+              <button class="btn-secondary-mobile" onclick="skipMiraStep5()">
+                Lewati Catatan & Lanjutkan
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 6: Check-in Summary & Rule-Based Response Engine -->
+          <div class="mira-step-container" id="mira-step-summary">
+            <div class="summary-top-banner">
+              <div style="font-size: 24px; margin-bottom: 4px">📋</div>
+              <h4
+                style="
+                  font-size: 15px;
+                  font-weight: 800;
+                  color: var(--text-main);
+                  margin-bottom: 2px;
+                "
+              >
+                Ringkasan Check-in Hari Ini
+              </h4>
+              <p style="font-size: 11.5px; color: var(--text-muted)">
+                Data Anda telah dirangkum untuk riwayat pemulihan.
+              </p>
+            </div>
+
+            <!-- Answers Grid Summary -->
+            <div class="summary-answers-grid">
+              <div class="summary-ans-item">
+                <span class="ans-label">Kondisi Umum</span>
+                <strong class="ans-val" id="sum-condition">-</strong>
+              </div>
+              <div class="summary-ans-item">
+                <span class="ans-label">Tingkat Nyeri</span>
+                <strong class="ans-val" id="sum-pain">-</strong>
+              </div>
+              <div class="summary-ans-item">
+                <span class="ans-label">Aktivitas Harian</span>
+                <strong class="ans-val" id="sum-activity">-</strong>
+              </div>
+              <div class="summary-ans-item">
+                <span class="ans-label">Keyakinan Pemulihan</span>
+                <strong class="ans-val" id="sum-confidence">-</strong>
+              </div>
+              <div class="summary-ans-item full-width" id="sum-note-wrap">
+                <span class="ans-label">Catatan Tambahan</span>
+                <div class="ans-val-note" id="sum-note">
+                  Tidak ada catatan tambahan
+                </div>
+              </div>
+            </div>
+
+            <!-- MIRA AI Contextual Response Box -->
+            <div class="mira-response-container" id="mira-response-container">
+              <!-- Dynamically rendered based on Scenario A, B, or C -->
+            </div>
+
+            <!-- Safety Guardrail Note -->
+            <div class="mira-guardrail-note" style="margin-top: 14px">
+              <span>🛡️</span>
+              <div>
+                <strong>Catatan Penting:</strong> MIRA membantu mencatat kondisi
+                Anda dan memberikan panduan umum. MIRA tidak menggantikan
+                konsultasi dengan tenaga kesehatan.
+              </div>
+            </div>
+
+            <!-- Complete and Claim Points Action Button -->
+            <div class="modal-actions" style="margin-top: 16px">
+              <button
+                class="btn-primary-mobile"
+                id="btn-complete-mira-checkin"
+                onclick="finalizeMiraCheckinSubmission()"
+              >
+                🎉 Simpan & Dapatkan +25 CarePoints
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- End mira-flow-body -->
+
+        <!-- Step Navigation Footer (Steps 1-4) -->
+        <div class="mira-flow-footer" id="mira-flow-footer">
+          <button
+            class="text-btn"
+            id="btn-flow-prev"
+            onclick="goToPrevMiraStep()"
+            style="
+              display: none;
+              font-size: 13px;
+              color: var(--text-muted);
+              font-weight: 700;
+            "
+          >
+            ← Sebelumnya
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 15. Check-in Success Celebration Modal -->
+    <div class="modal-backdrop" id="modal-mira-success">
+      <div class="modal-content-card" style="text-align: center">
+        <div
+          class="modal-icon-badge"
+          style="background: #ecfdf5; color: #10b981; font-size: 32px"
+        >
+          🎉
+        </div>
+        <h3 class="modal-title" style="color: #047857; margin-bottom: 4px">
+          Check-in Selesai!
+        </h3>
+        <p class="modal-text" style="margin-bottom: 14px">
+          Kondisi Anda telah berhasil dicatat ke dalam perjalanan pemulihan
+          Mandaya.
+        </p>
+
+        <!-- Reward Points Highlight Box -->
+        <div class="success-points-box">
+          <div class="points-plus-val">+25 CarePoints</div>
+          <div class="points-plus-sub">Apresiasi Check-in Pemulihan Harian</div>
+        </div>
+
+        <div class="modal-actions" style="margin-top: 16px">
+          <button
+            class="btn-primary-mobile"
+            onclick="
+              closeModal('modal-mira-success');
+              switchTab('journey');
+            "
+          >
+            🧭 Lihat Perjalanan Saya
+          </button>
+          <button
+            class="btn-secondary-mobile"
+            onclick="
+              closeModal('modal-mira-success');
+              switchTab('home');
+            "
+          >
+            🏠 Kembali ke Beranda
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 16. Already Completed Today Info Modal -->
+    <div class="modal-backdrop" id="modal-mira-already-completed">
+      <div class="modal-content-card" style="text-align: center">
+        <div
+          class="modal-icon-badge"
+          style="background: #e0f2fe; color: #0284c7; font-size: 28px"
+        >
+          ✓
+        </div>
+        <h3
+          class="modal-title"
+          style="color: var(--primary-deep); margin-bottom: 4px"
+        >
+          Check-in Hari Ini Sudah Selesai
+        </h3>
+        <p class="modal-text" style="margin-bottom: 14px">
+          Anda telah memperbarui kondisi pemulihan Anda untuk hari ini. Terima
+          kasih telah menjaga kesinambungan perawatan Anda.
+        </p>
+
+        <div
+          style="
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 14px;
+            text-align: left;
+            font-size: 12.5px;
+          "
+        >
+          <div
+            style="
+              font-weight: 700;
+              color: var(--text-main);
+              margin-bottom: 4px;
+            "
+            id="already-done-title"
+          >
+            Status Check-in Terakhir
+          </div>
+          <div
+            style="color: var(--text-body); line-height: 1.4"
+            id="already-done-details"
+          >
+            Kondisi stabil dengan tingkat nyeri sedang.
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button
+            class="btn-primary-mobile"
+            onclick="
+              closeModal('modal-mira-already-completed');
+              switchTab('mira');
+            "
+          >
+            Lihat Riwayat di Tab MIRA
+          </button>
+          <button
+            class="btn-secondary-mobile"
+            onclick="closeModal('modal-mira-already-completed')"
+          >
+            Tutup
           </button>
         </div>
       </div>
