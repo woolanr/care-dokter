@@ -65,28 +65,6 @@
          SMARTPHONE DEVICE FRAME
          ==================================================================== -->
       <div class="smartphone-frame" id="smartphone-frame">
-        <!-- Top Dynamic Island & Camera -->
-        <div class="dynamic-island">
-          <div class="camera-lens"></div>
-        </div>
-
-        <!-- Mobile Status Bar -->
-        <div class="mobile-status-bar" id="mobile-status-bar">
-          <span id="status-bar-clock">09:41</span>
-          <div
-            style="
-              display: flex;
-              align-items: center;
-              gap: 6px;
-              font-size: 11px;
-            "
-          >
-            <span>Mandaya 5G</span>
-            <span>📶</span>
-            <span>🔋 98%</span>
-          </div>
-        </div>
-
         <!-- Scrollable Mobile Screen Viewport -->
         <div class="mobile-screen-viewport" id="mobile-viewport">
           <!-- ================================================================
@@ -546,12 +524,13 @@
               style="cursor: pointer"
               title="Lihat detail perjalanan perawatan"
             >
-              <div class="journey-top-pill">
-                <span class="journey-label">Perjalanan Perawatan Anda</span>
-                <span class="journey-status-tag">Recovery Phase</span>
+              <div class="journey-header-centered">
+                <div class="journey-top-pill">
+                  <span class="journey-label">Perjalanan Perawatan Anda</span>
+                  <span class="journey-status-tag">Recovery Phase</span>
+                </div>
+                <h3 class="journey-name">Orthopedic Recovery</h3>
               </div>
-
-              <h3 class="journey-name">Orthopedic Recovery</h3>
 
               <!-- Progress Indicator -->
               <div class="journey-progress-container">
@@ -578,35 +557,41 @@
             </div>
 
             <!-- SECTION 2: MIRA PREVIEW CARD -->
-            <div class="mira-preview-card">
+            <div
+              class="mira-preview-card"
+              onclick="openModal('modal-mira-preview')"
+              style="cursor: pointer"
+              title="Buka MIRA Check-in"
+            >
               <div class="mira-card-header">
                 <img
                   src="/assets/mira/mira_avatar.jpg"
                   alt="MIRA Assistant"
                   class="mira-avatar-img"
-                  onerror="this.src = '/assets/care-dokter-logo.svg'"
+                  onerror="this.src = '/unnamed.png'"
                 />
-                <div>
+                <div class="mira-header-text">
                   <div class="mira-title-badge">
                     <span>MIRA</span>
                     <span class="mira-ai-tag">AI Recovery Assistant</span>
                   </div>
-                  <div style="font-size: 11px; color: var(--text-muted)">
-                    Protokol Klinis DPJP Mandaya
-                  </div>
+                  <div class="mira-sub-label">Protokol Klinis DPJP Mandaya</div>
                 </div>
               </div>
 
               <div class="mira-prompt-bubble">
-                "Halo Budi, bagaimana kondisi lutut Anda hari ini?"
+                💬 "Halo Budi, bagaimana kondisi lutut Anda hari ini?"
               </div>
 
               <button
                 class="btn-mira-checkin"
-                onclick="openModal('modal-mira-preview')"
+                onclick="
+                  event.stopPropagation();
+                  openModal('modal-mira-preview');
+                "
               >
                 <span>🩺</span>
-                <span>Check-in Sekarang</span>
+                <span>Check-in Sekarang (+25 CarePoints)</span>
               </button>
             </div>
 
