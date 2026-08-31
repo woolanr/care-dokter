@@ -1029,15 +1029,16 @@ function executeRedemption() {
 }
 
 /**
- * Handle Post-Redemption Next Best Action ("Konfirmasi Jadwal Kontrol")
+ * Centralized Appointment Confirmation Handler
+ * Integrates Patient Action -> CarePoint Activity -> Updated Balance -> Missions
  */
-function handlePostRedemptionAction() {
-  closeModal("modal-reward-success");
-
-  // If mission-2 is not completed, complete it
+function confirmAppointmentAction() {
   const mission2 = state.missions.find((m) => m.id === "mission-2");
-  if (mission2 && mission2.status !== "completed") {
-    mission2.status = "completed";
+  const alreadyConfirmed = mission2 && mission2.status === "completed";
+
+  if (!alreadyConfirmed) {
+    if (mission2) mission2.status = "completed";
+    state.currentUser.appointmentConfirmed = true;
     state.addPoints(
       20,
       "Appointment Confirmed",
@@ -1045,14 +1046,86 @@ function handlePostRedemptionAction() {
       "📅",
     );
     renderCarePointDashboard();
+    renderAppointmentState();
     showToast(
       "Jadwal kontrol 7 Sep 2026 terkonfirmasi! +20 CarePoints ditambahkan.",
     );
   } else {
-    showToast("Jadwal kontrol 7 Sep 2026 telah terkonfirmasi sebelumnya.");
+    showToast("Jadwal kontrol 7 Sep 2026 telah terkonfirmasi.");
   }
 
-  // Open Appointment detail modal
+  // Update modal button state if open
+  renderAppointmentState();
+}
+
+/**
+ * Sync Appointment UI across Home and Modal
+ */
+function renderAppointmentState() {
+  const mission2 = state.missions.find((m) => m.id === "mission-2");
+  const isConfirmed = mission2 && mission2.status === "completed";
+
+  const modalBtn = document.getElementById("btn-modal-confirm-apt");
+  const modalBadge = document.getElementById("modal-apt-status-badge");
+
+  if (modalBtn) {
+    if (isConfirmed) {
+      modalBtn.innerHTML = "✓ Kehadiran Terkonfirmasi (+20 Pts)";
+      modalBtn.style.background = "#10b981";
+      modalBtn.disabled = true;
+    } else {
+      modalBtn.innerHTML = "📅 Konfirmasi Kehadiran (+20 CarePoints)";
+      modalBtn.style.background = "var(--primary)";
+      modalBtn.disabled = false;
+    }
+  }
+
+  if (modalBadge) {
+    if (isConfirmed) {
+      modalBadge.textContent = "✓ JADWAL TERKONFIRMASI";
+      modalBadge.style.background = "#dcfce7";
+      modalBadge.style.color = "#15803d";
+    } else {
+      modalBadge.textContent = "KONTROL POLI TERJADWAL";
+      modalBadge.style.background = "#e0f2fe";
+      modalBadge.style.color = "#0284c7";
+    }
+  }
+}
+
+/**
+ * Handle MIRA Daily Check-in Completion
+ */
+function handleMiraCheckinCompletion() {
+  const mission1 = state.missions.find((m) => m.id === "mission-1");
+  const alreadyDone = mission1 && mission1.status === "completed";
+
+  if (!alreadyDone) {
+    if (mission1) {
+      mission1.status = "completed";
+      mission1.btnText = "✓ Selesai";
+    }
+    state.addPoints(
+      25,
+      "MIRA Check-in Completed",
+      "Check-in pemulihan lutut H+14 bersama MIRA",
+      "🤖",
+    );
+    renderCarePointDashboard();
+    showToast("Check-in selesai! Anda mendapatkan +25 CarePoints.");
+  } else {
+    showToast("Check-in pemulihan harian hari ini sudah tercatat.");
+  }
+
+  closeModal("modal-mira-preview");
+}
+
+/**
+ * Handle Post-Redemption Next Best Action ("Konfirmasi Jadwal Kontrol")
+ */
+function handlePostRedemptionAction() {
+  closeModal("modal-reward-success");
+  confirmAppointmentAction();
   openModal("modal-appointment-detail");
 }
 
@@ -1213,19 +1286,7 @@ function handleMissionAction(missionId) {
     openModal("modal-mission-mira-info");
   } else if (missionId === "mission-2") {
     // Confirm Your Next Appointment (+20 Pts)
-    if (mission.status === "completed") {
-      showToast("Misi konfirmasi jadwal kontrol sudah selesai.");
-      return;
-    }
-    mission.status = "completed";
-    state.addPoints(
-      20,
-      "Appointment Confirmed",
-      "Konfirmasi jadwal kontrol ortopedi 7 Sep 2026",
-      "📅",
-    );
-    renderCarePointDashboard();
-    showToast("Misi berhasil! Anda mendapatkan +20 CarePoints.");
+    confirmAppointmentAction();
   } else if (missionId === "mission-3") {
     showToast("Misi membaca tips pemulihan ortopedi telah selesai.");
   } else if (missionId === "mission-4") {
@@ -1346,6 +1407,25 @@ function openModal(modalId) {
   const modal = document.getElementById(modalId);
   if (modal) {
     modal.classList.add("active");
+  }
+
+  if (modalId === "modal-appointment-detail") {
+    renderAppointmentState();
+  } else if (modalId === "modal-mira-preview") {
+    const mission1 = state.missions.find((m) => m.id === "mission-1");
+    const isDone = mission1 && mission1.status === "completed";
+    const btn = document.getElementById("btn-mira-checkin-action");
+    if (btn) {
+      if (isDone) {
+        btn.innerHTML = "✓ Check-in Hari Ini Selesai (+25 Pts)";
+        btn.style.background = "#10b981";
+        btn.disabled = true;
+      } else {
+        btn.innerHTML = "✓ Kondisi Baik & Selesaikan Check-in (+25 Pts)";
+        btn.style.background = "var(--primary)";
+        btn.disabled = false;
+      }
+    }
   }
 }
 

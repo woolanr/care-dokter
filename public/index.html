@@ -38,7 +38,7 @@
             style="width: 24px; height: 24px; object-fit: contain"
             onerror="this.src = '/logo.svg'"
           />
-          <span>Care Dokter</span>
+          <span>Care Dokter · Feature 1 Prototype</span>
           <span class="prototype-badge">Patient Role Only</span>
         </div>
 
@@ -65,6 +65,28 @@
          SMARTPHONE DEVICE FRAME
          ==================================================================== -->
       <div class="smartphone-frame" id="smartphone-frame">
+        <!-- Top Dynamic Island & Camera -->
+        <div class="dynamic-island">
+          <div class="camera-lens"></div>
+        </div>
+
+        <!-- Mobile Status Bar -->
+        <div class="mobile-status-bar" id="mobile-status-bar">
+          <span id="status-bar-clock">09:41</span>
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              gap: 6px;
+              font-size: 11px;
+            "
+          >
+            <span>Mandaya 5G</span>
+            <span>📶</span>
+            <span>🔋 98%</span>
+          </div>
+        </div>
+
         <!-- Scrollable Mobile Screen Viewport -->
         <div class="mobile-screen-viewport" id="mobile-viewport">
           <!-- ================================================================
@@ -1628,17 +1650,48 @@
         </div>
         <h3 class="modal-title">MIRA Recovery Check-in</h3>
         <p class="modal-text">
-          Fitur MIRA Check-in akan tersedia pada modul berikutnya.<br /><br />
-          Pada modul mendatang, MIRA akan menyapa Anda secara proaktif sesuai
-          fase pemulihan lutut Anda (H+14), memberikan edukasi obat, dan
-          menghubungkan Anda langsung dengan tim Tele-Nurse Mandaya.
+          MIRA menyapa Anda di fase pemulihan lutut
+          <strong>H+14 (Pasca Rekonstruksi ACL)</strong>.<br /><br />
+          <em
+            >"Halo Budi, apakah pembengkakan lutut sudah berkurang dan latihan
+            jalan mandiri berjalan lancar hari ini?"</em
+          >
         </p>
+
+        <div
+          style="
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 14px;
+            text-align: left;
+            font-size: 12.5px;
+            color: #166534;
+          "
+        >
+          <div style="font-weight: 700; margin-bottom: 2px">
+            🪙 Reward Perawatan:
+          </div>
+          <div>
+            Selesaikan check-in pemulihan harian untuk mendapatkan
+            <strong>+25 CarePoints</strong>.
+          </div>
+        </div>
+
         <div class="modal-actions">
           <button
             class="btn-primary-mobile"
+            id="btn-mira-checkin-action"
+            onclick="handleMiraCheckinCompletion()"
+          >
+            ✓ Kondisi Baik & Selesaikan Check-in (+25 Pts)
+          </button>
+          <button
+            class="btn-secondary-mobile"
             onclick="closeModal('modal-mira-preview')"
           >
-            Mengerti
+            Tutup
           </button>
         </div>
       </div>
@@ -1664,6 +1717,7 @@
               padding: 3px 8px;
               border-radius: 6px;
             "
+            id="modal-apt-status-badge"
           >
             KONTROL POLI TERJADWAL
           </span>
@@ -1711,9 +1765,20 @@
           </div>
         </div>
 
-        <div class="modal-actions">
+        <div id="modal-apt-action-container" style="margin-bottom: 8px">
           <button
             class="btn-primary-mobile"
+            id="btn-modal-confirm-apt"
+            onclick="confirmAppointmentAction()"
+            style="background: var(--primary)"
+          >
+            📅 Konfirmasi Kehadiran (+20 CarePoints)
+          </button>
+        </div>
+
+        <div class="modal-actions">
+          <button
+            class="btn-secondary-mobile"
             onclick="closeModal('modal-appointment-detail')"
           >
             Tutup Detail
