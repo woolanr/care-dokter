@@ -3976,7 +3976,391 @@ input:checked + .slider-toggle:before {
   margin-bottom: 2px;
 }
 
-.points-plus-sub {
+/* ==========================================================================
+   FEATURE 4: PATIENT FEEDBACK & ADVOCACY STYLES
+   ========================================================================== */
+
+/* Home Feedback Card */
+.feedback-home-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  margin-top: 14px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+}
+
+.feedback-home-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: #cbd5e1;
+}
+
+.feedback-home-card.submitted {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.feedback-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.feedback-card-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--primary-deep);
+  background: #e0f2fe;
+  padding: 3px 8px;
+  border-radius: 20px;
+}
+
+.feedback-card-pill.done {
+  color: #15803d;
+  background: #dcfce7;
+}
+
+.feedback-card-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 3px;
+}
+
+.feedback-card-desc {
   font-size: 12px;
-  color: #d1fae5;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+
+.feedback-status-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.feedback-status-chip {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.feedback-status-chip.chip-rating {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.feedback-status-chip.chip-feedback {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.feedback-status-chip.chip-testimonial {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+
+.feedback-status-chip.chip-referral {
+  background: #ccfbf1;
+  color: #0f766e;
+}
+
+/* 5-Star Interactive Rating Picker */
+.star-rating-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin: 14px 0 8px 0;
+  padding: 10px 0;
+}
+
+.star-item-btn {
+  background: none;
+  border: none;
+  font-size: 34px;
+  line-height: 1;
+  cursor: pointer;
+  color: #cbd5e1;
+  transition:
+    transform 0.15s ease,
+    color 0.15s ease;
+  user-select: none;
+  padding: 4px;
+}
+
+.star-item-btn:hover {
+  transform: scale(1.15);
+}
+
+.star-item-btn.active {
+  color: #f59e0b;
+  text-shadow: 0 2px 8px rgba(245, 158, 11, 0.35);
+}
+
+.star-rating-label {
+  text-align: center;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0369a1;
+  min-height: 20px;
+  margin-bottom: 12px;
+}
+
+/* Category Multi-Select Pills */
+.feedback-cat-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0 14px 0;
+}
+
+.feedback-cat-pill {
+  padding: 8px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-body);
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.feedback-cat-pill:hover {
+  border-color: #93c5fd;
+  background: #f8fafc;
+}
+
+.feedback-cat-pill.selected {
+  border-color: var(--primary);
+  background: #eff6ff;
+  color: var(--primary-deep);
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.12);
+}
+
+/* Feedback Textarea & Character Counter */
+.feedback-textarea-wrap {
+  position: relative;
+  margin-top: 6px;
+}
+
+.feedback-textarea {
+  width: 100%;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 12.5px;
+  font-family: inherit;
+  color: var(--text-main);
+  background: #ffffff;
+  resize: none;
+  transition: border-color 0.2s ease;
+  line-height: 1.45;
+}
+
+.feedback-textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.char-counter {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: right;
+  margin-top: 4px;
+}
+
+/* Explicit Consent Checkbox */
+.consent-checkbox-wrap {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  background: #f8fafc;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 11px 12px;
+  margin: 12px 0 16px 0;
+  cursor: pointer;
+  text-align: left;
+  user-select: none;
+  transition: all 0.15s ease;
+}
+
+.consent-checkbox-wrap:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.consent-checkbox-wrap input[type="checkbox"] {
+  width: 17px;
+  height: 17px;
+  accent-color: var(--primary);
+  margin-top: 2px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.consent-label-text {
+  font-size: 11.5px;
+  color: var(--text-body);
+  line-height: 1.45;
+}
+
+/* Advocacy Choice Cards (Positive Feedback Flow) */
+.advocacy-cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 14px 0;
+}
+
+.advocacy-action-card {
+  background: #ffffff;
+  border: 1.5px solid #bae6fd;
+  border-radius: 14px;
+  padding: 13px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.advocacy-action-card:hover {
+  border-color: var(--primary);
+  background: #f0f9ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.12);
+}
+
+.advocacy-card-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: #e0f2fe;
+  color: #0284c7;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.advocacy-action-card:nth-child(2) .advocacy-card-icon {
+  background: #f3e8ff;
+  color: #7c3aed;
+}
+
+.advocacy-card-info {
+  flex: 1;
+}
+
+.advocacy-card-heading {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 2px;
+}
+
+.advocacy-card-sub {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+
+.advocacy-card-arrow {
+  color: var(--primary);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* Referral Preview Card */
+.referral-share-card {
+  background: linear-gradient(135deg, #1e3a8a 0%, #0369a1 60%, #0284c7 100%);
+  color: #ffffff;
+  border-radius: 16px;
+  padding: 18px 16px;
+  text-align: center;
+  margin: 14px 0;
+  box-shadow: 0 6px 18px rgba(3, 105, 161, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+.referral-share-card::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.15) 0%,
+    transparent 60%
+  );
+  pointer-events: none;
+}
+
+.referral-badge-top {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+}
+
+.referral-card-title {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+  margin-bottom: 6px;
+}
+
+.referral-card-msg {
+  font-size: 12px;
+  line-height: 1.45;
+  color: #e0f2fe;
+  margin-bottom: 12px;
+}
+
+.referral-link-box {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px dashed rgba(255, 255, 255, 0.4);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 11px;
+  font-family: monospace;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 }

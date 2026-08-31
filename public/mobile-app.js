@@ -345,6 +345,26 @@ const DEFAULT_TIMELINE_MILESTONES = [
 ];
 
 // ============================================================================
+// FEATURE 4: PATIENT FEEDBACK & ADVOCACY DATA MODELS
+// ============================================================================
+
+const DEFAULT_FEEDBACK = {
+  submitted: false,
+  rating: null, // 1 to 5
+  categories: [], // string[]
+  comment: "",
+  submittedAt: "",
+};
+
+const DEFAULT_ADVOCACY = {
+  testimonialSubmitted: false,
+  testimonialText: "",
+  testimonialConsent: false,
+  referralShared: false,
+  sharedAt: "",
+};
+
+// ============================================================================
 // 2. APPLICATION STATE MANAGEMENT
 // ============================================================================
 
@@ -365,6 +385,8 @@ class AppState {
     const savedMissions = localStorage.getItem("care_dokter_missions");
     const savedMiraData = localStorage.getItem("care_dokter_mira_data");
     const savedMilestones = localStorage.getItem("care_dokter_milestones");
+    const savedFeedback = localStorage.getItem("care_dokter_feedback");
+    const savedAdvocacy = localStorage.getItem("care_dokter_advocacy");
 
     this.isLoggedIn = savedLoggedIn ? JSON.parse(savedLoggedIn) : false;
     this.onboardingCompleted = savedOnboarding
@@ -391,6 +413,12 @@ class AppState {
     this.timelineMilestones = savedMilestones
       ? JSON.parse(savedMilestones)
       : [...DEFAULT_TIMELINE_MILESTONES];
+    this.feedback = savedFeedback
+      ? JSON.parse(savedFeedback)
+      : { ...DEFAULT_FEEDBACK };
+    this.advocacy = savedAdvocacy
+      ? JSON.parse(savedAdvocacy)
+      : { ...DEFAULT_ADVOCACY };
 
     this.currentScreen = "splash";
     this.currentTab = "home";
@@ -431,6 +459,8 @@ class AppState {
       "care_dokter_milestones",
       JSON.stringify(this.timelineMilestones),
     );
+    localStorage.setItem("care_dokter_feedback", JSON.stringify(this.feedback));
+    localStorage.setItem("care_dokter_advocacy", JSON.stringify(this.advocacy));
   }
 
   login() {
@@ -524,6 +554,8 @@ class AppState {
     localStorage.removeItem("care_dokter_missions");
     localStorage.removeItem("care_dokter_mira_data");
     localStorage.removeItem("care_dokter_milestones");
+    localStorage.removeItem("care_dokter_feedback");
+    localStorage.removeItem("care_dokter_advocacy");
 
     this.isLoggedIn = stayLoggedIn;
     this.onboardingCompleted = stayLoggedIn;
@@ -534,6 +566,8 @@ class AppState {
     this.missions = [...DEFAULT_CARE_MISSIONS];
     this.miraData = { ...DEFAULT_MIRA_DATA, todayCheckinDone: false };
     this.timelineMilestones = [...DEFAULT_TIMELINE_MILESTONES];
+    this.feedback = { ...DEFAULT_FEEDBACK };
+    this.advocacy = { ...DEFAULT_ADVOCACY };
     this.currentTab = "home";
     this.onboardingStep = 1;
     this.saveState();
@@ -1470,7 +1504,7 @@ function renderCareJourneyTimeline() {
   const milestones = state.timelineMilestones;
   const isDoneToday = state.miraData.todayCheckinDone;
 
-  listEl.innerHTML = milestones
+  let timelineHtml = milestones
     .map((item) => {
       let cardClass = "";
       let iconClass = item.status;
@@ -1525,6 +1559,40 @@ function renderCareJourneyTimeline() {
     `;
     })
     .join("");
+
+  // Feature 4: If Patient Feedback has been submitted, include chronological activity item
+  if (state.feedback && state.feedback.submitted) {
+    const fb = state.feedback;
+    const adv = state.advocacy;
+    let advNote = "";
+    if (adv && adv.testimonialSubmitted && adv.referralShared) {
+      advNote = " · Testimonial & Rekomendasi Dibagikan";
+    } else if (adv && adv.testimonialSubmitted) {
+      advNote = " · Testimonial Pengalaman Terkirim";
+    } else if (adv && adv.referralShared) {
+      advNote = " · Mandaya Direkomendasikan";
+    }
+
+    timelineHtml += `
+      <div class="timeline-milestone-card completed" style="background: #f0fdf4; border-color: #bbf7d0; margin-top: 10px;">
+        <div class="milestone-icon-indicator done" style="background: #16a34a;">
+          ✓
+        </div>
+        <div class="milestone-content-wrap">
+          <div class="milestone-header-line">
+            <span class="milestone-phase-badge done">Feedback Pasien</span>
+            <span class="milestone-date-text">${fb.submittedAt || "Hari Ini"}</span>
+          </div>
+          <div class="milestone-title">Patient Feedback Submitted (⭐ ${fb.rating}/5)</div>
+          <div class="milestone-desc">
+            Penilaian: <strong>${getRatingLabel(fb.rating)}</strong>${fb.categories && fb.categories.length ? ` · Kategori: ${fb.categories.join(", ")}` : ""}${advNote}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  listEl.innerHTML = timelineHtml;
 }
 
 /**
@@ -1646,6 +1714,7 @@ function renderMiraScreen() {
  */
 function renderHomeScreen() {
   renderHomeScreenPoints();
+  renderHomeScreenFeedback();
 
   const isDoneToday = state.miraData.todayCheckinDone;
   const bubble = document.getElementById("home-mira-bubble");
@@ -2094,6 +2163,426 @@ function handleLogout() {
   closeAllModals();
   state.logout();
   navigateToScreen("screen-login");
+}
+
+// ============================================================================
+// FEATURE 4: PATIENT FEEDBACK & NATURAL ADVOCACY ENGINE
+// ============================================================================
+
+let currentFeedbackDraft = {
+  rating: null,
+  categories: [],
+  comment: "",
+};
+
+/**
+ * Returns human-readable label for feedback star rating
+ */
+function getRatingLabel(rating) {
+  switch (Number(rating)) {
+    case 1:
+      return "Sangat Tidak Puas";
+    case 2:
+      return "Tidak Puas";
+    case 3:
+      return "Cukup";
+    case 4:
+      return "Puas";
+    case 5:
+      return "Sangat Puas";
+    default:
+      return "Belum Dinilai";
+  }
+}
+
+/**
+ * Render Home Screen Feedback Card
+ */
+function renderHomeScreenFeedback() {
+  const cardEl = document.getElementById("home-feedback-card");
+  if (!cardEl) return;
+
+  const fb = state.feedback;
+  const adv = state.advocacy;
+
+  if (!fb || !fb.submitted) {
+    cardEl.className = "feedback-home-card";
+    cardEl.innerHTML = `
+      <div class="feedback-card-header">
+        <div class="feedback-card-pill">
+          <span>💬</span> Masukan Pasien
+        </div>
+        <span style="font-size: 11px; color: var(--text-muted);">Mandaya Quality Care</span>
+      </div>
+      <h4 class="feedback-card-title">Bagaimana pengalaman Anda?</h4>
+      <p class="feedback-card-desc">
+        Masukan Anda membantu kami terus meningkatkan mutu pelayanan dan kenyamanan perawatan.
+      </p>
+      <button class="btn-primary-mobile" style="padding: 10px 14px; font-size: 13px; width: 100%; border-radius: 10px;" onclick="openFeedbackModal()">
+        <span>✍️</span> Berikan Feedback Pasien
+      </button>
+    `;
+  } else {
+    cardEl.className = "feedback-home-card submitted";
+    const ratingStars = "★".repeat(fb.rating) + "☆".repeat(5 - fb.rating);
+    const ratingLabel = getRatingLabel(fb.rating);
+
+    let chipsHtml = `
+      <div class="feedback-status-chip chip-rating">
+        <span>${ratingStars}</span> <strong>${fb.rating}/5 · ${ratingLabel}</strong>
+      </div>
+      <div class="feedback-status-chip chip-feedback">
+        <span>✓</span> Feedback Terkirim
+      </div>
+    `;
+
+    if (adv && adv.testimonialSubmitted) {
+      chipsHtml += `
+        <div class="feedback-status-chip chip-testimonial">
+          <span>✓</span> Testimonial Terkirim
+        </div>
+      `;
+    }
+
+    if (adv && adv.referralShared) {
+      chipsHtml += `
+        <div class="feedback-status-chip chip-referral">
+          <span>✓</span> Mandaya Dibagikan
+        </div>
+      `;
+    }
+
+    let extraActionBtn = "";
+    if (fb.rating >= 4) {
+      extraActionBtn = `
+        <div style="margin-top: 12px; display: flex; gap: 8px;">
+          <button class="btn-secondary-mobile" style="padding: 8px 12px; font-size: 12px; flex: 1; border-radius: 8px;" onclick="openModal('modal-feedback-positive-advocacy')">
+            <span>💙</span> Opsi Berbagi & Rekomendasi
+          </button>
+        </div>
+      `;
+    }
+
+    cardEl.innerHTML = `
+      <div class="feedback-card-header">
+        <div class="feedback-card-pill done">
+          <span>✓</span> Feedback Selesai
+        </div>
+        <span style="font-size: 11px; color: var(--text-muted);">${fb.submittedAt || "Tersimpan"}</span>
+      </div>
+      <h4 class="feedback-card-title">Terima kasih atas feedback Anda 💙</h4>
+      <p class="feedback-card-desc" style="margin-bottom: 6px;">
+        Masukan Anda telah tersimpan dengan aman untuk evaluasi peningkatan mutu pelayanan Mandaya.
+      </p>
+      <div class="feedback-status-chips">
+        ${chipsHtml}
+      </div>
+      ${extraActionBtn}
+    `;
+  }
+}
+
+/**
+ * Open Feedback Entry Modal
+ */
+function openFeedbackModal() {
+  currentFeedbackDraft = {
+    rating:
+      state.feedback && state.feedback.submitted ? state.feedback.rating : null,
+    categories:
+      state.feedback && state.feedback.submitted
+        ? [...state.feedback.categories]
+        : [],
+    comment:
+      state.feedback && state.feedback.submitted
+        ? state.feedback.comment || ""
+        : "",
+  };
+
+  // Render stars
+  updateFeedbackStarsUI();
+
+  // Render categories pills
+  const catGrid = document.getElementById("feedback-categories-grid");
+  if (catGrid) {
+    const pills = catGrid.querySelectorAll(".feedback-cat-pill");
+    pills.forEach((pill) => {
+      const text = pill.textContent.replace(/^[^\s]+\s+/, "").trim();
+      if (currentFeedbackDraft.categories.includes(text)) {
+        pill.classList.add("selected");
+      } else {
+        pill.classList.remove("selected");
+      }
+    });
+  }
+
+  // Comment input
+  const commentInput = document.getElementById("feedback-comment-input");
+  if (commentInput) {
+    commentInput.value = currentFeedbackDraft.comment || "";
+  }
+
+  updateFeedbackSubmitBtn();
+  openModal("modal-patient-feedback");
+}
+
+/**
+ * Select Star Rating in Feedback Form
+ */
+function selectFeedbackRating(score) {
+  currentFeedbackDraft.rating = score;
+  updateFeedbackStarsUI();
+  updateFeedbackSubmitBtn();
+}
+
+/**
+ * Update UI highlighting for Feedback Stars
+ */
+function updateFeedbackStarsUI() {
+  const wrap = document.getElementById("feedback-stars-wrap");
+  const label = document.getElementById("feedback-star-label");
+  if (!wrap || !label) return;
+
+  const stars = wrap.querySelectorAll(".star-item-btn");
+  const score = currentFeedbackDraft.rating;
+
+  stars.forEach((btn, idx) => {
+    if (score && idx + 1 <= score) {
+      btn.classList.add("active");
+    } else {
+      btn.classList.remove("active");
+    }
+  });
+
+  if (score) {
+    label.textContent = `${score} / 5 · ${getRatingLabel(score)}`;
+    if (score >= 4) {
+      label.style.color = "#0284c7";
+    } else if (score === 3) {
+      label.style.color = "#d97706";
+    } else {
+      label.style.color = "#64748b";
+    }
+  } else {
+    label.textContent = "Pilih penilaian bintang (1 - 5)";
+    label.style.color = "#64748b";
+  }
+}
+
+/**
+ * Toggle category pill selection
+ */
+function toggleFeedbackCategory(categoryName, element) {
+  const idx = currentFeedbackDraft.categories.indexOf(categoryName);
+  if (idx > -1) {
+    currentFeedbackDraft.categories.splice(idx, 1);
+    if (element) element.classList.remove("selected");
+  } else {
+    currentFeedbackDraft.categories.push(categoryName);
+    if (element) element.classList.add("selected");
+  }
+}
+
+/**
+ * Update disabled state of feedback submit button
+ */
+function updateFeedbackSubmitBtn() {
+  const btn = document.getElementById("btn-submit-feedback");
+  if (btn) {
+    if (currentFeedbackDraft.rating) {
+      btn.disabled = false;
+      btn.style.opacity = "1";
+      btn.style.cursor = "pointer";
+    } else {
+      btn.disabled = true;
+      btn.style.opacity = "0.5";
+      btn.style.cursor = "not-allowed";
+    }
+  }
+}
+
+/**
+ * Submit Patient Feedback with conditional branch (Neutral vs Positive Advocacy)
+ */
+function submitPatientFeedback() {
+  if (!currentFeedbackDraft.rating) {
+    showToast("Silakan pilih penilaian bintang terlebih dahulu.");
+    return;
+  }
+
+  const commentInput = document.getElementById("feedback-comment-input");
+  const commentText = commentInput ? commentInput.value.trim() : "";
+
+  const now = new Date();
+  const dateStr = `${now.getDate()} ${["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"][now.getMonth()]} ${now.getFullYear()}`;
+
+  state.feedback = {
+    submitted: true,
+    rating: currentFeedbackDraft.rating,
+    categories: [...currentFeedbackDraft.categories],
+    comment: commentText,
+    submittedAt: dateStr,
+  };
+  state.saveState();
+
+  closeModal("modal-patient-feedback");
+  renderHomeScreenFeedback();
+  renderCareJourneyTimeline();
+
+  // Branching: Ratings 1-3 (Neutral/Low) vs Ratings 4-5 (Positive Advocacy)
+  if (currentFeedbackDraft.rating <= 3) {
+    const neutralSummary = document.getElementById("neutral-feedback-summary");
+    if (neutralSummary) {
+      if (commentText) {
+        neutralSummary.textContent = `Catatan masukan: "${commentText}" (${currentFeedbackDraft.rating}/5 Bintang - ${getRatingLabel(currentFeedbackDraft.rating)})`;
+      } else {
+        neutralSummary.textContent = `Penilaian ${currentFeedbackDraft.rating}/5 Bintang (${getRatingLabel(currentFeedbackDraft.rating)}) telah tersimpan untuk evaluasi tim manajemen mutu pelayanan Mandaya.`;
+      }
+    }
+    openModal("modal-feedback-neutral-thanks");
+    showToast("Feedback berhasil disimpan. Terima kasih atas masukan Anda.");
+  } else {
+    openModal("modal-feedback-positive-advocacy");
+  }
+}
+
+/**
+ * Open Testimonial form modal from advocacy invitation
+ */
+function openTestimonialFromAdvocacy() {
+  closeModal("modal-feedback-positive-advocacy");
+
+  const textInput = document.getElementById("testimonial-text-input");
+  const checkbox = document.getElementById("testimonial-consent-checkbox");
+
+  if (textInput) {
+    if (state.advocacy && state.advocacy.testimonialText) {
+      textInput.value = state.advocacy.testimonialText;
+    } else if (state.feedback && state.feedback.comment) {
+      textInput.value = state.feedback.comment;
+    } else {
+      textInput.value = "";
+    }
+  }
+
+  if (checkbox) {
+    checkbox.checked = false; // MUST NEVER be pre-checked
+  }
+
+  updateTestimonialCharCounter();
+  validateTestimonialForm();
+  openModal("modal-advocacy-testimonial");
+}
+
+/**
+ * Update character count for testimonial form
+ */
+function updateTestimonialCharCounter() {
+  const textInput = document.getElementById("testimonial-text-input");
+  const counter = document.getElementById("testimonial-char-counter");
+  if (textInput && counter) {
+    const len = textInput.value.length;
+    counter.textContent = `${len} / 500 Karakter`;
+  }
+  validateTestimonialForm();
+}
+
+/**
+ * Validate testimonial submission form (requires explicit user consent)
+ */
+function validateTestimonialForm() {
+  const textInput = document.getElementById("testimonial-text-input");
+  const checkbox = document.getElementById("testimonial-consent-checkbox");
+  const btn = document.getElementById("btn-submit-testimonial");
+
+  if (!btn) return;
+
+  const hasText = textInput && textInput.value.trim().length > 0;
+  const isConsented = checkbox && checkbox.checked;
+
+  if (hasText && isConsented) {
+    btn.disabled = false;
+    btn.style.opacity = "1";
+    btn.style.cursor = "pointer";
+  } else {
+    btn.disabled = true;
+    btn.style.opacity = "0.5";
+    btn.style.cursor = "not-allowed";
+  }
+}
+
+/**
+ * Submit verified patient testimonial
+ */
+function submitTestimonialAction() {
+  const textInput = document.getElementById("testimonial-text-input");
+  const checkbox = document.getElementById("testimonial-consent-checkbox");
+
+  if (!checkbox || !checkbox.checked) {
+    showToast("Harap centang persetujuan penggunaan testimonial.");
+    return;
+  }
+
+  const testimonialText = textInput ? textInput.value.trim() : "";
+  if (!testimonialText) {
+    showToast("Silakan tuliskan cerita pengalaman Anda terlebih dahulu.");
+    return;
+  }
+
+  const now = new Date();
+  const dateStr = `${now.getDate()} ${["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"][now.getMonth()]} ${now.getFullYear()}`;
+
+  state.advocacy.testimonialSubmitted = true;
+  state.advocacy.testimonialText = testimonialText;
+  state.advocacy.testimonialConsent = true;
+  state.advocacy.sharedAt = dateStr;
+  state.saveState();
+
+  closeModal("modal-advocacy-testimonial");
+  renderHomeScreenFeedback();
+  renderCareJourneyTimeline();
+  openModal("modal-advocacy-testimonial-thanks");
+  showToast("Testimonial Anda berhasil dikirim.");
+}
+
+/**
+ * Open Referral modal from advocacy invitation
+ */
+function openReferralFromAdvocacy() {
+  closeModal("modal-feedback-positive-advocacy");
+  openModal("modal-advocacy-referral");
+}
+
+/**
+ * Execute Referral Sharing Action (privacy-safe, no third-party health collection)
+ */
+function executeReferralShare() {
+  const shareData = {
+    title: "Care Dokter - Mandaya Royal Hospital Puri",
+    text: "Temukan pendamping perjalanan perawatan kesehatan di Mandaya Royal Hospital bersama aplikasi Care Dokter.",
+    url: "https://mandayahospitalgroup.com/care-dokter",
+  };
+
+  const now = new Date();
+  const dateStr = `${now.getDate()} ${["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"][now.getMonth()]} ${now.getFullYear()}`;
+
+  state.advocacy.referralShared = true;
+  state.advocacy.sharedAt = dateStr;
+  state.saveState();
+
+  renderHomeScreenFeedback();
+  renderCareJourneyTimeline();
+
+  if (navigator.share) {
+    navigator.share(shareData).catch(() => {});
+  } else if (navigator.clipboard) {
+    navigator.clipboard
+      .writeText(`${shareData.text}\n${shareData.url}`)
+      .catch(() => {});
+  }
+
+  closeModal("modal-advocacy-referral");
+  showToast("Link rekomendasi Care Dokter siap dibagikan ke orang terdekat.");
 }
 
 // ============================================================================

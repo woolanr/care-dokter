@@ -667,6 +667,11 @@
                 </button>
               </div>
             </div>
+
+            <!-- SECTION 5: PATIENT FEEDBACK & ADVOCACY CARD (FEATURE 4) -->
+            <div class="feedback-home-card" id="home-feedback-card">
+              <!-- Dynamically populated by JS renderHomeScreenFeedback() -->
+            </div>
           </section>
 
           <!-- ================================================================
@@ -3134,6 +3139,568 @@
             onclick="closeModal('modal-reset-demo-confirm')"
           >
             Batalkan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================================
+       FEATURE 4: PATIENT FEEDBACK & ADVOCACY MODALS
+       ====================================================================== -->
+
+    <!-- 18. Patient Feedback Modal -->
+    <div class="modal-backdrop" id="modal-patient-feedback">
+      <div
+        class="modal-content-card"
+        style="max-height: 88vh; overflow-y: auto"
+      >
+        <div class="modal-header-close">
+          <div style="display: flex; align-items: center; gap: 8px">
+            <span style="font-size: 20px">💬</span>
+            <h3 class="modal-title" style="margin: 0; font-size: 15px">
+              Pengalaman Bersama Mandaya
+            </h3>
+          </div>
+          <button
+            class="close-btn"
+            onclick="closeModal('modal-patient-feedback')"
+          >
+            ✕
+          </button>
+        </div>
+
+        <!-- Question 1: 5-Star Rating -->
+        <div style="margin-top: 10px">
+          <label
+            style="
+              font-size: 13px;
+              font-weight: 700;
+              color: var(--text-main);
+              display: block;
+              margin-bottom: 4px;
+            "
+          >
+            Seberapa puas Anda dengan pengalaman perawatan Anda?
+          </label>
+
+          <div class="star-rating-wrap" id="feedback-stars-wrap">
+            <button
+              type="button"
+              class="star-item-btn"
+              onclick="selectFeedbackRating(1)"
+            >
+              ★
+            </button>
+            <button
+              type="button"
+              class="star-item-btn"
+              onclick="selectFeedbackRating(2)"
+            >
+              ★
+            </button>
+            <button
+              type="button"
+              class="star-item-btn"
+              onclick="selectFeedbackRating(3)"
+            >
+              ★
+            </button>
+            <button
+              type="button"
+              class="star-item-btn"
+              onclick="selectFeedbackRating(4)"
+            >
+              ★
+            </button>
+            <button
+              type="button"
+              class="star-item-btn"
+              onclick="selectFeedbackRating(5)"
+            >
+              ★
+            </button>
+          </div>
+          <div class="star-rating-label" id="feedback-star-label">
+            Pilih penilaian bintang (1 - 5)
+          </div>
+        </div>
+
+        <!-- Question 2: Categories -->
+        <div style="margin-top: 6px">
+          <label
+            style="
+              font-size: 13px;
+              font-weight: 700;
+              color: var(--text-main);
+              display: block;
+              margin-bottom: 4px;
+            "
+          >
+            Apa yang paling ingin Anda bagikan?
+          </label>
+          <div
+            style="
+              font-size: 11px;
+              color: var(--text-muted);
+              margin-bottom: 8px;
+            "
+          >
+            Dapat memilih lebih dari satu kategori
+          </div>
+
+          <div class="feedback-cat-grid" id="feedback-categories-grid">
+            <div
+              class="feedback-cat-pill"
+              onclick="
+                toggleFeedbackCategory('Pelayanan tenaga kesehatan', this)
+              "
+            >
+              <span>👨‍⚕️</span> Pelayanan tenaga kesehatan
+            </div>
+            <div
+              class="feedback-cat-pill"
+              onclick="
+                toggleFeedbackCategory('Kemudahan proses perawatan', this)
+              "
+            >
+              <span>⚡</span> Kemudahan proses perawatan
+            </div>
+            <div
+              class="feedback-cat-pill"
+              onclick="toggleFeedbackCategory('Komunikasi', this)"
+            >
+              <span>🗣️</span> Komunikasi
+            </div>
+            <div
+              class="feedback-cat-pill"
+              onclick="toggleFeedbackCategory('Fasilitas', this)"
+            >
+              <span>🏥</span> Fasilitas
+            </div>
+            <div
+              class="feedback-cat-pill"
+              onclick="toggleFeedbackCategory('Teknologi dan layanan', this)"
+            >
+              <span>📱</span> Teknologi dan layanan
+            </div>
+            <div
+              class="feedback-cat-pill"
+              onclick="
+                toggleFeedbackCategory('Pengalaman secara keseluruhan', this)
+              "
+            >
+              <span>🌟</span> Pengalaman secara keseluruhan
+            </div>
+          </div>
+        </div>
+
+        <!-- Question 3: Optional Text Feedback -->
+        <div style="margin-top: 10px">
+          <label
+            style="
+              font-size: 13px;
+              font-weight: 700;
+              color: var(--text-main);
+              display: block;
+              margin-bottom: 2px;
+            "
+          >
+            Ceritakan Pengalaman Anda
+            <span
+              style="
+                font-weight: 500;
+                font-size: 11.5px;
+                color: var(--text-muted);
+              "
+              >(Opsional)</span
+            >
+          </label>
+          <div
+            style="
+              font-size: 11px;
+              color: var(--text-muted);
+              margin-bottom: 6px;
+            "
+          >
+            Anda hanya perlu membagikan informasi yang nyaman untuk Anda
+            ceritakan.
+          </div>
+          <div class="feedback-textarea-wrap">
+            <textarea
+              id="feedback-comment-input"
+              class="feedback-textarea"
+              placeholder="Ceritakan pengalaman Anda selama proses perawatan..."
+              rows="3"
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="modal-actions" style="margin-top: 16px">
+          <button
+            class="btn-primary-mobile"
+            id="btn-submit-feedback"
+            onclick="submitPatientFeedback()"
+          >
+            Kirim Feedback
+          </button>
+          <button
+            class="btn-secondary-mobile"
+            onclick="closeModal('modal-patient-feedback')"
+          >
+            Batalkan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 19. Low / Neutral Feedback Thank You Modal (Rating 1, 2, 3) -->
+    <div class="modal-backdrop" id="modal-feedback-neutral-thanks">
+      <div class="modal-content-card" style="text-align: center">
+        <div
+          class="modal-icon-badge"
+          style="background: #f1f5f9; color: #475569; font-size: 28px"
+        >
+          🤝
+        </div>
+        <h3
+          class="modal-title"
+          style="color: var(--text-main); margin-bottom: 6px"
+        >
+          Terima kasih atas masukan Anda
+        </h3>
+        <p
+          class="modal-text"
+          style="
+            margin-bottom: 16px;
+            font-size: 12.5px;
+            line-height: 1.5;
+            color: var(--text-body);
+          "
+        >
+          Feedback Anda membantu kami memahami pengalaman pasien dan terus
+          meningkatkan pelayanan di Mandaya Royal Hospital.
+        </p>
+
+        <div
+          style="
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 16px;
+            text-align: left;
+            font-size: 12px;
+            color: var(--text-muted);
+          "
+        >
+          <div
+            style="
+              font-weight: 700;
+              color: var(--text-main);
+              margin-bottom: 2px;
+            "
+          >
+            Catatan Pasien:
+          </div>
+          <div id="neutral-feedback-summary">
+            Masukan Anda telah tersimpan dengan aman untuk evaluasi tim mutu
+            pelayanan kami.
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button
+            class="btn-primary-mobile"
+            onclick="
+              closeModal('modal-feedback-neutral-thanks');
+              switchTab('home');
+            "
+          >
+            Kembali ke Home
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 20. Positive Feedback Thank You & Optional Advocacy Modal (Rating 4, 5) -->
+    <div class="modal-backdrop" id="modal-feedback-positive-advocacy">
+      <div class="modal-content-card" style="text-align: center">
+        <div
+          class="modal-icon-badge"
+          style="background: #e0f2fe; color: #0284c7; font-size: 32px"
+        >
+          💙
+        </div>
+        <h3
+          class="modal-title"
+          style="color: var(--primary-deep); margin-bottom: 6px"
+        >
+          Senang mendengar Anda memiliki pengalaman yang baik 💙
+        </h3>
+        <p
+          class="modal-text"
+          style="
+            margin-bottom: 16px;
+            font-size: 12.5px;
+            line-height: 1.45;
+            color: var(--text-body);
+          "
+        >
+          Jika Anda berkenan, pengalaman Anda mungkin dapat membantu orang lain
+          yang sedang mencari layanan kesehatan.
+        </p>
+
+        <!-- 2 Optional Advocacy Choice Cards -->
+        <div class="advocacy-cards-container">
+          <!-- Action 1: Testimonial -->
+          <div
+            class="advocacy-action-card"
+            onclick="openTestimonialFromAdvocacy()"
+          >
+            <div class="advocacy-card-icon">✍️</div>
+            <div class="advocacy-card-info">
+              <div class="advocacy-card-heading">Bagikan Cerita Anda</div>
+              <div class="advocacy-card-sub">
+                Tuliskan cerita singkat pengalaman perawatan Anda
+              </div>
+            </div>
+            <div class="advocacy-card-arrow">→</div>
+          </div>
+
+          <!-- Action 2: Referral -->
+          <div
+            class="advocacy-action-card"
+            onclick="openReferralFromAdvocacy()"
+          >
+            <div class="advocacy-card-icon">👥</div>
+            <div class="advocacy-card-info">
+              <div class="advocacy-card-heading">Rekomendasikan Mandaya</div>
+              <div class="advocacy-card-sub">
+                Bagikan info Care Dokter kepada keluarga & kerabat
+              </div>
+            </div>
+            <div class="advocacy-card-arrow">→</div>
+          </div>
+        </div>
+
+        <div class="modal-actions" style="margin-top: 8px">
+          <button
+            class="btn-secondary-mobile"
+            onclick="
+              closeModal('modal-feedback-positive-advocacy');
+              switchTab('home');
+            "
+          >
+            Nanti Saja
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 21. Testimonial Submission Modal -->
+    <div class="modal-backdrop" id="modal-advocacy-testimonial">
+      <div
+        class="modal-content-card"
+        style="max-height: 88vh; overflow-y: auto"
+      >
+        <div class="modal-header-close">
+          <div style="display: flex; align-items: center; gap: 8px">
+            <span style="font-size: 20px">✍️</span>
+            <h3 class="modal-title" style="margin: 0; font-size: 15px">
+              Bagikan Cerita Anda
+            </h3>
+          </div>
+          <button
+            class="close-btn"
+            onclick="closeModal('modal-advocacy-testimonial')"
+          >
+            ✕
+          </button>
+        </div>
+
+        <p
+          class="modal-text"
+          style="
+            text-align: left;
+            margin: 8px 0 12px 0;
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.45;
+          "
+        >
+          Cerita Anda dapat membantu pasien lain memahami pengalaman perawatan
+          bersama Mandaya.
+        </p>
+
+        <div
+          style="
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 10px;
+            padding: 10px 12px;
+            margin-bottom: 12px;
+            font-size: 11.5px;
+            color: #166534;
+            line-height: 1.4;
+          "
+        >
+          🔒 <strong>Privasi Pasien:</strong> Anda hanya perlu membagikan
+          informasi yang nyaman untuk Anda ceritakan tanpa membuka data medis
+          sensitif.
+        </div>
+
+        <div class="feedback-textarea-wrap">
+          <textarea
+            id="testimonial-text-input"
+            class="feedback-textarea"
+            placeholder="Ceritakan pengalaman Anda bersama Mandaya..."
+            rows="5"
+            maxlength="500"
+            oninput="updateTestimonialCharCounter()"
+          ></textarea>
+          <div class="char-counter" id="testimonial-char-counter">
+            0 / 500 Karakter
+          </div>
+        </div>
+
+        <!-- Explicit Consent Checkbox (NOT Pre-checked) -->
+        <label class="consent-checkbox-wrap" for="testimonial-consent-checkbox">
+          <input
+            type="checkbox"
+            id="testimonial-consent-checkbox"
+            onchange="validateTestimonialForm()"
+          />
+          <span class="consent-label-text">
+            Saya memahami dan menyetujui bahwa testimonial saya dapat digunakan
+            oleh Mandaya sesuai persetujuan yang saya berikan.
+          </span>
+        </label>
+
+        <div class="modal-actions">
+          <button
+            class="btn-primary-mobile"
+            id="btn-submit-testimonial"
+            onclick="submitTestimonialAction()"
+          >
+            Kirim Testimonial
+          </button>
+          <button
+            class="btn-secondary-mobile"
+            onclick="closeModal('modal-advocacy-testimonial')"
+          >
+            Batalkan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 22. Testimonial Received Confirmation Modal -->
+    <div class="modal-backdrop" id="modal-advocacy-testimonial-thanks">
+      <div class="modal-content-card" style="text-align: center">
+        <div
+          class="modal-icon-badge"
+          style="background: #ecfdf5; color: #10b981; font-size: 32px"
+        >
+          ✨
+        </div>
+        <h3 class="modal-title" style="color: #047857; margin-bottom: 6px">
+          Terima kasih telah membagikan pengalaman Anda
+        </h3>
+        <p
+          class="modal-text"
+          style="
+            margin-bottom: 16px;
+            font-size: 12.5px;
+            line-height: 1.45;
+            color: var(--text-body);
+          "
+        >
+          Testimonial Anda telah diterima dengan baik. Cerita Anda sangat
+          berarti untuk menginspirasi pasien lain dalam perjalanan pemulihan.
+        </p>
+
+        <div class="modal-actions">
+          <button
+            class="btn-primary-mobile"
+            onclick="
+              closeModal('modal-advocacy-testimonial-thanks');
+              switchTab('home');
+            "
+          >
+            Kembali ke Home
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 23. Referral Share Modal -->
+    <div class="modal-backdrop" id="modal-advocacy-referral">
+      <div class="modal-content-card" style="text-align: center">
+        <div class="modal-header-close">
+          <div style="display: flex; align-items: center; gap: 8px">
+            <span style="font-size: 20px">👥</span>
+            <h3 class="modal-title" style="margin: 0; font-size: 15px">
+              Bagikan Mandaya
+            </h3>
+          </div>
+          <button
+            class="close-btn"
+            onclick="closeModal('modal-advocacy-referral')"
+          >
+            ✕
+          </button>
+        </div>
+
+        <h4
+          style="
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--primary-deep);
+            margin: 8px 0 4px 0;
+          "
+        >
+          Bagikan Mandaya kepada Orang Terdekat
+        </h4>
+        <p
+          class="modal-text"
+          style="
+            margin-bottom: 12px;
+            font-size: 12px;
+            line-height: 1.45;
+            color: var(--text-body);
+          "
+        >
+          Jika Anda merasa pengalaman Anda bermanfaat, Anda dapat membagikan
+          Mandaya kepada keluarga atau teman.
+        </p>
+
+        <!-- Referral Card Preview -->
+        <div class="referral-share-card">
+          <div class="referral-badge-top">
+            <span>🏥</span> Mandaya Royal Hospital Puri
+          </div>
+          <div class="referral-card-title">CARE DOKTER</div>
+          <p class="referral-card-msg">
+            "Temukan layanan dan perjalanan perawatan bersama Mandaya."
+          </p>
+          <div class="referral-link-box">
+            <span>🔗 mandayahospitalgroup.com/care-dokter</span>
+            <span style="color: #7dd3fc; font-weight: 700; font-size: 10px"
+              >Salin Link</span
+            >
+          </div>
+        </div>
+
+        <div class="modal-actions" style="margin-top: 14px">
+          <button class="btn-primary-mobile" onclick="executeReferralShare()">
+            <span>📤</span> Bagikan
+          </button>
+          <button
+            class="btn-secondary-mobile"
+            onclick="closeModal('modal-advocacy-referral')"
+          >
+            Selesai
           </button>
         </div>
       </div>
