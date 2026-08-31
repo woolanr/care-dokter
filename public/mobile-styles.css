@@ -867,7 +867,7 @@ body {
 .care-journey-hero-card {
   background: var(--grad-card-hero);
   border-radius: 20px;
-  padding: 20px 18px;
+  padding: 20px 30px;
   color: #ffffff;
   margin-bottom: 16px;
   box-shadow: 0 10px 25px -4px rgba(30, 58, 138, 0.35);
@@ -979,7 +979,7 @@ body {
   background: #ffffff;
   border: 1.5px solid #bae6fd;
   border-radius: 20px;
-  padding: 30px;
+  padding: 40px;
   margin-bottom: 16px;
   box-shadow: var(--shadow-sm);
   position: relative;
