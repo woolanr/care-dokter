@@ -209,6 +209,8 @@ body {
 @media (max-width: 600px) {
   .prototype-stage {
     padding: 0;
+    min-height: 100%;
+    height: 100%;
   }
   .prototype-topbar {
     display: none;
@@ -216,7 +218,9 @@ body {
   .smartphone-frame {
     max-width: 100%;
     height: 100vh;
+    height: 100dvh;
     max-height: 100vh;
+    max-height: 100dvh;
     border-radius: 0;
     box-shadow: none;
     border: none;
@@ -234,18 +238,36 @@ body {
   position: relative;
   width: 100%;
   height: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
   background: var(--bg-app);
   overflow-y: auto;
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
   -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.4) transparent;
 }
 
-/* Hide scrollbar but keep functional */
+/* Subtle, functional scrollbar */
 .mobile-screen-viewport::-webkit-scrollbar {
-  width: 0px;
+  width: 5px;
+}
+
+.mobile-screen-viewport::-webkit-scrollbar-track {
   background: transparent;
+}
+
+.mobile-screen-viewport::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.35);
+  border-radius: 6px;
+}
+
+.mobile-screen-viewport::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.6);
 }
 
 /* Screen Views */
@@ -254,17 +276,18 @@ body {
   width: 100%;
   min-height: 100%;
   flex-direction: column;
+  flex-shrink: 0;
+  box-sizing: border-box;
   opacity: 0;
-  transition:
-    opacity 0.25s ease,
-    transform 0.25s ease;
-  transform: translateY(8px);
+  transition: opacity 0.2s ease;
 }
 
 .screen-view.active {
   display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
   opacity: 1;
-  transform: translateY(0);
+  transform: none;
 }
 
 /* ==========================================================================
@@ -792,7 +815,10 @@ body {
    5. HOME SCREEN (MAIN CONTINUOUS CARE DASHBOARD)
    ========================================================================== */
 #screen-home {
-  padding: 20px 18px 90px 18px; /* space for bottom nav */
+  width: 100%;
+  min-height: 100%;
+  padding: 20px 18px calc(var(--nav-height) + 36px) 18px; /* space for bottom nav */
+  box-sizing: border-box;
 }
 
 /* Home Header */
@@ -867,7 +893,7 @@ body {
 .care-journey-hero-card {
   background: var(--grad-card-hero);
   border-radius: 20px;
-  padding: 20px 30px;
+  padding: 20px 25px;
   color: #ffffff;
   margin-bottom: 16px;
   box-shadow: 0 10px 25px -4px rgba(30, 58, 138, 0.35);
@@ -979,7 +1005,7 @@ body {
   background: #ffffff;
   border: 1.5px solid #bae6fd;
   border-radius: 20px;
-  padding: 40px;
+  padding: 35px;
   margin-bottom: 16px;
   box-shadow: var(--shadow-sm);
   position: relative;
@@ -1250,7 +1276,10 @@ body {
    7. PROFILE SCREEN
    ========================================================================== */
 #screen-profile {
-  padding: 20px 18px 90px 18px;
+  width: 100%;
+  min-height: 100%;
+  padding: 20px 18px calc(var(--nav-height) + 36px) 18px;
+  box-sizing: border-box;
 }
 
 .profile-header-card {
@@ -1371,7 +1400,9 @@ body {
    8. PLACEHOLDER SCREENS FOR FUTURE MODULES
    ========================================================================== */
 .placeholder-view {
-  padding: 24px 20px 90px 20px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 24px 20px calc(var(--nav-height) + 36px) 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1526,8 +1557,11 @@ body {
 
 /* Rewards Screen View Container */
 #screen-rewards {
-  padding: 20px 18px 95px 18px;
+  width: 100%;
+  min-height: 100%;
+  padding: 20px 18px calc(var(--nav-height) + 36px) 18px;
   background: #f8fafc;
+  box-sizing: border-box;
 }
 
 .carepoint-header {
