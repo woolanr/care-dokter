@@ -514,7 +514,7 @@ class AppState {
     return true;
   }
 
-  resetAllDemoData() {
+  resetAllDemoData(stayLoggedIn = false) {
     localStorage.removeItem("care_dokter_isLoggedIn");
     localStorage.removeItem("care_dokter_onboardingCompleted");
     localStorage.removeItem("care_dokter_user");
@@ -525,14 +525,14 @@ class AppState {
     localStorage.removeItem("care_dokter_mira_data");
     localStorage.removeItem("care_dokter_milestones");
 
-    this.isLoggedIn = false;
-    this.onboardingCompleted = false;
+    this.isLoggedIn = stayLoggedIn;
+    this.onboardingCompleted = stayLoggedIn;
     this.currentUser = { ...DEFAULT_DEMO_PATIENT };
     this.familyPool = { ...DEFAULT_FAMILY_POOL };
     this.pointTransactions = [...DEFAULT_TRANSACTIONS];
     this.myRewards = [...DEFAULT_MY_REWARDS];
     this.missions = [...DEFAULT_CARE_MISSIONS];
-    this.miraData = { ...DEFAULT_MIRA_DATA };
+    this.miraData = { ...DEFAULT_MIRA_DATA, todayCheckinDone: false };
     this.timelineMilestones = [...DEFAULT_TIMELINE_MILESTONES];
     this.currentTab = "home";
     this.onboardingStep = 1;
@@ -1477,16 +1477,19 @@ function renderCareJourneyTimeline() {
       let badgeClass = item.badgeClass;
       let badgeLabel = item.badgeLabel;
       let actionBtnHtml = "";
+      let descText = item.desc;
 
       if (item.id === "ms-3") {
         if (isDoneToday) {
           cardClass = "completed";
           iconClass = "done";
           badgeClass = "done";
-          badgeLabel = "✓ Sudah Check-in";
+          badgeLabel = "✓ Selesai";
+          descText =
+            "Anda telah memperbarui kondisi pemulihan Anda (H+14). Catatan klinis mandiri telah tersinkronisasi untuk evaluasi DPJP.";
           actionBtnHtml = `
           <div style="margin-top: 10px; font-size: 12px; color: #16a34a; font-weight: 700; background: #dcfce7; padding: 6px 12px; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px;">
-            <span>✓</span> Check-in H+14 Selesai (+25 Pts didapatkan)
+            <span>✓</span> Recovery Check-in Completed (+25 Pts didapatkan)
           </div>
         `;
         } else {
@@ -1515,7 +1518,7 @@ function renderCareJourneyTimeline() {
             <span class="milestone-date-text">${item.date}</span>
           </div>
           <div class="milestone-title">${item.title}</div>
-          <div class="milestone-desc">${item.desc}</div>
+          <div class="milestone-desc">${descText}</div>
           ${actionBtnHtml}
         </div>
       </div>
@@ -1652,7 +1655,7 @@ function renderHomeScreen() {
 
   if (bubble) {
     if (isDoneToday) {
-      bubble.innerHTML = `💬 "Terima kasih, Budi! Check-in kondisi H+14 Anda sudah tercatat. Tetap ikuti latihan mandiri ya."`;
+      bubble.innerHTML = `💬 "✓ Check-in hari ini sudah selesai. Status terakhir: <strong>${state.miraData.lastCheckinSummary}</strong>"`;
     } else {
       bubble.innerHTML = `💬 "Halo Budi, bagaimana kondisi lutut Anda hari ini?"`;
     }
@@ -1660,13 +1663,13 @@ function renderHomeScreen() {
 
   if (badge) {
     badge.textContent = isDoneToday
-      ? "Check-in Selesai"
+      ? "✓ Check-in Selesai"
       : "AI Recovery Assistant";
   }
 
   if (btnText) {
     btnText.textContent = isDoneToday
-      ? "Lihat Riwayat Check-in"
+      ? "Lihat Status Pemulihan"
       : "Check-in Sekarang (+25 CarePoints)";
   }
 
@@ -1737,6 +1740,12 @@ function goToMiraStep(stepNum) {
   if (stepNum <= 5) {
     const currentStepEl = document.getElementById(`mira-step-${stepNum}`);
     if (currentStepEl) currentStepEl.classList.add("active");
+    if (stepNum === 5) {
+      const noteInput = document.getElementById("mira-patient-note-input");
+      if (noteInput && miraCurrentAnswers.note) {
+        noteInput.value = miraCurrentAnswers.note;
+      }
+    }
   } else {
     if (summaryEl) summaryEl.classList.add("active");
     renderMiraResponseSummary();
@@ -1771,7 +1780,11 @@ function goToMiraStep(stepNum) {
 
 function goToPrevMiraStep() {
   if (miraCurrentStep > 1) {
-    goToMiraStep(miraCurrentStep - 1);
+    if (miraCurrentStep === 6) {
+      goToMiraStep(5);
+    } else {
+      goToMiraStep(miraCurrentStep - 1);
+    }
   }
 }
 
@@ -2131,10 +2144,20 @@ function closeAllModals() {
 // ============================================================================
 
 function resetPrototypeDemo() {
-  state.resetAllDemoData();
+  const wasLoggedIn = state.isLoggedIn;
+  state.resetAllDemoData(wasLoggedIn);
   closeAllModals();
-  navigateToScreen("screen-welcome");
-  showToast("State prototype & CarePoints telah di-reset ke awal.");
+  renderCarePointDashboard();
+  renderHomeScreen();
+  renderCareJourneyTimeline();
+  renderMiraScreen();
+  if (wasLoggedIn) {
+    switchTab("home");
+    navigateToScreen("screen-home");
+  } else {
+    navigateToScreen("screen-welcome");
+  }
+  showToast("Data demo berhasil di-reset ke kondisi awal (450 CarePoints).");
 }
 
 function toggleDeviceFrame() {

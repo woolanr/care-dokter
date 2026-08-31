@@ -1398,6 +1398,30 @@
                 <span class="menu-item-arrow">→</span>
               </button>
 
+              <!-- Reset Demo Data (Competition & Evaluation Tool) -->
+              <button
+                class="profile-menu-item"
+                onclick="openModal('modal-reset-demo-confirm')"
+              >
+                <div class="menu-item-left">
+                  <div
+                    class="menu-item-icon"
+                    style="color: #0284c7; background: #e0f2fe"
+                  >
+                    🔄
+                  </div>
+                  <div>
+                    <div class="menu-item-title" style="color: #0284c7">
+                      Reset Demo Data
+                    </div>
+                    <div class="menu-item-sub">
+                      Kembalikan data simulasi ke awal (450 Poin)
+                    </div>
+                  </div>
+                </div>
+                <span class="menu-item-arrow" style="color: #0284c7">→</span>
+              </button>
+
               <!-- Logout -->
               <button
                 class="profile-menu-item"
@@ -3071,6 +3095,45 @@
             onclick="closeModal('modal-mira-already-completed')"
           >
             Tutup
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 17. Reset Demo Data Confirmation Modal -->
+    <div class="modal-backdrop" id="modal-reset-demo-confirm">
+      <div class="modal-content-card" style="text-align: center">
+        <div
+          class="modal-icon-badge"
+          style="background: #e0f2fe; color: #0284c7; font-size: 28px"
+        >
+          🔄
+        </div>
+        <h3
+          class="modal-title"
+          style="color: var(--primary-deep); margin-bottom: 4px"
+        >
+          Reset Data Demo?
+        </h3>
+        <p class="modal-text" style="margin-bottom: 14px">
+          Semua data simulasi akan dikembalikan ke kondisi awal (Saldo: 450
+          CarePoints, Progres: 70%, Status Check-in: Belum Diisi, Misi:
+          Tersedia).
+        </p>
+
+        <div class="modal-actions">
+          <button
+            class="btn-primary-mobile"
+            onclick="resetPrototypeDemo()"
+            style="background: #0284c7"
+          >
+            ✓ Ya, Reset ke Kondisi Awal
+          </button>
+          <button
+            class="btn-secondary-mobile"
+            onclick="closeModal('modal-reset-demo-confirm')"
+          >
+            Batalkan
           </button>
         </div>
       </div>
