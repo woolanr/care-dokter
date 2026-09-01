@@ -1463,16 +1463,18 @@ app.delete("/api/bookings/:id", (req, res) => {
 // 9. PENYAJIAN FILE STATIS & GAMBAR (public/)
 // ==========================================
 
-// Endpoint khusus untuk official Mandaya logo (/assets/mira/logo_mandaya.png & aliases)
+// Endpoint khusus untuk official Mandaya logo (/assets/logo_mandaya.png & aliases)
 const mandayaLogoRoutes = [
+  "/assets/logo_mandaya.png",
+  "/assets/logo_mandaya.jpg",
+  "/logo_mandaya.png",
+  "/logo_mandaya.jpg",
   "/assets/mira/logo_mandaya.png",
   "/assets/mira/logo_mandaya.jpg",
   "/assets/images/logo_mandaya.png",
   "/assets/images/logo_mandaya.jpg",
   "/src/assets/images/logo_mandaya.png",
   "/src/assets/images/logo_mandaya.jpg",
-  "/assets/logo_mandaya.png",
-  "/logo_mandaya.png",
   "/unnamed.png",
   "/assets/unnamed.png",
   "/assets/care-dokter-logo.png",
@@ -1482,11 +1484,13 @@ const mandayaLogoRoutes = [
 
 app.get(mandayaLogoRoutes, (req, res) => {
   const possiblePaths = [
+    path.join(__dirname, "public", "assets", "logo_mandaya.png"),
+    path.join(__dirname, "public", "assets", "logo_mandaya.jpg"),
+    path.join(__dirname, "public", "logo_mandaya.png"),
     path.join(__dirname, "public", "assets", "mira", "logo_mandaya.png"),
     path.join(__dirname, "public", "assets", "mira", "logo_mandaya.jpg"),
     path.join(__dirname, "public", "assets", "images", "logo_mandaya.png"),
     path.join(__dirname, "src", "assets", "images", "logo_mandaya.png"),
-    path.join(__dirname, "public", "logo_mandaya.png"),
     path.join(__dirname, "public", "assets", "care-dokter-logo.png"),
     path.join(__dirname, "public", "unnamed.png"),
     path.join(__dirname, "public", "assets", "unnamed.png"),
