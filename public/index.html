@@ -2279,23 +2279,41 @@
 
     <!-- 9. Reward Redemption Success Modal with Next Best Action -->
     <div class="modal-backdrop" id="modal-reward-success">
-      <div class="modal-content-card" style="text-align: center">
+      <div
+        class="modal-content-card"
+        style="text-align: center; max-height: 90vh; overflow-y: auto"
+      >
         <div
           class="modal-icon-badge"
           style="background: #ecfdf5; color: #10b981; font-size: 28px"
         >
           ✨
         </div>
-        <h3 class="modal-title" style="color: #047857">Berhasil Digunakan!</h3>
-        <p class="modal-text" style="margin-bottom: 14px">
-          Anda telah menggunakan
-          <strong id="success-cost-text">300 CarePoints</strong> untuk
-          <strong id="success-reward-name">Follow-up Consultation</strong>.
+        <h3 class="modal-title" style="color: #047857; margin-bottom: 4px">
+          Penukaran Berhasil!
+        </h3>
+        <p
+          class="modal-text"
+          style="margin-bottom: 12px; font-size: 13px; color: var(--text-body)"
+        >
+          Voucher Anda telah ditambahkan ke
+          <strong style="color: var(--primary-deep)">Voucher Saya</strong
+          >.<br />
+          <span style="font-size: 12px; color: var(--text-muted)">
+            Menggunakan
+            <strong id="success-cost-text" style="color: var(--text-main)"
+              >300 CarePoints</strong
+            >
+            untuk
+            <strong id="success-reward-name" style="color: var(--text-main)"
+              >Follow-up Consultation</strong
+            >.
+          </span>
         </p>
 
         <!-- Unique Voucher Code Box -->
         <div class="voucher-code-card">
-          <div class="voucher-code-label">KODE MANFAAT ANDA</div>
+          <div class="voucher-code-label">KODE VOUCHER ANDA</div>
           <div class="voucher-code-number" id="success-voucher-code">
             CARE-7294
           </div>
@@ -2303,27 +2321,70 @@
             Berlaku s/d 30 September 2026
           </div>
           <button class="btn-copy-code" onclick="copyVoucherCode()">
-            📋 Salin Kode Manfaat
+            📋 Salin Kode Voucher
           </button>
         </div>
 
-        <!-- POST-REDEMPTION NEXT BEST ACTION -->
-        <div class="next-best-action-card">
-          <div class="nba-header">
-            <span class="nba-badge">What's Next?</span>
-            <span class="nba-icon">🩺</span>
+        <!-- Sisa CarePoints Bar -->
+        <div
+          style="
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 9px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+          "
+        >
+          <span
+            style="
+              font-size: 12px;
+              font-weight: 600;
+              color: var(--text-muted);
+              display: flex;
+              align-items: center;
+              gap: 6px;
+            "
+          >
+            <span>🪙</span> Sisa CarePoints:
+          </span>
+          <span
+            style="font-size: 13.5px; font-weight: 800; color: #6d4bd8"
+            id="success-remaining-points"
+            >150 Points</span
+          >
+        </div>
+
+        <!-- POST-REDEMPTION NEXT BEST ACTION CONTAINER -->
+        <div id="post-redemption-nba-container">
+          <!-- Injected dynamically by renderPostRedemptionNextBestAction() -->
+        </div>
+
+        <!-- SECONDARY ACTIONS CONTAINER -->
+        <div style="margin-top: 14px; text-align: left">
+          <div
+            style="
+              font-size: 11px;
+              font-weight: 800;
+              color: var(--text-muted);
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+              margin-bottom: 8px;
+            "
+          >
+            Pilihan Lainnya
           </div>
-          <h4 class="nba-title">Konfirmasi Jadwal Kontrol Anda</h4>
-          <p class="nba-desc">
-            Pastikan jadwal kontrol lanjutan ortopedi (7 Sep 2026) terkonfirmasi
-            untuk kelancaran penggunaan voucher manfaat ini.
-          </p>
-          <button class="btn-nba-action" onclick="handlePostRedemptionAction()">
-            📅 Konfirmasi Kontrol Sekarang (+20 Pts)
-          </button>
+          <div
+            id="post-redemption-secondary-container"
+            style="display: flex; flex-direction: column; gap: 8px"
+          >
+            <!-- Injected dynamically by renderPostRedemptionNextBestAction() -->
+          </div>
         </div>
 
-        <div class="modal-actions" style="margin-top: 12px">
+        <div class="modal-actions" style="margin-top: 16px">
           <button
             class="btn-primary-mobile"
             onclick="
@@ -2331,7 +2392,7 @@
               switchCarePointCategory('my-rewards');
             "
           >
-            Lihat di My Rewards
+            Lihat di Voucher Saya
           </button>
           <button
             class="btn-secondary-mobile"
@@ -3426,7 +3487,10 @@
             border: 1px solid #a7f3d0;
           "
         >
-          <span>🪙</span> +20 CarePoints Telah Ditambahkan
+          <span>🪙</span>
+          <span id="neutral-thanks-pts-badge"
+            >+20 CarePoints Telah Ditambahkan</span
+          >
         </div>
         <h3
           class="modal-title"
@@ -3520,7 +3584,10 @@
             border: 1px solid #a7f3d0;
           "
         >
-          <span>🪙</span> +20 CarePoints Telah Ditambahkan
+          <span>🪙</span>
+          <span id="pos-advocacy-pts-badge"
+            >+20 CarePoints Telah Ditambahkan</span
+          >
         </div>
         <h3
           class="modal-title"

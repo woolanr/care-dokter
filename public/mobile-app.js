@@ -1224,7 +1224,7 @@ function executeRedemption() {
   // Close confirm modal
   closeModal("modal-reward-confirm");
 
-  // Populate Success Modal
+  // Populate Success Modal Basic Info
   const successCostEl = document.getElementById("success-cost-text");
   const successNameEl = document.getElementById("success-reward-name");
   const successCodeEl = document.getElementById("success-voucher-code");
@@ -1236,9 +1236,225 @@ function executeRedemption() {
   if (successExpiryEl)
     successExpiryEl.textContent = "Berlaku s/d 30 September 2026";
 
+  // Render Dynamic Post-Redemption Next-Best-Action
+  renderPostRedemptionNextBestAction(reward, state.currentUser.carePoints);
+
   openModal("modal-reward-success");
   renderCarePointDashboard();
+  renderHomeScreen();
   showToast(`Voucher ${reward.name} berhasil didapatkan!`);
+}
+
+/**
+ * Render dynamic Post-Redemption Next-Best-Action (Feature 1.7)
+ * Evaluates remaining points, clinical context, and patient care journey.
+ */
+function renderPostRedemptionNextBestAction(reward, remainingPoints) {
+  const container = document.getElementById("post-redemption-nba-container");
+  const secondaryContainer = document.getElementById(
+    "post-redemption-secondary-container",
+  );
+  const remainingPointsEl = document.getElementById("success-remaining-points");
+
+  if (remainingPointsEl) {
+    remainingPointsEl.textContent = `${remainingPoints} Points`;
+  }
+
+  if (!container) return;
+
+  const mission2 = state.missions.find((m) => m.id === "mission-2");
+  const isAppointmentConfirmed = Boolean(
+    state.currentUser.appointmentConfirmed ||
+    (mission2 && mission2.status === "completed"),
+  );
+  const isRecoveryJourney =
+    state.currentUser.careJourney === "Orthopedic Recovery" ||
+    (state.currentUser.careJourney &&
+      state.currentUser.careJourney.toLowerCase().includes("orthopedic"));
+
+  let primaryNba = null;
+
+  // 1. CLINICAL CONTEXT PRIORITY:
+  // If the patient is in an active recovery journey with an upcoming follow-up appointment not yet confirmed
+  if (!isAppointmentConfirmed && isRecoveryJourney) {
+    primaryNba = {
+      badge: "Langkah Selanjutnya",
+      icon: "🩺",
+      title: "Konfirmasi Jadwal Kontrol Anda",
+      desc: "Anda memiliki jadwal kontrol lanjutan ortopedi pada 7 September 2026. Konfirmasikan kehadiran untuk kelancaran konsultasi dokter spesialis.",
+      subNote: `Dengan sisa ${remainingPoints} CarePoints, Anda juga dapat menggunakan poin untuk layanan pemulihan seperti Telekonsultasi Fisioterapi.`,
+      btnLabel: "📅 Konfirmasi Jadwal Sekarang (+20 Pts)",
+      btnAction: "confirmAppointmentFromNBA()",
+    };
+  }
+  // 2. RULE A — REMAINING POINTS >= 300
+  else if (remainingPoints >= 300) {
+    primaryNba = {
+      badge: "Rekomendasi Poin",
+      icon: "⭐",
+      title: "Gunakan Poin untuk Perawatan Berikutnya",
+      desc: `Anda masih memiliki cukup CarePoints (${remainingPoints} Pts) untuk melanjutkan perjalanan kesehatan Anda.`,
+      subNote:
+        "Gunakan untuk konsultasi spesialis lanjutan, fisioterapi, atau voucher pemulihan.",
+      btnLabel: "Lihat Rekomendasi Saya",
+      btnAction: "exploreNextRewards('care')",
+    };
+  }
+  // 3. RULE B — REMAINING POINTS 100–299
+  else if (remainingPoints >= 100) {
+    primaryNba = {
+      badge: "Rekomendasi Pemulihan",
+      icon: "🎯",
+      title: "Gunakan Poin untuk Reward Pemulihan",
+      desc: `Poin Anda (${remainingPoints} Pts) masih bisa digunakan untuk mendukung perjalanan pemulihan.`,
+      subNote: isAppointmentConfirmed
+        ? "Jadwal kontrol 7 Sep 2026 terkonfirmasi. Tersedia voucher Telekonsultasi, Edukasi Pemulihan, atau Wellness."
+        : "Tersedia Telekonsultasi, Edukasi Pemulihan, atau Wellness & Recovery.",
+      btnLabel: "Lihat Reward yang Tersedia",
+      btnAction: "exploreNextRewards('care')",
+    };
+  }
+  // 4. RULE C — REMAINING POINTS < 100
+  else {
+    primaryNba = {
+      badge: "Kumpulkan Poin",
+      icon: "⚡",
+      title: "Kumpulkan CarePoints untuk Reward Berikutnya",
+      desc: "Anda telah memanfaatkan CarePoints untuk perjalanan kesehatan Anda.",
+      subNote:
+        "Selesaikan Misi Perawatan harian, MIRA Check-in, atau berikan ulasan untuk menambah saldo poin.",
+      btnLabel: "Lihat Cara Mendapatkan Poin",
+      btnAction: "exploreMissionsFromNBA()",
+    };
+  }
+
+  // Render Primary NBA Card
+  container.innerHTML = `
+    <div class="next-best-action-card">
+      <div class="nba-header">
+        <span class="nba-badge">✨ ${primaryNba.badge}</span>
+        <span class="nba-icon">${primaryNba.icon}</span>
+      </div>
+      <h4 class="nba-title">${primaryNba.title}</h4>
+      <p class="nba-desc" style="margin-bottom: 6px;">${primaryNba.desc}</p>
+      ${primaryNba.subNote ? `<p style="font-size: 11.5px; color: #4338ca; background: #e0e7ff; padding: 6px 10px; border-radius: 8px; margin-bottom: 10px; line-height: 1.4;">💡 ${primaryNba.subNote}</p>` : ""}
+      <button class="btn-nba-action" id="btn-primary-nba" onclick="${primaryNba.btnAction}">
+        ${primaryNba.btnLabel}
+      </button>
+    </div>
+  `;
+
+  // Render Secondary Action Cards
+  if (secondaryContainer) {
+    let cards = [];
+
+    // Option 1: MIRA Check-in
+    const miraDone = Boolean(state.miraData && state.miraData.todayCheckinDone);
+    cards.push(`
+      <div class="nba-secondary-card">
+        <div class="nba-secondary-left">
+          <span class="nba-secondary-icon">🤖</span>
+          <div>
+            <div class="nba-secondary-title">Lanjutkan Pemulihan Bersama MIRA</div>
+            <div class="nba-secondary-desc">Lakukan check-in untuk memantau perkembangan pemulihan Anda.</div>
+          </div>
+        </div>
+        <button class="btn-nba-secondary" onclick="openMiraCheckinFromNBA()">
+          ${miraDone ? "Lihat MIRA" : "Check-in MIRA"}
+        </button>
+      </div>
+    `);
+
+    // Option 2: Family Share / Transfer
+    cards.push(`
+      <div class="nba-secondary-card">
+        <div class="nba-secondary-left">
+          <span class="nba-secondary-icon">👨‍👩‍👧</span>
+          <div>
+            <div class="nba-secondary-title">Bagikan ke Keluarga</div>
+            <div class="nba-secondary-desc">Ajak keluarga mengenal Care Dokter & transfer poin keluarga.</div>
+          </div>
+        </div>
+        <button class="btn-nba-secondary" onclick="openFamilyTransferFromNBA()">
+          Transfer Poin
+        </button>
+      </div>
+    `);
+
+    // Option 3: Explore Other Rewards
+    if (remainingPoints >= 50) {
+      cards.push(`
+        <div class="nba-secondary-card">
+          <div class="nba-secondary-left">
+            <span class="nba-secondary-icon">🎁</span>
+            <div>
+              <div class="nba-secondary-title">Cari Reward Lain</div>
+              <div class="nba-secondary-desc">Gunakan sisa ${remainingPoints} poin untuk manfaat lainnya.</div>
+            </div>
+          </div>
+          <button class="btn-nba-secondary" onclick="exploreNextRewards('lifestyle')">
+            Lihat Rewards
+          </button>
+        </div>
+      `);
+    }
+
+    secondaryContainer.innerHTML = cards.slice(0, 2).join("");
+  }
+}
+
+/**
+ * Handle confirm appointment directly from Post-Redemption NBA
+ */
+function confirmAppointmentFromNBA() {
+  confirmAppointmentAction();
+
+  // Re-render NBA card with updated centralized balance
+  const currentReward =
+    state.pendingRedemptionReward || (state.myRewards && state.myRewards[0]);
+  const updatedPoints = state.currentUser.carePoints;
+  renderPostRedemptionNextBestAction(currentReward, updatedPoints);
+
+  // Sync all affected UI
+  renderCarePointDashboard();
+  renderHomeScreen();
+  renderCareJourneyTimeline();
+}
+
+/**
+ * Open MIRA Check-in from NBA
+ */
+function openMiraCheckinFromNBA() {
+  closeModal("modal-reward-success");
+  openMiraCheckin();
+}
+
+/**
+ * Open Family Transfer from NBA
+ */
+function openFamilyTransferFromNBA() {
+  closeModal("modal-reward-success");
+  if (state.currentUser.carePoints >= 50) {
+    openFamilyTransferModal(50);
+  } else {
+    switchCarePointCategory("family");
+  }
+}
+
+/**
+ * Explore next rewards from NBA
+ */
+function exploreNextRewards(catKey = "care") {
+  closeModal("modal-reward-success");
+  switchCarePointCategory(catKey);
+}
+
+/**
+ * Explore missions from NBA
+ */
+function exploreMissionsFromNBA() {
+  closeModal("modal-reward-success");
+  switchCarePointCategory("missions");
 }
 
 /**
@@ -1247,10 +1463,16 @@ function executeRedemption() {
  */
 function confirmAppointmentAction() {
   const mission2 = state.missions.find((m) => m.id === "mission-2");
-  const alreadyConfirmed = mission2 && mission2.status === "completed";
+  const alreadyConfirmed = Boolean(
+    state.currentUser.appointmentConfirmed ||
+    (mission2 && mission2.status === "completed"),
+  );
 
   if (!alreadyConfirmed) {
-    if (mission2) mission2.status = "completed";
+    if (mission2) {
+      mission2.status = "completed";
+      mission2.btnText = "✓ Selesai";
+    }
     state.currentUser.appointmentConfirmed = true;
     state.addPoints(
       20,
@@ -1258,8 +1480,11 @@ function confirmAppointmentAction() {
       "Konfirmasi jadwal kontrol ortopedi 7 Sep 2026",
       "📅",
     );
+    state.saveState();
     renderCarePointDashboard();
+    renderHomeScreen();
     renderAppointmentState();
+    renderCareJourneyTimeline();
     showToast(
       "Jadwal kontrol 7 Sep 2026 terkonfirmasi! +20 CarePoints ditambahkan.",
     );
