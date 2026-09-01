@@ -221,6 +221,16 @@ const DEFAULT_CARE_MISSIONS = [
     btnText: "5 / 7 Hari",
     icon: "🔥",
   },
+  {
+    id: "mission-5",
+    title: "Beri Ulasan Pengalaman Pelayanan",
+    reward: 20,
+    status: "available",
+    category: "MIRA Listen",
+    desc: "Bagikan masukan & evaluasi pengalaman pelayanan perawatan Anda.",
+    btnText: "Beri Ulasan",
+    icon: "💬",
+  },
 ];
 
 // Demo Credentials
@@ -354,6 +364,7 @@ const DEFAULT_FEEDBACK = {
   categories: [], // string[]
   comment: "",
   submittedAt: "",
+  pointsAwarded: false,
 };
 
 const DEFAULT_ADVOCACY = {
@@ -404,9 +415,22 @@ class AppState {
     this.myRewards = savedMyRewards
       ? JSON.parse(savedMyRewards)
       : [...DEFAULT_MY_REWARDS];
-    this.missions = savedMissions
-      ? JSON.parse(savedMissions)
-      : [...DEFAULT_CARE_MISSIONS];
+
+    if (savedMissions) {
+      try {
+        const parsed = JSON.parse(savedMissions);
+        const map = new Map(parsed.map((m) => [m.id, m]));
+        this.missions = DEFAULT_CARE_MISSIONS.map((def) => {
+          const existing = map.get(def.id);
+          return existing ? { ...def, ...existing } : { ...def };
+        });
+      } catch (e) {
+        this.missions = DEFAULT_CARE_MISSIONS.map((m) => ({ ...m }));
+      }
+    } else {
+      this.missions = DEFAULT_CARE_MISSIONS.map((m) => ({ ...m }));
+    }
+
     this.miraData = savedMiraData
       ? JSON.parse(savedMiraData)
       : { ...DEFAULT_MIRA_DATA };
@@ -419,6 +443,20 @@ class AppState {
     this.advocacy = savedAdvocacy
       ? JSON.parse(savedAdvocacy)
       : { ...DEFAULT_ADVOCACY };
+
+    // Sync mission-5 status if feedback was already submitted
+    if (
+      this.feedback &&
+      (this.feedback.pointsAwarded || this.feedback.submitted)
+    ) {
+      const m5 = this.missions.find(
+        (m) => m.id === "mission-5" || m.title.toLowerCase().includes("ulasan"),
+      );
+      if (m5) {
+        m5.status = "completed";
+        m5.btnText = "✓ Selesai";
+      }
+    }
 
     this.currentScreen = "splash";
     this.currentTab = "home";
@@ -563,7 +601,7 @@ class AppState {
     this.familyPool = { ...DEFAULT_FAMILY_POOL };
     this.pointTransactions = [...DEFAULT_TRANSACTIONS];
     this.myRewards = [...DEFAULT_MY_REWARDS];
-    this.missions = [...DEFAULT_CARE_MISSIONS];
+    this.missions = DEFAULT_CARE_MISSIONS.map((m) => ({ ...m }));
     this.miraData = { ...DEFAULT_MIRA_DATA, todayCheckinDone: false };
     this.timelineMilestones = [...DEFAULT_TIMELINE_MILESTONES];
     this.feedback = { ...DEFAULT_FEEDBACK };
@@ -1470,6 +1508,12 @@ function handleMissionAction(missionId) {
     showToast("Misi membaca tips pemulihan ortopedi telah selesai.");
   } else if (missionId === "mission-4") {
     showToast("Progres 7-Day Care Streak: 5 dari 7 hari pemulihan aktif.");
+  } else if (missionId === "mission-5") {
+    if (state.feedback && state.feedback.submitted) {
+      showToast("Misi ulasan pengalaman pelayanan telah selesai.");
+    } else {
+      openFeedbackModal();
+    }
   }
 }
 
