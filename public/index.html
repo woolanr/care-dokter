@@ -497,12 +497,26 @@
                   <div class="home-brand-sub">Mandaya Royal Hospital</div>
                 </div>
               </div>
-              <div
-                class="patient-avatar-badge"
-                onclick="switchTab('profile')"
-                title="Buka Profil"
-              >
-                BS
+              <div style="display: flex; align-items: center; gap: 8px">
+                <!-- Header Notification Bell Button -->
+                <button
+                  class="header-notification-btn"
+                  id="header-notif-btn"
+                  onclick="openNotificationCenter()"
+                  title="Pusat Notifikasi"
+                >
+                  <span class="notif-bell-icon">🔔</span>
+                  <span class="notif-badge-count" id="header-notif-badge"
+                    >2</span
+                  >
+                </button>
+                <div
+                  class="patient-avatar-badge"
+                  onclick="switchTab('profile')"
+                  title="Buka Profil"
+                >
+                  BS
+                </div>
               </div>
             </div>
 
@@ -578,7 +592,8 @@
               </div>
 
               <div class="mira-prompt-bubble" id="home-mira-bubble">
-                💬 "Halo Budi, bagaimana kondisi lutut Anda hari ini?"
+                💬 "Halo Budi, bagaimana kondisi Anda hari ini? Ceritakan
+                progres pemulihan Anda."
               </div>
 
               <button
@@ -2031,26 +2046,87 @@
       </div>
     </div>
 
-    <!-- 5. Notifications Modal -->
+    <!-- 5. Notification Center Modal (Module 3.1 Simulated Notification Engine) -->
     <div class="modal-backdrop" id="modal-notifications">
-      <div class="modal-content-card">
-        <div
-          class="modal-icon-badge"
-          style="background: #fef3c7; color: #d97706"
-        >
-          🔔
+      <div
+        class="modal-content-card"
+        style="
+          text-align: left;
+          max-height: 88vh;
+          display: flex;
+          flex-direction: column;
+          padding: 18px 16px;
+        "
+      >
+        <!-- Top Notification Header -->
+        <div class="notif-center-header">
+          <div style="display: flex; align-items: center; gap: 8px">
+            <span style="font-size: 20px">🔔</span>
+            <div>
+              <h3
+                class="modal-title"
+                style="margin-bottom: 2px; font-size: 15px"
+              >
+                Pusat Notifikasi
+              </h3>
+              <div style="font-size: 11px; color: var(--text-muted)">
+                Pengingat perjalanan pemulihan Mandaya
+              </div>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px">
+            <button
+              class="text-btn"
+              onclick="markAllNotificationsAsRead()"
+              style="
+                font-size: 11.5px;
+                color: #0284c7;
+                font-weight: 700;
+                padding: 4px 6px;
+              "
+            >
+              Tandai Dibaca
+            </button>
+            <button
+              class="text-btn"
+              onclick="closeModal('modal-notifications')"
+              style="font-size: 18px; line-height: 1; padding: 4px 6px"
+            >
+              ✕
+            </button>
+          </div>
         </div>
-        <h3 class="modal-title">Pengaturan Notifikasi</h3>
-        <p class="modal-text">
-          Notifikasi otomatis aktif untuk pengingat jadwal kontrol (7 Sep 2026),
-          sapaan harian MIRA, dan perolehan CarePoints.
-        </p>
-        <div class="modal-actions">
+
+        <!-- Notification List (Dynamically Rendered) -->
+        <div
+          class="notif-center-body"
+          id="notif-center-list"
+          style="
+            overflow-y: auto;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 2px 2px 10px 2px;
+          "
+        >
+          <!-- Populated by renderNotificationCenter() -->
+        </div>
+
+        <!-- Modal Footer -->
+        <div
+          class="modal-actions"
+          style="
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid var(--border);
+          "
+        >
           <button
-            class="btn-primary-mobile"
+            class="btn-secondary-mobile"
             onclick="closeModal('modal-notifications')"
           >
-            Simpan & Tutup
+            Tutup
           </button>
         </div>
       </div>
@@ -2662,8 +2738,7 @@
           <!-- STEP 1: General Condition -->
           <div class="mira-step-container active" id="mira-step-1">
             <div class="mira-bubble-msg">
-              👋 <strong>Halo Budi</strong>, bagaimana kondisi lutut Anda hari
-              ini?
+              👋 <strong>Halo Budi</strong>, bagaimana kondisi Anda hari ini?
             </div>
             <p class="mira-step-hint">
               Pilih kondisi yang paling menggambarkan keadaan Anda:
@@ -2672,13 +2747,13 @@
             <div class="mira-options-grid">
               <button
                 class="mira-option-tile"
-                onclick="selectMiraOption(1, 'Lebih Baik', '😊 Lebih Baik')"
+                onclick="selectMiraOption(1, 'Membaik', '😊 Membaik')"
               >
                 <span class="opt-emoji">😊</span>
                 <div class="opt-text-wrap">
-                  <span class="opt-title">Lebih Baik</span>
+                  <span class="opt-title">Membaik</span>
                   <span class="opt-sub"
-                    >Ada perbaikan signifikan pada lutut</span
+                    >Ada perbaikan signifikan pada lutut & mobilitas</span
                   >
                 </div>
               </button>
@@ -2688,14 +2763,14 @@
                 onclick="
                   selectMiraOption(
                     1,
-                    'Sama Seperti Sebelumnya',
-                    '🙂 Sama Seperti Sebelumnya',
+                    'Masih terasa tidak nyaman',
+                    '😐 Masih terasa tidak nyaman',
                   )
                 "
               >
-                <span class="opt-emoji">🙂</span>
+                <span class="opt-emoji">😐</span>
                 <div class="opt-text-wrap">
-                  <span class="opt-title">Sama Seperti Sebelumnya</span>
+                  <span class="opt-title">Masih terasa tidak nyaman</span>
                   <span class="opt-sub"
                     >Kondisi relatif stabil tanpa perubahan besar</span
                   >
@@ -2704,25 +2779,20 @@
 
               <button
                 class="mira-option-tile"
-                onclick="selectMiraOption(1, 'Masih Nyeri', '😣 Masih Nyeri')"
-              >
-                <span class="opt-emoji">😣</span>
-                <div class="opt-text-wrap">
-                  <span class="opt-title">Masih Nyeri</span>
-                  <span class="opt-sub"
-                    >Masih terasa nyeri yang mengganggu</span
-                  >
-                </div>
-              </button>
-
-              <button
-                class="mira-option-tile"
-                onclick="selectMiraOption(1, 'Lebih Buruk', '😟 Lebih Buruk')"
+                onclick="
+                  selectMiraOption(
+                    1,
+                    'Membutuhkan bantuan',
+                    '😟 Membutuhkan bantuan',
+                  )
+                "
               >
                 <span class="opt-emoji">😟</span>
                 <div class="opt-text-wrap">
-                  <span class="opt-title">Lebih Buruk</span>
-                  <span class="opt-sub">Keluhan bertambah atau membengkak</span>
+                  <span class="opt-title">Membutuhkan bantuan</span>
+                  <span class="opt-sub"
+                    >Keluhan bertambah atau membutuhkan pendampingan</span
+                  >
                 </div>
               </button>
             </div>
@@ -2731,7 +2801,7 @@
           <!-- STEP 2: Pain Level Scale -->
           <div class="mira-step-container" id="mira-step-2">
             <div class="mira-bubble-msg">
-              🩺 Seberapa besar rasa tidak nyaman yang Anda rasakan?
+              🩺 Seberapa besar rasa nyeri yang Anda rasakan?
             </div>
             <p class="mira-step-hint">
               Pilih skala tingkat nyeri yang Anda alami hari ini:
@@ -2753,7 +2823,7 @@
 
               <button
                 class="mira-pain-scale-item"
-                onclick="selectMiraPain(2, 'Ringan (1-3)')"
+                onclick="selectMiraPain(2, 'Nyeri Ringan (1-3)')"
               >
                 <div class="pain-num-badge pain-mild">1–3</div>
                 <div class="pain-info-wrap">
@@ -2766,7 +2836,7 @@
 
               <button
                 class="mira-pain-scale-item"
-                onclick="selectMiraPain(5, 'Sedang (4-6)')"
+                onclick="selectMiraPain(5, 'Nyeri Sedang (4-6)')"
               >
                 <div class="pain-num-badge pain-mod">4–6</div>
                 <div class="pain-info-wrap">
@@ -2779,7 +2849,7 @@
 
               <button
                 class="mira-pain-scale-item"
-                onclick="selectMiraPain(8, 'Berat (7-10)')"
+                onclick="selectMiraPain(8, 'Nyeri Berat (7-10)')"
               >
                 <div class="pain-num-badge pain-sev">7–10</div>
                 <div class="pain-info-wrap">
@@ -2795,10 +2865,10 @@
           <!-- STEP 3: Daily Activity -->
           <div class="mira-step-container" id="mira-step-3">
             <div class="mira-bubble-msg">
-              🚶‍♂️ Bagaimana aktivitas harian Anda hari ini?
+              🚶‍♂️ Apakah Anda dapat melakukan aktivitas ringan?
             </div>
             <p class="mira-step-hint">
-              Pilih tingkat mobilitas fisik Anda hari ini:
+              Pilih tingkat kemampuan mobilitas Anda hari ini:
             </p>
 
             <div class="mira-options-grid">
@@ -2807,16 +2877,16 @@
                 onclick="
                   selectMiraOption(
                     3,
-                    'Lebih aktif dari sebelumnya',
-                    '✓ Lebih aktif dari sebelumnya',
+                    'Ya, dengan nyaman',
+                    '✓ Ya, dengan nyaman',
                   )
                 "
               >
-                <span class="opt-emoji">🏃‍♂️</span>
+                <span class="opt-emoji">✓</span>
                 <div class="opt-text-wrap">
-                  <span class="opt-title">Lebih aktif dari sebelumnya</span>
+                  <span class="opt-title">Ya, dengan nyaman</span>
                   <span class="opt-sub"
-                    >Bisa berjalan lebih jauh dan mandiri</span
+                    >Bisa berjalan mandiri dan melakukan aktivitas ringan</span
                   >
                 </div>
               </button>
@@ -2824,14 +2894,18 @@
               <button
                 class="mira-option-tile"
                 onclick="
-                  selectMiraOption(3, 'Aktivitas normal', '✓ Aktivitas normal')
+                  selectMiraOption(
+                    3,
+                    'Bisa, tetapi masih terbatas',
+                    '~ Bisa, tetapi masih terbatas',
+                  )
                 "
               >
-                <span class="opt-emoji">🚶‍♂️</span>
+                <span class="opt-emoji">~</span>
                 <div class="opt-text-wrap">
-                  <span class="opt-title">Aktivitas normal</span>
+                  <span class="opt-title">Bisa, tetapi masih terbatas</span>
                   <span class="opt-sub"
-                    >Sesuai rutinitas pemulihan yang dianjurkan</span
+                    >Perlu tongkat penyangga atau bantuan terbatas</span
                   >
                 </div>
               </button>
@@ -2839,113 +2913,39 @@
               <button
                 class="mira-option-tile"
                 onclick="
-                  selectMiraOption(3, 'Masih terbatas', '✓ Masih terbatas')
+                  selectMiraOption(
+                    3,
+                    'Tidak nyaman atau sulit',
+                    '✕ Tidak nyaman atau sulit',
+                  )
                 "
               >
-                <span class="opt-emoji">🦿</span>
+                <span class="opt-emoji">✕</span>
                 <div class="opt-text-wrap">
-                  <span class="opt-title">Masih terbatas</span>
+                  <span class="opt-title">Tidak nyaman atau sulit</span>
                   <span class="opt-sub"
-                    >Perlu tongkat penyangga atau bantuan saat jalan</span
-                  >
-                </div>
-              </button>
-
-              <button
-                class="mira-option-tile"
-                onclick="
-                  selectMiraOption(3, 'Sangat terbatas', '✓ Sangat terbatas')
-                "
-              >
-                <span class="opt-emoji">🛏️</span>
-                <div class="opt-text-wrap">
-                  <span class="opt-title">Sangat terbatas</span>
-                  <span class="opt-sub"
-                    >Sebagian besar waktu di tempat tidur/duduk</span
+                    >Sebagian besar waktu istirahat di tempat tidur/duduk</span
                   >
                 </div>
               </button>
             </div>
           </div>
 
-          <!-- STEP 4: Recovery Confidence -->
+          <!-- STEP 4: Patient Note / Complaints (Optional) -->
           <div class="mira-step-container" id="mira-step-4">
             <div class="mira-bubble-msg">
-              ✨ Seberapa yakin Anda dengan perkembangan pemulihan Anda?
+              📝 Apakah ada keluhan yang ingin Anda sampaikan?
             </div>
             <p class="mira-step-hint">
-              Pilih tingkat keyakinan Anda terhadap proses pemulihan:
-            </p>
-
-            <div class="mira-options-grid">
-              <button
-                class="mira-option-tile"
-                onclick="selectMiraOption(4, 'Sangat Yakin', '😊 Sangat Yakin')"
-              >
-                <span class="opt-emoji">😊</span>
-                <div class="opt-text-wrap">
-                  <span class="opt-title">Sangat Yakin</span>
-                  <span class="opt-sub"
-                    >Merasa optimis dengan kemajuan lutut</span
-                  >
-                </div>
-              </button>
-
-              <button
-                class="mira-option-tile"
-                onclick="selectMiraOption(4, 'Cukup Yakin', '🙂 Cukup Yakin')"
-              >
-                <span class="opt-emoji">🙂</span>
-                <div class="opt-text-wrap">
-                  <span class="opt-title">Cukup Yakin</span>
-                  <span class="opt-sub"
-                    >Cukup nyaman mengikuti proses pemulihan</span
-                  >
-                </div>
-              </button>
-
-              <button
-                class="mira-option-tile"
-                onclick="selectMiraOption(4, 'Belum Yakin', '😐 Belum Yakin')"
-              >
-                <span class="opt-emoji">😐</span>
-                <div class="opt-text-wrap">
-                  <span class="opt-title">Belum Yakin</span>
-                  <span class="opt-sub"
-                    >Ragu apakah perkembangan sudah sesuai target</span
-                  >
-                </div>
-              </button>
-
-              <button
-                class="mira-option-tile"
-                onclick="selectMiraOption(4, 'Khawatir', '😟 Khawatir')"
-              >
-                <span class="opt-emoji">😟</span>
-                <div class="opt-text-wrap">
-                  <span class="opt-title">Khawatir</span>
-                  <span class="opt-sub"
-                    >Merasa cemas dengan kondisi pemulihan</span
-                  >
-                </div>
-              </button>
-            </div>
-          </div>
-
-          <!-- STEP 5: Patient Note (Optional) -->
-          <div class="mira-step-container" id="mira-step-5">
-            <div class="mira-bubble-msg">
-              📝 Apakah ada hal lain yang ingin Anda ceritakan?
-            </div>
-            <p class="mira-step-hint">
-              Catatan tambahan opsional untuk riwayat perawatan Anda:
+              Catatan tambahan opsional untuk riwayat perawatan dan pemantauan
+              dokter:
             </p>
 
             <div class="mira-note-input-wrap">
               <textarea
                 id="mira-patient-note-input"
                 class="mira-textarea"
-                placeholder="Contoh: Lutut terasa lebih kaku saat pagi hari, namun membaik setelah kompres hangat..."
+                placeholder="Contoh: Lutut terasa kaku di pagi hari, namun membaik setelah peregangan ringan..."
                 rows="4"
               ></textarea>
             </div>
@@ -2958,19 +2958,19 @@
                 margin-top: 14px;
               "
             >
-              <button class="btn-primary-mobile" onclick="submitMiraStep5()">
-                Lihat Ringkasan & Respon MIRA →
+              <button class="btn-primary-mobile" onclick="submitMiraStep4()">
+                Lihat Evaluasi MIRA →
               </button>
-              <button class="btn-secondary-mobile" onclick="skipMiraStep5()">
+              <button class="btn-secondary-mobile" onclick="skipMiraStep4()">
                 Lewati Catatan & Lanjutkan
               </button>
             </div>
           </div>
 
-          <!-- STEP 6: Check-in Summary & Rule-Based Response Engine -->
+          <!-- STEP 5: Check-in Summary & Rule-Based Triage Result -->
           <div class="mira-step-container" id="mira-step-summary">
             <div class="summary-top-banner">
-              <div style="font-size: 24px; margin-bottom: 4px">📋</div>
+              <div style="font-size: 24px; margin-bottom: 4px">🤖</div>
               <h4
                 style="
                   font-size: 15px;
@@ -2979,7 +2979,7 @@
                   margin-bottom: 2px;
                 "
               >
-                Ringkasan Check-in Hari Ini
+                Terima kasih, MIRA sedang meninjau kondisi Anda.
               </h4>
               <p style="font-size: 11.5px; color: var(--text-muted)">
                 Data Anda telah dirangkum untuk riwayat pemulihan.
@@ -2997,24 +2997,24 @@
                 <strong class="ans-val" id="sum-pain">-</strong>
               </div>
               <div class="summary-ans-item">
-                <span class="ans-label">Aktivitas Harian</span>
+                <span class="ans-label">Aktivitas Ringan</span>
                 <strong class="ans-val" id="sum-activity">-</strong>
               </div>
               <div class="summary-ans-item">
-                <span class="ans-label">Keyakinan Pemulihan</span>
-                <strong class="ans-val" id="sum-confidence">-</strong>
+                <span class="ans-label">Fase Perawatan</span>
+                <strong class="ans-val" id="sum-phase">H+14 Recovery</strong>
               </div>
               <div class="summary-ans-item full-width" id="sum-note-wrap">
-                <span class="ans-label">Catatan Tambahan</span>
+                <span class="ans-label">Catatan Pasien</span>
                 <div class="ans-val-note" id="sum-note">
                   Tidak ada catatan tambahan
                 </div>
               </div>
             </div>
 
-            <!-- MIRA AI Contextual Response Box -->
+            <!-- MIRA AI Contextual Response Box (Triage Green, Yellow, Red) -->
             <div class="mira-response-container" id="mira-response-container">
-              <!-- Dynamically rendered based on Scenario A, B, or C -->
+              <!-- Dynamically rendered based on Green, Yellow, or Red -->
             </div>
 
             <!-- Safety Guardrail Note -->
@@ -3022,8 +3022,8 @@
               <span>🛡️</span>
               <div>
                 <strong>Catatan Penting:</strong> MIRA membantu mencatat kondisi
-                Anda dan memberikan panduan umum. MIRA tidak menggantikan
-                konsultasi dengan tenaga kesehatan.
+                Anda dan memberikan evaluasi pemulihan umum. Ini bukan diagnosis
+                medis pengganti konsultasi langsung dengan dokter.
               </div>
             </div>
 

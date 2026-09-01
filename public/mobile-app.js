@@ -241,6 +241,57 @@ const DEMO_PASSWORD = "demo123";
 // FEATURE 3: MIRA RECOVERY COMPANION & CARE TIMELINE DATA MODELS
 // ============================================================================
 
+const DEFAULT_NOTIFICATIONS = [
+  {
+    id: "notif-mira-checkin",
+    type: "checkin",
+    badgeLabel: "MIRA Check-in",
+    title: "MIRA ingin mengetahui kondisi Anda",
+    desc: "Check-in pemulihan Anda hari ini belum selesai. Berikan kondisi terbaru untuk evaluasi dokter dan dapatkan +25 CarePoints.",
+    timeAgo: "Hari ini · 08:30 WIB",
+    read: false,
+    completed: false,
+    actionType: "checkin",
+    actionLabel: "Check-in Sekarang (+25 Pts)",
+  },
+  {
+    id: "notif-appointment-reminder",
+    type: "appointment",
+    badgeLabel: "Jadwal Kontrol",
+    title: "Pengingat Jadwal Kontrol DPJP Ortopedi",
+    desc: "Konsultasi evaluasi pemulihan H+21 bersama Dr. Andi Pratama, Sp.OT terjadwal pada 7 September 2026 pukul 10:00 WIB di Poli Ortopedi Mandaya Puri.",
+    timeAgo: "Kemarin · 14:00 WIB",
+    read: false,
+    completed: false,
+    actionType: "journey",
+    actionLabel: "Lihat Jadwal Perawatan",
+  },
+  {
+    id: "notif-mission-walk",
+    type: "mission",
+    badgeLabel: "Misi Pemulihan",
+    title: "Misi Harian: Latihan Peregangan Mandiri",
+    desc: "Lakukan latihan fleksi lutut 3x sehari sesuai panduan fisioterapi Mandaya untuk mempercepat pengembalian rentang gerak.",
+    timeAgo: "2 hari lalu",
+    read: true,
+    completed: true,
+    actionType: "journey",
+    actionLabel: "Lihat Misi",
+  },
+  {
+    id: "notif-feedback-points",
+    type: "redemption",
+    badgeLabel: "CarePoints",
+    title: "Apresiasi Suara Pasien: +20 CarePoints",
+    desc: "Terima kasih telah memberikan masukan melalui MIRA Listen. Masukan Anda sangat berharga bagi peningkatan layanan Mandaya.",
+    timeAgo: "3 hari lalu",
+    read: true,
+    completed: true,
+    actionType: "rewards",
+    actionLabel: "Cek Saldo Poin",
+  },
+];
+
 const DEFAULT_MIRA_DATA = {
   patientName: "Budi Santoso",
   procedure: "Total Knee Replacement (TKR) / Pasca Rekonstruksi ACL",
@@ -398,6 +449,10 @@ class AppState {
     const savedMilestones = localStorage.getItem("care_dokter_milestones");
     const savedFeedback = localStorage.getItem("care_dokter_feedback");
     const savedAdvocacy = localStorage.getItem("care_dokter_advocacy");
+    const savedNotifs = localStorage.getItem("care_dokter_notifications");
+    const savedBannerDismissed = localStorage.getItem(
+      "care_dokter_banner_dismissed",
+    );
 
     this.isLoggedIn = savedLoggedIn ? JSON.parse(savedLoggedIn) : false;
     this.onboardingCompleted = savedOnboarding
@@ -443,6 +498,12 @@ class AppState {
     this.advocacy = savedAdvocacy
       ? JSON.parse(savedAdvocacy)
       : { ...DEFAULT_ADVOCACY };
+    this.notifications = savedNotifs
+      ? JSON.parse(savedNotifs)
+      : DEFAULT_NOTIFICATIONS.map((n) => ({ ...n }));
+    this.bannerDismissed = savedBannerDismissed
+      ? JSON.parse(savedBannerDismissed)
+      : false;
 
     // Sync mission-5 status if feedback was already submitted
     if (
@@ -499,6 +560,14 @@ class AppState {
     );
     localStorage.setItem("care_dokter_feedback", JSON.stringify(this.feedback));
     localStorage.setItem("care_dokter_advocacy", JSON.stringify(this.advocacy));
+    localStorage.setItem(
+      "care_dokter_notifications",
+      JSON.stringify(this.notifications),
+    );
+    localStorage.setItem(
+      "care_dokter_banner_dismissed",
+      JSON.stringify(this.bannerDismissed),
+    );
   }
 
   login() {
@@ -594,6 +663,8 @@ class AppState {
     localStorage.removeItem("care_dokter_milestones");
     localStorage.removeItem("care_dokter_feedback");
     localStorage.removeItem("care_dokter_advocacy");
+    localStorage.removeItem("care_dokter_notifications");
+    localStorage.removeItem("care_dokter_banner_dismissed");
 
     this.isLoggedIn = stayLoggedIn;
     this.onboardingCompleted = stayLoggedIn;
@@ -606,6 +677,8 @@ class AppState {
     this.timelineMilestones = [...DEFAULT_TIMELINE_MILESTONES];
     this.feedback = { ...DEFAULT_FEEDBACK };
     this.advocacy = { ...DEFAULT_ADVOCACY };
+    this.notifications = DEFAULT_NOTIFICATIONS.map((n) => ({ ...n }));
+    this.bannerDismissed = false;
     this.currentTab = "home";
     this.onboardingStep = 1;
     this.saveState();
@@ -1979,11 +2052,14 @@ function renderMiraScreen() {
 }
 
 /**
- * Render Home Screen MIRA Card
+ * Render Home Screen MIRA Card & Notification States
  */
 function renderHomeScreen() {
   renderHomeScreenPoints();
   renderHomeScreenFeedback();
+
+  // Notification badge & banner
+  updateNotificationUI();
 
   const isDoneToday = state.miraData.todayCheckinDone;
   const bubble = document.getElementById("home-mira-bubble");
@@ -1995,7 +2071,7 @@ function renderHomeScreen() {
     if (isDoneToday) {
       bubble.innerHTML = `💬 "✓ Check-in hari ini sudah selesai. Status terakhir: <strong>${state.miraData.lastCheckinSummary}</strong>"`;
     } else {
-      bubble.innerHTML = `💬 "Halo Budi, bagaimana kondisi lutut Anda hari ini?"`;
+      bubble.innerHTML = `💬 "Halo Budi, bagaimana kondisi Anda hari ini? Ceritakan progres pemulihan Anda."`;
     }
   }
 
@@ -2023,6 +2099,165 @@ function renderHomeScreen() {
   }
 }
 
+// ============================================================================
+// MODULE 3.1: SIMULATED NOTIFICATION ENGINE
+// ============================================================================
+
+/**
+ * Update Header Notification Badge
+ */
+function updateNotificationUI() {
+  const badgeEl = document.getElementById("header-notif-badge");
+  const bannerEl = document.getElementById("home-notif-banner");
+
+  if (!state.notifications) {
+    state.notifications = DEFAULT_NOTIFICATIONS.map((n) => ({ ...n }));
+  }
+
+  const unreadCount = state.notifications.filter((n) => !n.read).length;
+
+  if (badgeEl) {
+    if (unreadCount > 0) {
+      badgeEl.textContent = unreadCount;
+      badgeEl.classList.remove("hidden");
+    } else {
+      badgeEl.classList.add("hidden");
+    }
+  }
+
+  if (bannerEl) {
+    if (!state.miraData.todayCheckinDone && !state.bannerDismissed) {
+      bannerEl.style.display = "flex";
+    } else {
+      bannerEl.style.display = "none";
+    }
+  }
+}
+
+/**
+ * Open Notification Center Modal
+ */
+function openNotificationCenter() {
+  renderNotificationCenter();
+  openModal("modal-notifications");
+}
+
+/**
+ * Render Notification Center Modal Content
+ */
+function renderNotificationCenter() {
+  const listEl = document.getElementById("notif-center-list");
+  if (!listEl) return;
+
+  if (!state.notifications || state.notifications.length === 0) {
+    listEl.innerHTML = `
+      <div style="text-align: center; padding: 24px 12px; color: var(--text-muted); font-size: 13px;">
+        Belum ada notifikasi baru.
+      </div>
+    `;
+    return;
+  }
+
+  listEl.innerHTML = state.notifications
+    .map((item) => {
+      let cardClass = item.read ? "" : "unread";
+      if (item.completed) cardClass += " completed";
+
+      let actionBtnHtml = "";
+      if (item.completed) {
+        actionBtnHtml = `
+        <span class="notif-completed-tag">
+          <span>✓</span> Selesai
+        </span>
+      `;
+      } else {
+        actionBtnHtml = `
+        <button class="btn-notif-cta" onclick="handleNotificationAction('${item.id}')">
+          ${item.actionLabel || "Lihat Detail"} →
+        </button>
+      `;
+      }
+
+      return `
+      <div class="notif-item-card ${cardClass}" id="notif-card-${item.id}">
+        <div class="notif-item-top">
+          <div class="notif-item-badge-wrap">
+            <span class="notif-item-badge ${item.type}">${item.badgeLabel}</span>
+            ${!item.read ? '<span style="font-size: 10px; color: #2563eb; font-weight: 700;">● Baru</span>' : ""}
+          </div>
+          <span class="notif-item-time">${item.timeAgo}</span>
+        </div>
+        <div class="notif-item-title">${item.title}</div>
+        <div class="notif-item-desc">${item.desc}</div>
+        <div class="notif-item-footer">
+          <span style="font-size: 11px; color: var(--text-muted);">${item.read ? "Sudah dibaca" : "Belum dibaca"}</span>
+          ${actionBtnHtml}
+        </div>
+      </div>
+    `;
+    })
+    .join("");
+
+  updateNotificationUI();
+}
+
+/**
+ * Handle Notification CTA Click
+ */
+function handleNotificationAction(notifId) {
+  const notif = state.notifications.find((n) => n.id === notifId);
+  if (notif) {
+    notif.read = true;
+    state.saveState();
+  }
+
+  closeModal("modal-notifications");
+  updateNotificationUI();
+
+  if (notif) {
+    if (notif.actionType === "checkin") {
+      openMiraCheckin();
+    } else if (notif.actionType === "journey") {
+      switchTab("journey");
+    } else if (notif.actionType === "rewards") {
+      switchTab("rewards");
+    }
+  }
+}
+
+/**
+ * Mark All Notifications as Read
+ */
+function markAllNotificationsAsRead() {
+  state.notifications.forEach((n) => {
+    n.read = true;
+  });
+  state.saveState();
+  renderNotificationCenter();
+  updateNotificationUI();
+  showToast("Semua notifikasi telah ditandai dibaca.");
+}
+
+/**
+ * Dismiss In-App Notification Banner
+ */
+function dismissInAppBanner() {
+  state.bannerDismissed = true;
+  state.saveState();
+  updateNotificationUI();
+}
+
+/**
+ * Handle In-App Notification Banner CTA
+ */
+function handleInAppBannerCTA() {
+  openMiraCheckin();
+}
+
+// ============================================================================
+// MODULE 3.2: MIRA CHECK-IN FLOW & TRIAGE ENGINE
+// ============================================================================
+
 /**
  * Open MIRA Check-in Flow Modal
  */
@@ -2044,8 +2279,6 @@ function openMiraCheckin() {
     painLabel: "",
     activity: "",
     activityDisplay: "",
-    confidence: "",
-    confidenceDisplay: "",
     note: "",
     scenario: "scenario-B",
     scenarioTitle: "",
@@ -2061,13 +2294,13 @@ function openMiraCheckin() {
 }
 
 /**
- * Go to a specific question step in conversational flow (1-6)
+ * Go to a specific question step in conversational flow (1-5)
  */
 function goToMiraStep(stepNum) {
   miraCurrentStep = stepNum;
 
   // Hide all steps
-  for (let i = 1; i <= 5; i++) {
+  for (let i = 1; i <= 4; i++) {
     const stepEl = document.getElementById(`mira-step-${i}`);
     if (stepEl) stepEl.classList.remove("active");
   }
@@ -2075,10 +2308,10 @@ function goToMiraStep(stepNum) {
   if (summaryEl) summaryEl.classList.remove("active");
 
   // Activate current step
-  if (stepNum <= 5) {
+  if (stepNum <= 4) {
     const currentStepEl = document.getElementById(`mira-step-${stepNum}`);
     if (currentStepEl) currentStepEl.classList.add("active");
-    if (stepNum === 5) {
+    if (stepNum === 4) {
       const noteInput = document.getElementById("mira-patient-note-input");
       if (noteInput && miraCurrentAnswers.note) {
         noteInput.value = miraCurrentAnswers.note;
@@ -2095,10 +2328,10 @@ function goToMiraStep(stepNum) {
   const prevBtn = document.getElementById("btn-flow-prev");
 
   if (counter) {
-    if (stepNum <= 5) {
-      counter.textContent = `Pertanyaan ${stepNum} dari 5`;
+    if (stepNum <= 4) {
+      counter.textContent = `Pertanyaan ${stepNum} dari 4`;
     } else {
-      counter.textContent = `Ringkasan & Respon MIRA`;
+      counter.textContent = `Evaluasi & Respon MIRA`;
     }
   }
 
@@ -2118,8 +2351,8 @@ function goToMiraStep(stepNum) {
 
 function goToPrevMiraStep() {
   if (miraCurrentStep > 1) {
-    if (miraCurrentStep === 6) {
-      goToMiraStep(5);
+    if (miraCurrentStep === 5) {
+      goToMiraStep(4);
     } else {
       goToMiraStep(miraCurrentStep - 1);
     }
@@ -2127,7 +2360,7 @@ function goToPrevMiraStep() {
 }
 
 /**
- * Handle Option Selection for Steps 1, 3, 4
+ * Handle Option Selection for Steps 1 and 3
  */
 function selectMiraOption(step, value, displayLabel) {
   if (step === 1) {
@@ -2138,10 +2371,6 @@ function selectMiraOption(step, value, displayLabel) {
     miraCurrentAnswers.activity = value;
     miraCurrentAnswers.activityDisplay = displayLabel;
     goToMiraStep(4);
-  } else if (step === 4) {
-    miraCurrentAnswers.confidence = value;
-    miraCurrentAnswers.confidenceDisplay = displayLabel;
-    goToMiraStep(5);
   }
 }
 
@@ -2155,22 +2384,22 @@ function selectMiraPain(score, label) {
 }
 
 /**
- * Handle Step 5 Note Submit / Skip
+ * Handle Step 4 Patient Note Submit / Skip
  */
-function submitMiraStep5() {
+function submitMiraStep4() {
   const noteInput = document.getElementById("mira-patient-note-input");
   const noteVal = noteInput ? noteInput.value.trim() : "";
   miraCurrentAnswers.note = noteVal;
-  goToMiraStep(6);
+  goToMiraStep(5);
 }
 
-function skipMiraStep5() {
+function skipMiraStep4() {
   miraCurrentAnswers.note = "";
-  goToMiraStep(6);
+  goToMiraStep(5);
 }
 
 /**
- * Rule-Based AI Response Engine for Step 6
+ * Rule-Based AI Triage Response Engine for Step 5 (Summary & Evaluation)
  */
 function renderMiraResponseSummary() {
   const ans = miraCurrentAnswers;
@@ -2179,55 +2408,65 @@ function renderMiraResponseSummary() {
   const sumCond = document.getElementById("sum-condition");
   const sumPain = document.getElementById("sum-pain");
   const sumAct = document.getElementById("sum-activity");
-  const sumConf = document.getElementById("sum-confidence");
+  const sumPhase = document.getElementById("sum-phase");
   const sumNote = document.getElementById("sum-note");
 
   if (sumCond) sumCond.textContent = ans.condition || "-";
   if (sumPain) sumPain.textContent = ans.painLabel || "-";
   if (sumAct) sumAct.textContent = ans.activity || "-";
-  if (sumConf) sumConf.textContent = ans.confidence || "-";
+  if (sumPhase) sumPhase.textContent = "H+14 Recovery";
   if (sumNote)
     sumNote.textContent = ans.note
       ? `"${ans.note}"`
-      : "Tidak ada catatan tambahan";
+      : "Tidak ada keluhan tambahan";
 
-  // Rule-Based Decision Logic
+  // Rule-Based Triage Logic (Green, Yellow, Red)
   const respContainer = document.getElementById("mira-response-container");
   if (!respContainer) return;
 
   const pain = ans.painScore !== null ? ans.painScore : 2;
   const isHighPain = pain >= 7;
-  const isWorse =
-    ans.condition === "Lebih Buruk" || ans.activity === "Sangat terbatas";
-  const isBetter =
-    ans.condition === "Lebih Baik" ||
-    ans.activity === "Lebih aktif dari sebelumnya";
+  const isNeedsHelp =
+    ans.condition === "Membutuhkan bantuan" ||
+    ans.activity === "Tidak nyaman atau sulit";
+  const isGoodProgress =
+    ans.condition === "Membaik" &&
+    pain <= 2 &&
+    ans.activity === "Ya, dengan nyaman";
 
-  let scenario = "scenario-B";
-  let title = "Proses Pemulihan Berjalan Sesuai Rencana";
+  let scenario = "scenario-stable";
+  let badgeText = "🟡 YELLOW · Stable / Needs Attention";
+  let title = "💙 Kondisi Anda perlu terus dipantau.";
   let msg =
-    "Kondisi Anda berada dalam batas pemulihan fase H+14 yang wajar. Rasa tidak nyaman yang sesekali muncul adalah hal normal. Tetap minum obat teratur dan ikuti protokol fisioterapi mandiri.";
-  let smartActionLabel = "📅 Siapkan Catatan Kontrol (7 Sep 2026)";
-  let smartActionFunc = `handleSmartNextAction('scenario-B')`;
+    "Kondisi Anda berada dalam batas pemulihan fase H+14 yang wajar. Rasa tidak nyaman yang sesekali muncul adalah hal normal. Tetap minum obat teratur dan ikuti protokol fisioterapi mandiri tanpa memaksakan beban berlebih.";
+  let milestoneInfo =
+    "Milestone Berikutnya: Kontrol DPJP Ortopedi (7 Sep 2026)";
+  let smartActionLabel = "📅 Pastikan Catatan Kontrol (7 Sep 2026)";
+  let smartActionFunc = `handleSmartNextAction('scenario-yellow')`;
   let scenarioTag = "Kondisi Stabil";
 
-  if (isHighPain || isWorse) {
-    // Scenario C: Needs Attention
+  if (isHighPain || isNeedsHelp) {
+    // Scenario RED: Needs Attention
     scenario = "scenario-alert";
+    badgeText = "🔴 RED · Needs Attention";
     scenarioTag = "Perlu Perhatian";
-    title = "Perlu Perhatian Lebih: Istirahatkan Lutut Anda";
-    msg = `Mengingat rasa nyeri yang dirasakan cukup tinggi (${ans.painLabel}), disarankan untuk mengistirahatkan lutut, meninggikan kaki, dan kompres dingin. Jika keluhan berlanjut, hubungi tim perawat ortopedi Mandaya.`;
-    smartActionLabel = "🩺 Konsultasikan dengan Tim Mandaya";
-    smartActionFunc = `handleSmartNextAction('scenario-C')`;
-  } else if (pain <= 2 && isBetter) {
-    // Scenario A: Positive Progress
+    title =
+      "💙 Kami menyarankan Anda untuk segera mendapatkan perhatian lebih lanjut.";
+    msg = `Mengingat rasa nyeri yang dirasakan cukup tinggi (${ans.painLabel}) atau mobilitas yang sangat terbatas, kami menyarankan Anda mengistirahatkan lutut, meninggikan kaki, dan melakukan kompres es. Jika keluhan berlanjut, hubungi tim perawat ortopedi Mandaya.`;
+    milestoneInfo = "Disarankan: Hubungi Perawat Ortopedi Mandaya";
+    smartActionLabel = "🩺 Hubungi Tim Ortopedi Mandaya";
+    smartActionFunc = `handleSmartNextAction('scenario-red')`;
+  } else if (isGoodProgress) {
+    // Scenario GREEN: Positive Progress
     scenario = "scenario-positive";
+    badgeText = "🟢 GREEN · Positive Progress";
     scenarioTag = "Pemulihan Baik";
-    title = "Kemajuan Pemulihan Sangat Positif!";
+    title = "💙 Pemulihan Anda menunjukkan perkembangan yang baik.";
     msg =
-      "Senang mendengar perkembangan Anda, Budi! Nyeri lutut Anda berada di tingkat minimal dan mobilitas meningkat secara teratur. Pertahankan rutinitas latihan peregangan mandiri.";
-    smartActionLabel = "📖 Lihat Tips Mobilisasi Lutut";
-    smartActionFunc = `handleSmartNextAction('scenario-A')`;
+      "Senang mendengar perkembangan Anda, Budi! Nyeri lutut Anda berada di tingkat minimal dan mobilitas meningkat secara bertahap. Pertahankan rutinitas latihan peregangan mandiri.";
+    milestoneInfo = "Milestone Berikutnya: Kontrol DPJP Ortopedi (7 Sep 2026)";
+    smartActionLabel = "📖 Lihat Tips Mobilisasi Mandiri";
+    smartActionFunc = `handleSmartNextAction('scenario-green')`;
   }
 
   ans.scenario = scenario;
@@ -2237,20 +2476,41 @@ function renderMiraResponseSummary() {
 
   respContainer.innerHTML = `
     <div class="mira-ai-response-card ${scenario}">
+      <div style="margin-bottom: 8px;">
+        <span style="font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 12px; display: inline-block; ${scenario === "scenario-positive" ? "background: #dcfce7; color: #166534;" : scenario === "scenario-alert" ? "background: #fee2e2; color: #991b1b;" : "background: #e0e7ff; color: #3730a3;"}">
+          ${badgeText}
+        </span>
+      </div>
       <div class="response-card-header">
-        <span style="font-size: 18px;">${scenario === "scenario-alert" ? "⚠️" : scenario === "scenario-positive" ? "🌟" : "💡"}</span>
         <h5 class="response-card-title">${title}</h5>
       </div>
       <p class="response-card-msg">${msg}</p>
+      
+      <div style="background: rgba(255,255,255,0.7); border-radius: 10px; padding: 8px 10px; margin-bottom: 10px; font-size: 11.5px; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
+        <span>📌</span>
+        <div><strong>${milestoneInfo}</strong></div>
+      </div>
+
       ${
         scenario === "scenario-alert"
           ? `
-        <div class="response-alert-box">
-          ⚠️ Catatan: Hubungi IGD atau Poli Ortopedi jika lutut bengkak merah mendadak atau timbul demam.
+        <div style="background: #fef2f2; border: 1px solid #fca5a5; border-radius: 8px; padding: 8px 10px; margin-bottom: 10px; font-size: 11px; color: #991b1b; line-height: 1.35;">
+          ⚠️ Catatan: Hubungi IGD RS Mandaya Puri (021-5099-8899) jika timbul demam tinggi mendadak atau lutut membengkak kemerahan parah.
         </div>
       `
           : ""
       }
+
+      ${
+        scenario === "scenario-positive"
+          ? `
+        <div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 8px 10px; margin-bottom: 10px; font-size: 11px; color: #166534; line-height: 1.35;">
+          📈 Progres Pemulihan Anda akan otomatis diperbarui menjadi <strong>75% Selesai</strong> setelah Anda menyimpan check-in ini.
+        </div>
+      `
+          : ""
+      }
+
       <button class="btn-smart-next-action" onclick="${smartActionFunc}">
         ${smartActionLabel}
       </button>
@@ -2262,15 +2522,16 @@ function renderMiraResponseSummary() {
  * Handle contextual smart action click from response card
  */
 function handleSmartNextAction(scenarioType) {
-  closeModal("modal-mira-checkin-flow");
-  if (scenarioType === "scenario-C") {
+  if (scenarioType === "scenario-red") {
+    closeModal("modal-mira-checkin-flow");
     openModal("modal-appointment-detail");
-    showToast("Silakan cek kontak RS Mandaya Puri atau jadwal kontrol dokter.");
-  } else if (scenarioType === "scenario-A") {
+    showToast("Silakan cek kontak Poli Ortopedi Mandaya Puri.");
+  } else if (scenarioType === "scenario-green") {
     showToast(
-      "Panduan: Lakukan fleksi lutut 3x sehari selama 10 menit tanpa dipaksakan.",
+      "Panduan: Lakukan fleksi lutut 3x sehari selama 10 menit tanpa memaksakan beban.",
     );
   } else {
+    closeModal("modal-mira-checkin-flow");
     openModal("modal-appointment-detail");
   }
 }
@@ -2285,12 +2546,11 @@ function finalizeMiraCheckinSubmission() {
   const newHistItem = {
     id: `chk-${Date.now()}`,
     date: "Hari Ini (31 Agu 2026)",
-    condition: ans.condition || "Kondisi Baik",
-    painLevel: ans.painLabel || "Nyeri Ringan",
-    activity: ans.activity || "Aktivitas normal",
-    confidence: ans.confidence || "Cukup Yakin",
+    condition: ans.condition || "Membaik",
+    painLevel: ans.painLabel || "Nyeri Ringan (1-3)",
+    activity: ans.activity || "Ya, dengan nyaman",
     note: ans.note || "",
-    scenario: ans.scenario || "scenario-B",
+    scenario: ans.scenario || "scenario-stable",
     scenarioLabel: ans.scenarioLabel || "Kondisi Stabil",
   };
 
@@ -2300,19 +2560,39 @@ function finalizeMiraCheckinSubmission() {
   state.miraData.lastCheckinSummary = `${newHistItem.condition}, ${newHistItem.painLevel}.`;
   state.miraData.checkinHistory.unshift(newHistItem);
 
-  // 3. Mark Mission 1 as Completed
+  // If positive progress, update recovery progress to 75%
+  if (ans.scenario === "scenario-positive") {
+    state.currentUser.recoveryProgress = 75;
+    state.miraData.overallProgress = 75;
+  }
+
+  // 3. Mark Check-in Notification as Completed and Read
+  if (state.notifications) {
+    const checkinNotif = state.notifications.find(
+      (n) => n.id === "notif-mira-checkin" || n.type === "checkin",
+    );
+    if (checkinNotif) {
+      checkinNotif.completed = true;
+      checkinNotif.read = true;
+    }
+  }
+
+  // 4. Dismiss banner
+  state.bannerDismissed = true;
+
+  // 5. Mark Mission 1 as Completed
   const m1 = state.missions.find((m) => m.id === "mission-1");
   if (m1) {
     m1.status = "completed";
     m1.btnText = "✓ Selesai";
   }
 
-  // 4. Award +25 CarePoints
+  // 6. Award +25 CarePoints
   state.addPoints(
     25,
     "MIRA Recovery Check-in",
-    "Check-in kondisi pemulihan lutut H+14",
-    "🤖",
+    "Check-in kondisi pemulihan lutut H+14 Mandaya",
+    "💙",
   );
 
   // Save State
@@ -2322,11 +2602,12 @@ function finalizeMiraCheckinSubmission() {
   closeModal("modal-mira-checkin-flow");
   openModal("modal-mira-success");
 
-  // Re-render UI
+  // Re-render all screens
   renderHomeScreen();
   renderCareJourneyTimeline();
   renderMiraScreen();
   renderCarePointDashboard();
+  renderNotificationCenter();
 }
 
 // ============================================================================
