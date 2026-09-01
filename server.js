@@ -1463,40 +1463,58 @@ app.delete("/api/bookings/:id", (req, res) => {
 // 9. PENYAJIAN FILE STATIS & GAMBAR (public/)
 // ==========================================
 
-// Endpoint khusus untuk logo unnamed.png / care-dokter logo
-app.get(
-  [
-    "/unnamed.png",
-    "/assets/unnamed.png",
-    "/assets/care-dokter-logo.png",
-    "/care-dokter-logo.png",
-  ],
-  (req, res) => {
-    const possiblePaths = [
-      path.join(__dirname, "public", "unnamed.png"),
-      path.join(__dirname, "unnamed.png"),
-      path.join(__dirname, "public", "assets", "unnamed.png"),
-      path.join(__dirname, "assets", "unnamed.png"),
-      path.join(__dirname, "src", "assets", "unnamed.png"),
-      path.join(__dirname, "src", "assets", "images", "unnamed.png"),
-    ];
+// Endpoint khusus untuk official Mandaya logo (/assets/mira/logo_mandaya.png & aliases)
+const mandayaLogoRoutes = [
+  "/assets/mira/logo_mandaya.png",
+  "/assets/mira/logo_mandaya.jpg",
+  "/assets/images/logo_mandaya.png",
+  "/assets/images/logo_mandaya.jpg",
+  "/src/assets/images/logo_mandaya.png",
+  "/src/assets/images/logo_mandaya.jpg",
+  "/assets/logo_mandaya.png",
+  "/logo_mandaya.png",
+  "/unnamed.png",
+  "/assets/unnamed.png",
+  "/assets/care-dokter-logo.png",
+  "/care-dokter-logo.png",
+  "/assets/care-dokter-logo.svg",
+];
 
-    for (const p of possiblePaths) {
-      if (fs.existsSync(p)) {
+app.get(mandayaLogoRoutes, (req, res) => {
+  const possiblePaths = [
+    path.join(__dirname, "public", "assets", "mira", "logo_mandaya.png"),
+    path.join(__dirname, "public", "assets", "mira", "logo_mandaya.jpg"),
+    path.join(__dirname, "public", "assets", "images", "logo_mandaya.png"),
+    path.join(__dirname, "src", "assets", "images", "logo_mandaya.png"),
+    path.join(__dirname, "public", "logo_mandaya.png"),
+    path.join(__dirname, "public", "assets", "care-dokter-logo.png"),
+    path.join(__dirname, "public", "unnamed.png"),
+    path.join(__dirname, "public", "assets", "unnamed.png"),
+    path.join(__dirname, "public", "assets", "care-dokter-logo.svg"),
+    path.join(__dirname, "public", "logo.svg"),
+  ];
+
+  for (const p of possiblePaths) {
+    if (fs.existsSync(p)) {
+      if (p.endsWith(".svg")) {
+        res.setHeader("Content-Type", "image/svg+xml");
+      } else if (p.endsWith(".jpg") || p.endsWith(".jpeg")) {
+        res.setHeader("Content-Type", "image/jpeg");
+      } else {
         res.setHeader("Content-Type", "image/png");
-        return res.sendFile(p);
       }
+      return res.sendFile(p);
     }
+  }
 
-    // Fallback ke logo.svg jika unnamed.png belum diunggah
-    const fallbackSvg = path.join(__dirname, "public", "logo.svg");
-    if (fs.existsSync(fallbackSvg)) {
-      res.setHeader("Content-Type", "image/svg+xml");
-      return res.sendFile(fallbackSvg);
-    }
-    res.status(404).send("Logo not found");
-  },
-);
+  // Fallback ke logo.svg
+  const fallbackSvg = path.join(__dirname, "public", "logo.svg");
+  if (fs.existsSync(fallbackSvg)) {
+    res.setHeader("Content-Type", "image/svg+xml");
+    return res.sendFile(fallbackSvg);
+  }
+  res.status(404).send("Logo not found");
+});
 
 const imageFallbacks = {
   "/logo.png": "logo.svg",
