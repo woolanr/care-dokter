@@ -5,10 +5,10 @@
 
 // State Global Aplikasi
 let state = {
-  currentView: 'home',
+  currentView: "home",
   drawerOpen: false,
-  drawerTab: 'risk',
-  currentMpiId: 'MPI-0001',
+  drawerTab: "risk",
+  currentMpiId: "MPI-0001",
   currentProfileId: null,
   activeChatDoctorId: 1,
   doctors: [],
@@ -20,12 +20,12 @@ let state = {
   reviewQueue: [],
   accessLogs: [],
   consents: [],
-  activeTimelineFilter: 'ALL',
+  activeTimelineFilter: "ALL",
   loyaltyAccount: null,
   pointPrescriptions: [],
   rewardsCatalog: [],
   familyPool: null,
-  activeRewardsFilter: 'ALL',
+  activeRewardsFilter: "ALL",
   gamificationMissions: [],
   activeQuiz: null,
   lastRedemptionResult: null,
@@ -33,27 +33,57 @@ let state = {
   selectedOneTapOption: null,
   miraNurseQueue: [],
   medications: [
-    { id: 1, name: 'Amlodipine 10mg', dosis: '1x1 Tablet (Pagi)', status: 'diminum', takenAt: '08:00 WIB' },
-    { id: 2, name: 'Atorvastatin 20mg', dosis: '1x1 Tablet (Malam)', status: 'belum', takenAt: null },
-    { id: 3, name: 'Clopidogrel 75mg', dosis: '1x1 Tablet (Pagi sesudah makan)', status: 'diminum', takenAt: '08:15 WIB' }
+    {
+      id: 1,
+      name: "Amlodipine 10mg",
+      dosis: "1x1 Tablet (Pagi)",
+      status: "diminum",
+      takenAt: "08:00 WIB",
+    },
+    {
+      id: 2,
+      name: "Atorvastatin 20mg",
+      dosis: "1x1 Tablet (Malam)",
+      status: "belum",
+      takenAt: null,
+    },
+    {
+      id: 3,
+      name: "Clopidogrel 75mg",
+      dosis: "1x1 Tablet (Pagi sesudah makan)",
+      status: "diminum",
+      takenAt: "08:15 WIB",
+    },
   ],
   chatMessages: [
-    { sender: 'doctor', text: 'Halo! Saya dr. Anisa Putri, Sp.A. Ada keluhan kesehatan anak yang bisa saya bantu hari ini?', time: '09:00' },
-    { sender: 'patient', text: 'Selamat pagi dok, anak saya agak demam sejak semalam, suhu sekitar 37.8°C.', time: '09:02' },
-    { sender: 'doctor', text: 'Baik Ibu. Pastikan si kecil cukup cairan dan istirahat. Apakah ada batuk, pilek, atau ruam merah di kulitnya?', time: '09:03' }
-  ]
+    {
+      sender: "doctor",
+      text: "Halo! Saya dr. Anisa Putri, Sp.A. Ada keluhan kesehatan anak yang bisa saya bantu hari ini?",
+      time: "09:00",
+    },
+    {
+      sender: "patient",
+      text: "Selamat pagi dok, anak saya agak demam sejak semalam, suhu sekitar 37.8°C.",
+      time: "09:02",
+    },
+    {
+      sender: "doctor",
+      text: "Baik Ibu. Pastikan si kecil cukup cairan dan istirahat. Apakah ada batuk, pilek, atau ruam merah di kulitnya?",
+      time: "09:03",
+    },
+  ],
 };
 
 // Inisialisasi Saat DOM Siap
-document.addEventListener('DOMContentLoaded', async () => {
-  console.log('[Care+] Memulai inisialisasi aplikasi terpadu...');
+document.addEventListener("DOMContentLoaded", async () => {
+  console.log("[Care+] Memulai inisialisasi aplikasi terpadu...");
   await loadInitialData();
   setupEventListeners();
   renderAllViews();
 
   // Check URL hash or query params
-  const hash = window.location.hash.replace('#', '');
-  if (hash === 'risk' || hash === 'mpi' || hash === 'privacy') {
+  const hash = window.location.hash.replace("#", "");
+  if (hash === "risk" || hash === "mpi" || hash === "privacy") {
     switchDrawerTab(hash);
     toggleDrawer();
   }
@@ -65,27 +95,80 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function loadInitialData() {
   try {
     const [docsRes, profsRes, mpiRes, statsRes] = await Promise.all([
-      fetch('/api/doctors').then(r => r.json()).catch(() => []),
-      fetch('/api/profiles').then(r => r.json()).catch(() => []),
-      fetch('/api/mpi/patients').then(r => r.json()).catch(() => ({ data: [] })),
-      fetch('/api/stats').then(r => r.json()).catch(() => ({ data: {} }))
+      fetch("/api/doctors")
+        .then((r) => r.json())
+        .catch(() => []),
+      fetch("/api/profiles")
+        .then((r) => r.json())
+        .catch(() => []),
+      fetch("/api/mpi/patients")
+        .then((r) => r.json())
+        .catch(() => ({ data: [] })),
+      fetch("/api/stats")
+        .then((r) => r.json())
+        .catch(() => ({ data: {} })),
     ]);
 
-    state.doctors = Array.isArray(docsRes) && docsRes.length ? docsRes : [
-      { id: 1, name: "dr. Anisa Putri, Sp.A", spec: "Spesialis Anak", exp: 8, avail: "yes", img: "/anisa.svg" },
-      { id: 2, name: "dr. Bagas Santoso, Sp.PD", spec: "Spesialis Penyakit Dalam", exp: 12, avail: "yes", img: "/bagas.svg" },
-      { id: 3, name: "dr. Citra Lestari, Sp.KK", spec: "Spesialis Kulit & Kelamin", exp: 5, avail: "no", img: "/citra.svg" },
-      { id: 4, name: "dr. Dimas Pratama, Sp.JP", spec: "Spesialis Jantung & Pembuluh Darah", exp: 15, avail: "yes", img: "/dimas.svg" }
-    ];
+    state.doctors =
+      Array.isArray(docsRes) && docsRes.length
+        ? docsRes
+        : [
+            {
+              id: 1,
+              name: "dr. Anisa Putri, Sp.A",
+              spec: "Spesialis Anak",
+              exp: 8,
+              avail: "yes",
+              img: "/anisa.svg",
+            },
+            {
+              id: 2,
+              name: "dr. Bagas Santoso, Sp.PD",
+              spec: "Spesialis Penyakit Dalam",
+              exp: 12,
+              avail: "yes",
+              img: "/bagas.svg",
+            },
+            {
+              id: 3,
+              name: "dr. Citra Lestari, Sp.KK",
+              spec: "Spesialis Kulit & Kelamin",
+              exp: 5,
+              avail: "no",
+              img: "/citra.svg",
+            },
+            {
+              id: 4,
+              name: "dr. Dimas Pratama, Sp.JP",
+              spec: "Spesialis Jantung & Pembuluh Darah",
+              exp: 15,
+              avail: "yes",
+              img: "/dimas.svg",
+            },
+          ];
 
-    state.profiles = Array.isArray(profsRes) && profsRes.length ? profsRes : [
-      { id: 1, mpi_id: "MPI-0001", name: "Siti Aminah Rahayu", birth: "1985-04-12", gender: "Perempuan", phone: "081234567890", email: "siti.aminah@gmail.com", nik: "3201018504120001", kk: "3201019876543210", isMain: true }
-    ];
+    state.profiles =
+      Array.isArray(profsRes) && profsRes.length
+        ? profsRes
+        : [
+            {
+              id: 1,
+              mpi_id: "MPI-0001",
+              name: "Siti Aminah Rahayu",
+              birth: "1985-04-12",
+              gender: "Perempuan",
+              phone: "081234567890",
+              email: "siti.aminah@gmail.com",
+              nik: "3201018504120001",
+              kk: "3201019876543210",
+              isMain: true,
+            },
+          ];
 
     state.mpiPatients = mpiRes.data || [];
     if (state.profiles.length > 0) {
       state.currentProfileId = state.profiles[0].id;
-      state.currentMpiId = state.profiles[0].mpi_id || 'MPI-0001';
+      state.currentMpiId = state.profiles[0].mpi_id || "MPI-0001";
     }
 
     await loadPatientTimeline();
@@ -97,7 +180,7 @@ async function loadInitialData() {
     await loadMiraPathway();
     await loadNursePriorityQueue();
   } catch (err) {
-    console.error('Error loading initial data:', err);
+    console.error("Error loading initial data:", err);
   }
 }
 
@@ -105,9 +188,9 @@ async function loadInitialData() {
  * Event Listeners & Input Helpers
  */
 function setupEventListeners() {
-  const dateInput = document.getElementById('book-date');
+  const dateInput = document.getElementById("book-date");
   if (dateInput) {
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toISOString().split("T")[0];
     dateInput.min = today;
     dateInput.value = today;
   }
@@ -118,27 +201,31 @@ function setupEventListeners() {
  */
 function switchView(viewName) {
   state.currentView = viewName;
-  document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.care-nav-btn').forEach(el => el.classList.remove('active'));
+  document
+    .querySelectorAll(".page-view")
+    .forEach((el) => el.classList.remove("active"));
+  document
+    .querySelectorAll(".care-nav-btn")
+    .forEach((el) => el.classList.remove("active"));
 
   const targetView = document.getElementById(`view-${viewName}`);
   const targetNav = document.getElementById(`nav-${viewName}`);
 
-  if (targetView) targetView.classList.add('active');
-  if (targetNav) targetNav.classList.add('active');
+  if (targetView) targetView.classList.add("active");
+  if (targetNav) targetNav.classList.add("active");
 
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo({ top: 0, behavior: "smooth" });
 
-  if (viewName === 'profile') {
+  if (viewName === "profile") {
     loadPatientTimeline();
     loadPatientConsents();
-  } else if (viewName === 'doctors') {
+  } else if (viewName === "doctors") {
     renderChatDoctorsList();
-  } else if (viewName === 'loyalty') {
+  } else if (viewName === "loyalty") {
     loadLoyaltyData();
-  } else if (viewName === 'mira') {
+  } else if (viewName === "mira") {
     loadMiraPathway();
-  } else if (viewName === 'booking') {
+  } else if (viewName === "booking") {
     updateBookingPointQuote();
   }
 }
@@ -148,9 +235,9 @@ function switchView(viewName) {
  */
 function toggleDrawer() {
   state.drawerOpen = !state.drawerOpen;
-  const drawer = document.getElementById('drawer-backdrop');
+  const drawer = document.getElementById("drawer-backdrop");
   if (drawer) {
-    drawer.classList.toggle('active', state.drawerOpen);
+    drawer.classList.toggle("active", state.drawerOpen);
   }
   if (state.drawerOpen) {
     loadRiskQueue();
@@ -163,23 +250,27 @@ function toggleDrawer() {
 }
 
 function closeDrawerOnOutside(e) {
-  if (e.target.id === 'drawer-backdrop') {
+  if (e.target.id === "drawer-backdrop") {
     toggleDrawer();
   }
 }
 
 function switchDrawerTab(tabName) {
   state.drawerTab = tabName;
-  document.querySelectorAll('.drawer-tab-btn').forEach(btn => btn.classList.remove('active'));
-  document.querySelectorAll('[id^="drawer-pane-"]').forEach(pane => pane.style.display = 'none');
+  document
+    .querySelectorAll(".drawer-tab-btn")
+    .forEach((btn) => btn.classList.remove("active"));
+  document
+    .querySelectorAll('[id^="drawer-pane-"]')
+    .forEach((pane) => (pane.style.display = "none"));
 
   const btn = document.getElementById(`drawer-tab-${tabName}`);
   const pane = document.getElementById(`drawer-pane-${tabName}`);
 
-  if (btn) btn.classList.add('active');
-  if (pane) pane.style.display = 'block';
+  if (btn) btn.classList.add("active");
+  if (pane) pane.style.display = "block";
 
-  if (tabName === 'mira-nurse') {
+  if (tabName === "mira-nurse") {
     loadNursePriorityQueue();
   }
 }
@@ -202,48 +293,50 @@ function renderAllViews() {
  */
 function renderHomeView() {
   // Stats
-  const statMpi = document.getElementById('stat-mpi-count');
+  const statMpi = document.getElementById("stat-mpi-count");
   if (statMpi) statMpi.textContent = state.mpiPatients.length || 9;
 
-  const statDoc = document.getElementById('stat-doc-count');
+  const statDoc = document.getElementById("stat-doc-count");
   if (statDoc) statDoc.textContent = state.doctors.length;
 
-  const statRisk = document.getElementById('stat-risk-count');
+  const statRisk = document.getElementById("stat-risk-count");
   if (statRisk) statRisk.textContent = state.riskQueue.length;
 
-  const badgeRisk = document.getElementById('badge-risk-count');
+  const badgeRisk = document.getElementById("badge-risk-count");
   if (badgeRisk) {
     if (state.riskQueue.length > 0) {
-      badgeRisk.style.display = 'flex';
+      badgeRisk.style.display = "flex";
       badgeRisk.textContent = state.riskQueue.length;
     } else {
-      badgeRisk.style.display = 'none';
+      badgeRisk.style.display = "none";
     }
   }
 
   // Medications List
-  const medContainer = document.getElementById('home-medications-list');
+  const medContainer = document.getElementById("home-medications-list");
   if (medContainer) {
     let takenCount = 0;
-    medContainer.innerHTML = state.medications.map(med => {
-      const isTaken = med.status === 'diminum';
-      if (isTaken) takenCount++;
-      return `
-        <div class="quick-med-item ${isTaken ? 'taken' : ''}">
+    medContainer.innerHTML = state.medications
+      .map((med) => {
+        const isTaken = med.status === "diminum";
+        if (isTaken) takenCount++;
+        return `
+        <div class="quick-med-item ${isTaken ? "taken" : ""}">
           <div>
             <div style="font-weight: 700; font-size: 13.5px; color: var(--text-main);">${med.name}</div>
             <div style="font-size: 12px; color: var(--text-muted);">${med.dosis}</div>
           </div>
-          <button class="btn btn-sm ${isTaken ? 'btn-white' : 'btn-primary'}" 
+          <button class="btn btn-sm ${isTaken ? "btn-white" : "btn-primary"}" 
                   onclick="toggleMedication(${med.id})" 
-                  style="border: 1px solid ${isTaken ? '#a7f3d0' : 'transparent'}; font-size: 12px;">
-            ${isTaken ? '✓ Diminum' : 'Tandai Minum'}
+                  style="border: 1px solid ${isTaken ? "#a7f3d0" : "transparent"}; font-size: 12px;">
+            ${isTaken ? "✓ Diminum" : "Tandai Minum"}
           </button>
         </div>
       `;
-    }).join('');
+      })
+      .join("");
 
-    const rateEl = document.getElementById('home-adherence-rate');
+    const rateEl = document.getElementById("home-adherence-rate");
     if (rateEl) {
       const pct = Math.round((takenCount / state.medications.length) * 100);
       rateEl.textContent = `${pct}%`;
@@ -255,26 +348,26 @@ function renderHomeView() {
  * Toggle Status Obat & Catat ke Events
  */
 async function toggleMedication(medId) {
-  const med = state.medications.find(m => m.id === medId);
+  const med = state.medications.find((m) => m.id === medId);
   if (!med) return;
 
-  if (med.status === 'diminum') {
-    med.status = 'belum';
+  if (med.status === "diminum") {
+    med.status = "belum";
   } else {
-    med.status = 'diminum';
+    med.status = "diminum";
     // Kirim event ke backend
     try {
-      await fetch('/api/events', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      await fetch("/api/events", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           mpi_id: state.currentMpiId,
-          sistem: 'CARE_DOKTER',
-          tipe: 'obat',
+          sistem: "CARE_DOKTER",
+          tipe: "obat",
           judul: `Konfirmasi Minum Obat: ${med.name}`,
           detail: `Dosis ${med.dosis} diminum tepat waktu oleh pasien.`,
-          outcome: 'diminum'
-        })
+          outcome: "diminum",
+        }),
       });
       await loadPatientTimeline();
     } catch (e) {}
@@ -286,53 +379,61 @@ async function toggleMedication(medId) {
  * Render Kartu Dokter di Beranda
  */
 function renderDoctorsGrid() {
-  const grid = document.getElementById('home-doctor-grid');
+  const grid = document.getElementById("home-doctor-grid");
   if (!grid) return;
 
-  grid.innerHTML = state.doctors.map(doc => `
+  grid.innerHTML = state.doctors
+    .map(
+      (doc) => `
     <div class="doctor-card">
       <div class="doc-avatar-wrap">
-        <img src="${doc.img || '/anisa.svg'}" alt="${doc.name}" class="doc-avatar">
+        <img src="${doc.img || "/anisa.svg"}" alt="${doc.name}" class="doc-avatar">
       </div>
       <h4 class="doc-name">${doc.name}</h4>
       <div class="doc-spec">${doc.spec}</div>
       <div class="doc-meta">Pengalaman ${doc.exp} tahun</div>
-      <span class="badge-avail ${doc.avail === 'yes' ? 'yes' : 'no'}">
-        ${doc.avail === 'yes' ? '● Tersedia Konsultasi' : '○ Sedang Praktik'}
+      <span class="badge-avail ${doc.avail === "yes" ? "yes" : "no"}">
+        ${doc.avail === "yes" ? "● Tersedia Konsultasi" : "○ Sedang Praktik"}
       </span>
       <button class="btn btn-primary btn-sm" onclick="startDoctorChat(${doc.id})" style="width: 100%;">
         💬 Chat Sekarang
       </button>
     </div>
-  `).join('');
+  `,
+    )
+    .join("");
 }
 
 /**
  * Dokter & Chat Logic
  */
 function renderChatDoctorsList() {
-  const list = document.getElementById('chat-doctor-list');
+  const list = document.getElementById("chat-doctor-list");
   if (!list) return;
 
-  list.innerHTML = state.doctors.map(doc => `
-    <div class="chat-doc-item ${doc.id === state.activeChatDoctorId ? 'active' : ''}" onclick="selectChatDoctor(${doc.id})">
-      <img src="${doc.img || '/anisa.svg'}" alt="${doc.name}" style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover;">
+  list.innerHTML = state.doctors
+    .map(
+      (doc) => `
+    <div class="chat-doc-item ${doc.id === state.activeChatDoctorId ? "active" : ""}" onclick="selectChatDoctor(${doc.id})">
+      <img src="${doc.img || "/anisa.svg"}" alt="${doc.name}" style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover;">
       <div style="flex: 1; min-width: 0;">
         <div style="font-weight: 700; font-size: 13.5px; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${doc.name}</div>
         <div style="font-size: 11.5px; color: var(--primary);">${doc.spec}</div>
       </div>
     </div>
-  `).join('');
+  `,
+    )
+    .join("");
 }
 
 function selectChatDoctor(docId) {
   state.activeChatDoctorId = docId;
-  const doc = state.doctors.find(d => d.id === docId);
+  const doc = state.doctors.find((d) => d.id === docId);
   if (doc) {
-    const avatarEl = document.getElementById('active-chat-avatar');
-    const nameEl = document.getElementById('active-chat-name');
-    const specEl = document.getElementById('active-chat-spec');
-    if (avatarEl) avatarEl.src = doc.img || '/anisa.svg';
+    const avatarEl = document.getElementById("active-chat-avatar");
+    const nameEl = document.getElementById("active-chat-name");
+    const specEl = document.getElementById("active-chat-spec");
+    if (avatarEl) avatarEl.src = doc.img || "/anisa.svg";
     if (nameEl) nameEl.textContent = doc.name;
     if (specEl) specEl.textContent = `${doc.spec} · Online`;
   }
@@ -342,46 +443,60 @@ function selectChatDoctor(docId) {
 
 function startDoctorChat(docId) {
   selectChatDoctor(docId);
-  switchView('doctors');
+  switchView("doctors");
 }
 
 function renderChatMessages() {
-  const container = document.getElementById('chat-messages-container');
+  const container = document.getElementById("chat-messages-container");
   if (!container) return;
 
-  container.innerHTML = state.chatMessages.map(msg => `
+  container.innerHTML = state.chatMessages
+    .map(
+      (msg) => `
     <div class="chat-bubble ${msg.sender}">
       <div>${msg.text}</div>
       <div style="font-size: 10px; margin-top: 4px; text-align: right; opacity: 0.7;">${msg.time}</div>
     </div>
-  `).join('');
+  `,
+    )
+    .join("");
 
   container.scrollTop = container.scrollHeight;
 }
 
 function sendChatMessage(e) {
   e.preventDefault();
-  const input = document.getElementById('chat-input-field');
+  const input = document.getElementById("chat-input-field");
   const text = input.value.trim();
   if (!text) return;
 
-  const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  state.chatMessages.push({ sender: 'patient', text, time: now });
-  input.value = '';
+  const now = new Date().toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  state.chatMessages.push({ sender: "patient", text, time: now });
+  input.value = "";
   renderChatMessages();
 
   // Dokter Balas Otomatis
   setTimeout(() => {
-    const doc = state.doctors.find(d => d.id === state.activeChatDoctorId);
+    const doc = state.doctors.find((d) => d.id === state.activeChatDoctorId);
     const replyText = `Terima kasih atas informasinya. Rekam medis terpadu Anda di Mandaya sudah saya periksa. Jika keluhan berlanjut, disarankan untuk melakukan pemeriksaan fisik langsung di poliklinik kami.`;
-    state.chatMessages.push({ sender: 'doctor', text: replyText, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
+    state.chatMessages.push({
+      sender: "doctor",
+      text: replyText,
+      time: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    });
     renderChatMessages();
   }, 1000);
 }
 
 function openBookingForCurrentDoctor() {
-  switchView('booking');
-  const docSelect = document.getElementById('book-doctor-select');
+  switchView("booking");
+  const docSelect = document.getElementById("book-doctor-select");
   if (docSelect) docSelect.value = state.activeChatDoctorId;
 }
 
@@ -389,53 +504,76 @@ function openBookingForCurrentDoctor() {
  * Reservasi Janji Temu Logic
  */
 function renderBookingDropdowns() {
-  const profSelect = document.getElementById('book-profile-select');
+  const profSelect = document.getElementById("book-profile-select");
   if (profSelect) {
-    profSelect.innerHTML = state.profiles.map(p => `
-      <option value="${p.id}">${p.name} (${p.gender}, NIK: ${p.nik || '-'})</option>
-    `).join('');
+    profSelect.innerHTML = state.profiles
+      .map(
+        (p) => `
+      <option value="${p.id}">${p.name} (${p.gender}, NIK: ${p.nik || "-"})</option>
+    `,
+      )
+      .join("");
   }
 
-  const docSelect = document.getElementById('book-doctor-select');
+  const docSelect = document.getElementById("book-doctor-select");
   if (docSelect) {
-    docSelect.innerHTML = state.doctors.map(d => `
+    docSelect.innerHTML = state.doctors
+      .map(
+        (d) => `
       <option value="${d.id}">${d.name} - ${d.spec}</option>
-    `).join('');
+    `,
+      )
+      .join("");
   }
 }
 
 async function submitBooking(e) {
   e.preventDefault();
-  const profileId = parseInt(document.getElementById('book-profile-select').value, 10);
-  const doctorId = parseInt(document.getElementById('book-doctor-select').value, 10);
-  const hospital = document.getElementById('book-hospital-select').value;
-  const date = document.getElementById('book-date').value;
-  const time = document.getElementById('book-time').value;
-  const temp = parseFloat(document.getElementById('book-temp').value) || null;
-  const symptom = document.getElementById('book-symptom').value;
-  const history = document.getElementById('book-history').value;
+  const profileId = parseInt(
+    document.getElementById("book-profile-select").value,
+    10,
+  );
+  const doctorId = parseInt(
+    document.getElementById("book-doctor-select").value,
+    10,
+  );
+  const hospital = document.getElementById("book-hospital-select").value;
+  const date = document.getElementById("book-date").value;
+  const time = document.getElementById("book-time").value;
+  const temp = parseFloat(document.getElementById("book-temp").value) || null;
+  const symptom = document.getElementById("book-symptom").value;
+  const history = document.getElementById("book-history").value;
 
   try {
-    const res = await fetch('/api/bookings', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const res = await fetch("/api/bookings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        profileId, doctorId, hospital, date, time, temp, symptom, history
-      })
+        profileId,
+        doctorId,
+        hospital,
+        date,
+        time,
+        temp,
+        symptom,
+        history,
+      }),
     });
 
     const data = await res.json();
     if (!res.ok) {
-      alert(`Gagal membuat reservasi: ${data.error || 'Terjadi kesalahan'}`);
+      alert(`Gagal membuat reservasi: ${data.error || "Terjadi kesalahan"}`);
       return;
     }
 
-    alert('✓ Reservasi berhasil dibuat dan otomatis terhubung ke Rekam Medis Terpadu Mandaya!');
-    document.getElementById('booking-form').reset();
+    alert(
+      "✓ Reservasi berhasil dibuat dan otomatis terhubung ke Rekam Medis Terpadu Mandaya!",
+    );
+    document.getElementById("booking-form").reset();
     await loadPatientTimeline();
-    switchView('profile');
+    switchView("profile");
   } catch (err) {
-    alert('Terjadi kesalahan jaringan saat menyimpan reservasi.');
+    alert("Terjadi kesalahan jaringan saat menyimpan reservasi.");
   }
 }
 
@@ -443,22 +581,26 @@ async function submitBooking(e) {
  * Profil Pasien & Anggota Keluarga
  */
 function renderProfilePills() {
-  const container = document.getElementById('profile-pills-container');
+  const container = document.getElementById("profile-pills-container");
   if (!container) return;
 
-  container.innerHTML = state.profiles.map(p => `
-    <div class="profile-pill ${p.id === state.currentProfileId ? 'active' : ''}" onclick="selectProfile(${p.id})">
+  container.innerHTML = state.profiles
+    .map(
+      (p) => `
+    <div class="profile-pill ${p.id === state.currentProfileId ? "active" : ""}" onclick="selectProfile(${p.id})">
       <span>👤</span>
-      <span>${p.name} ${p.isMain ? '(Utama)' : ''}</span>
+      <span>${p.name} ${p.isMain ? "(Utama)" : ""}</span>
     </div>
-  `).join('');
+  `,
+    )
+    .join("");
 }
 
 function selectProfile(profId) {
   state.currentProfileId = profId;
-  const p = state.profiles.find(x => x.id === profId);
+  const p = state.profiles.find((x) => x.id === profId);
   if (p) {
-    state.currentMpiId = p.mpi_id || 'MPI-0001';
+    state.currentMpiId = p.mpi_id || "MPI-0001";
   }
   renderProfilePills();
   renderActiveProfileDetails();
@@ -467,74 +609,78 @@ function selectProfile(profId) {
 }
 
 function renderActiveProfileDetails() {
-  const p = state.profiles.find(x => x.id === state.currentProfileId) || state.profiles[0];
+  const p =
+    state.profiles.find((x) => x.id === state.currentProfileId) ||
+    state.profiles[0];
   if (!p) return;
 
-  const nameEl = document.getElementById('prof-disp-name');
-  const mpiEl = document.getElementById('prof-disp-mpi');
-  const nikEl = document.getElementById('prof-disp-nik');
-  const phoneEl = document.getElementById('prof-disp-phone');
-  const emailEl = document.getElementById('prof-disp-email');
-  const birthEl = document.getElementById('prof-disp-birth');
+  const nameEl = document.getElementById("prof-disp-name");
+  const mpiEl = document.getElementById("prof-disp-mpi");
+  const nikEl = document.getElementById("prof-disp-nik");
+  const phoneEl = document.getElementById("prof-disp-phone");
+  const emailEl = document.getElementById("prof-disp-email");
+  const birthEl = document.getElementById("prof-disp-birth");
 
   if (nameEl) nameEl.textContent = p.name;
-  if (mpiEl) mpiEl.textContent = p.mpi_id || 'MPI-0001';
-  if (nikEl) nikEl.textContent = p.nik || '-';
-  if (phoneEl) phoneEl.textContent = p.phone || '-';
-  if (emailEl) emailEl.textContent = p.email || '-';
-  if (birthEl) birthEl.textContent = `${p.birth || '-'} (${p.gender || '-'})`;
+  if (mpiEl) mpiEl.textContent = p.mpi_id || "MPI-0001";
+  if (nikEl) nikEl.textContent = p.nik || "-";
+  if (phoneEl) phoneEl.textContent = p.phone || "-";
+  if (emailEl) emailEl.textContent = p.email || "-";
+  if (birthEl) birthEl.textContent = `${p.birth || "-"} (${p.gender || "-"})`;
 }
 
 function openAddProfileModal() {
-  document.getElementById('modal-profile-title').textContent = 'Tambah Profil Anggota Baru';
-  document.getElementById('prof-form-id').value = '';
-  document.getElementById('prof-form-name').value = '';
-  document.getElementById('prof-form-birth').value = '1990-01-01';
-  document.getElementById('prof-form-gender').value = 'Perempuan';
-  document.getElementById('prof-form-phone').value = '';
-  document.getElementById('prof-form-email').value = '';
-  document.getElementById('prof-form-nik').value = '';
-  document.getElementById('prof-form-kk').value = '';
-  document.getElementById('modal-profile').classList.add('active');
+  document.getElementById("modal-profile-title").textContent =
+    "Tambah Profil Anggota Baru";
+  document.getElementById("prof-form-id").value = "";
+  document.getElementById("prof-form-name").value = "";
+  document.getElementById("prof-form-birth").value = "1990-01-01";
+  document.getElementById("prof-form-gender").value = "Perempuan";
+  document.getElementById("prof-form-phone").value = "";
+  document.getElementById("prof-form-email").value = "";
+  document.getElementById("prof-form-nik").value = "";
+  document.getElementById("prof-form-kk").value = "";
+  document.getElementById("modal-profile").classList.add("active");
 }
 
 function openEditProfileModal() {
-  const p = state.profiles.find(x => x.id === state.currentProfileId);
+  const p = state.profiles.find((x) => x.id === state.currentProfileId);
   if (!p) return;
 
-  document.getElementById('modal-profile-title').textContent = 'Edit Profil Anggota';
-  document.getElementById('prof-form-id').value = p.id;
-  document.getElementById('prof-form-name').value = p.name;
-  document.getElementById('prof-form-birth').value = p.birth;
-  document.getElementById('prof-form-gender').value = p.gender;
-  document.getElementById('prof-form-phone').value = p.phone;
-  document.getElementById('prof-form-email').value = p.email;
-  document.getElementById('prof-form-nik').value = p.nik;
-  document.getElementById('prof-form-kk').value = p.kk;
-  document.getElementById('modal-profile').classList.add('active');
+  document.getElementById("modal-profile-title").textContent =
+    "Edit Profil Anggota";
+  document.getElementById("prof-form-id").value = p.id;
+  document.getElementById("prof-form-name").value = p.name;
+  document.getElementById("prof-form-birth").value = p.birth;
+  document.getElementById("prof-form-gender").value = p.gender;
+  document.getElementById("prof-form-phone").value = p.phone;
+  document.getElementById("prof-form-email").value = p.email;
+  document.getElementById("prof-form-nik").value = p.nik;
+  document.getElementById("prof-form-kk").value = p.kk;
+  document.getElementById("modal-profile").classList.add("active");
 }
 
 async function saveProfile(e) {
   e.preventDefault();
-  const id = document.getElementById('prof-form-id').value;
+  const id = document.getElementById("prof-form-id").value;
   const payload = {
-    name: document.getElementById('prof-form-name').value,
-    birth: document.getElementById('prof-form-birth').value,
-    gender: document.getElementById('prof-form-gender').value,
-    phone: document.getElementById('prof-form-phone').value,
-    email: document.getElementById('prof-form-email').value,
-    nik: document.getElementById('prof-form-nik').value,
-    kk: document.getElementById('prof-form-kk').value,
-    mpi_id: state.currentMpiId
+    name: document.getElementById("prof-form-name").value,
+    birth: document.getElementById("prof-form-birth").value,
+    gender: document.getElementById("prof-form-gender").value,
+    phone: document.getElementById("prof-form-phone").value,
+    email: document.getElementById("prof-form-email").value,
+    nik: document.getElementById("prof-form-nik").value,
+    kk: document.getElementById("prof-form-kk").value,
+    mpi_id: state.currentMpiId,
   };
 
   try {
-    const url = id ? `/api/profiles/${id}` : '/api/profiles';
-    const method = id ? 'PUT' : 'POST';
+    const url = id ? `/api/profiles/${id}` : "/api/profiles";
+    const method = id ? "PUT" : "POST";
     const res = await fetch(url, {
       method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
     });
     const data = await res.json();
     if (!res.ok) {
@@ -542,14 +688,14 @@ async function saveProfile(e) {
       return;
     }
 
-    closeModal('modal-profile');
-    const profs = await fetch('/api/profiles').then(r => r.json());
+    closeModal("modal-profile");
+    const profs = await fetch("/api/profiles").then((r) => r.json());
     state.profiles = profs;
     renderProfilePills();
     renderBookingDropdowns();
     renderActiveProfileDetails();
   } catch (err) {
-    alert('Terjadi kesalahan jaringan.');
+    alert("Terjadi kesalahan jaringan.");
   }
 }
 
@@ -558,30 +704,37 @@ async function saveProfile(e) {
  */
 async function loadPatientTimeline() {
   try {
-    const res = await fetch(`/api/timeline/${state.currentMpiId}`).then(r => r.json());
+    const res = await fetch(`/api/timeline/${state.currentMpiId}`).then((r) =>
+      r.json(),
+    );
     state.timelineEvents = res.events || [];
     renderTimelineFeed();
   } catch (e) {
-    console.error('Error loading timeline:', e);
+    console.error("Error loading timeline:", e);
   }
 }
 
 function filterTimeline(systemKey, btn) {
   state.activeTimelineFilter = systemKey;
   if (btn) {
-    document.querySelectorAll('#timeline-filters .btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+    document
+      .querySelectorAll("#timeline-filters .btn")
+      .forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
   }
   renderTimelineFeed();
 }
 
 function renderTimelineFeed() {
-  const container = document.getElementById('patient-timeline-container');
+  const container = document.getElementById("patient-timeline-container");
   if (!container) return;
 
-  const filtered = state.activeTimelineFilter === 'ALL'
-    ? state.timelineEvents
-    : state.timelineEvents.filter(ev => ev.sistem === state.activeTimelineFilter);
+  const filtered =
+    state.activeTimelineFilter === "ALL"
+      ? state.timelineEvents
+      : state.timelineEvents.filter(
+          (ev) => ev.sistem === state.activeTimelineFilter,
+        );
 
   if (filtered.length === 0) {
     container.innerHTML = `
@@ -592,22 +745,30 @@ function renderTimelineFeed() {
     return;
   }
 
-  container.innerHTML = filtered.map(ev => `
+  container.innerHTML = filtered
+    .map(
+      (ev) => `
     <div class="timeline-item">
       <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
-        <span class="badge-system badge-${ev.sistem}">${ev.sistem.replace('_', ' ')}</span>
+        <span class="badge-system badge-${ev.sistem}">${ev.sistem.replace("_", " ")}</span>
         <span style="font-size: 12px; color: var(--text-muted); font-weight: 500;">${ev.waktu}</span>
       </div>
       <div style="font-weight: 700; font-size: 15px; color: var(--text-main); margin-bottom: 4px;">${ev.judul}</div>
-      <div style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">${ev.detail || '-'}</div>
-      ${ev.outcome ? `
+      <div style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">${ev.detail || "-"}</div>
+      ${
+        ev.outcome
+          ? `
         <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between;">
           <span style="font-size: 12px; font-weight: 600; color: var(--primary-dark);">Outcome: <strong>${ev.outcome}</strong></span>
           <span style="font-size: 11px; background: #ecfdf5; color: #047857; padding: 2px 6px; border-radius: 4px; font-weight: 700;">✓ Data Latih AI</span>
         </div>
-      ` : ''}
+      `
+          : ""
+      }
     </div>
-  `).join('');
+  `,
+    )
+    .join("");
 }
 
 /**
@@ -615,27 +776,30 @@ function renderTimelineFeed() {
  */
 async function loadPatientConsents() {
   try {
-    const res = await fetch(`/api/consent/${state.currentMpiId}`).then(r => r.json());
+    const res = await fetch(`/api/consent/${state.currentMpiId}`).then((r) =>
+      r.json(),
+    );
     state.consents = res.consents || [];
     renderConsentSwitches();
   } catch (e) {
-    console.error('Error loading consents:', e);
+    console.error("Error loading consents:", e);
   }
 }
 
 function renderConsentSwitches() {
-  const container = document.getElementById('consent-switches-container');
+  const container = document.getElementById("consent-switches-container");
   if (!container) return;
 
-  container.innerHTML = state.consents.map(c => {
-    const isLocked = c.dapat_dicabut === 0;
-    return `
+  container.innerHTML = state.consents
+    .map((c) => {
+      const isLocked = c.dapat_dicabut === 0;
+      return `
       <div style="background: var(--bg-page); border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; margin-bottom: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center;">
           <div style="flex: 1; padding-right: 12px;">
             <div style="font-weight: 700; font-size: 14px; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
               ${c.nama_purpose}
-              ${isLocked ? '<span style="font-size: 10px; background: #e0f2fe; color: #0369a1; padding: 2px 6px; border-radius: 4px; font-weight: 800;">Wajib Medis</span>' : ''}
+              ${isLocked ? '<span style="font-size: 10px; background: #e0f2fe; color: #0369a1; padding: 2px 6px; border-radius: 4px; font-weight: 800;">Wajib Medis</span>' : ""}
             </div>
             <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
               Dasar Hukum: ${c.basis_hukum}
@@ -643,82 +807,91 @@ function renderConsentSwitches() {
           </div>
           <div>
             <input type="checkbox" 
-                   ${c.status === 1 ? 'checked' : ''} 
-                   ${isLocked ? 'disabled title="Tujuan klinis tidak dapat dicabut demi keselamatan pasien"' : ''}
+                   ${c.status === 1 ? "checked" : ""} 
+                   ${isLocked ? 'disabled title="Tujuan klinis tidak dapat dicabut demi keselamatan pasien"' : ""}
                    onchange="updateConsent('${c.purpose}', this.checked)"
-                   style="transform: scale(1.3); cursor: ${isLocked ? 'not-allowed' : 'pointer'};">
+                   style="transform: scale(1.3); cursor: ${isLocked ? "not-allowed" : "pointer"};">
           </div>
         </div>
       </div>
     `;
-  }).join('');
+    })
+    .join("");
 }
 
 async function updateConsent(purpose, isGranted) {
   try {
     await fetch(`/api/consent/${state.currentMpiId}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ purpose, diberikan: isGranted ? 1 : 0 })
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ purpose, diberikan: isGranted ? 1 : 0 }),
     });
     await loadPatientConsents();
     await loadAccessLogs();
   } catch (e) {
-    alert('Gagal memperbarui izin data.');
+    alert("Gagal memperbarui izin data.");
   }
 }
 
 function openConsentModal() {
-  document.getElementById('modal-consent').classList.add('active');
+  document.getElementById("modal-consent").classList.add("active");
 }
 
 /**
  * Check-in Gejala Mandiri
  */
 function openCheckinModal() {
-  document.getElementById('modal-checkin').classList.add('active');
+  document.getElementById("modal-checkin").classList.add("active");
 }
 
 async function submitCheckin(e) {
   e.preventDefault();
-  const pain = document.getElementById('input-pain-scale').value;
-  const checkboxes = document.querySelectorAll('input[name="symptom_tag"]:checked');
-  const tags = Array.from(checkboxes).map(c => c.value);
-  const notes = document.getElementById('checkin-notes').value;
+  const pain = document.getElementById("input-pain-scale").value;
+  const checkboxes = document.querySelectorAll(
+    'input[name="symptom_tag"]:checked',
+  );
+  const tags = Array.from(checkboxes).map((c) => c.value);
+  const notes = document.getElementById("checkin-notes").value;
 
-  const detailText = `Skala Nyeri: ${pain}/10. Gejala: ${tags.join(', ') || 'Tidak ada gejala khusus'}. Catatan: ${notes || '-'}`;
+  const detailText = `Skala Nyeri: ${pain}/10. Gejala: ${tags.join(", ") || "Tidak ada gejala khusus"}. Catatan: ${notes || "-"}`;
 
   try {
-    await fetch('/api/events', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    await fetch("/api/events", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         mpi_id: state.currentMpiId,
-        sistem: 'CRM',
-        tipe: 'checkin',
+        sistem: "CRM",
+        tipe: "checkin",
         judul: `Check-in Mandiri (Nyeri ${pain}/10)`,
         detail: detailText,
-        outcome: pain > 4 ? 'memburuk' : 'stabil'
-      })
+        outcome: pain > 4 ? "memburuk" : "stabil",
+      }),
     });
 
-    closeModal('modal-checkin');
-    alert('✓ Check-in berhasil dikirim! Tim medis dan DPJP Mandaya memantau kondisi Anda.');
-    
-    const lastPainEl = document.getElementById('home-last-pain');
-    const lastSymEl = document.getElementById('home-last-symptoms');
-    if (lastPainEl) lastPainEl.textContent = `${pain} / 10 (${pain > 4 ? 'Waspada' : 'Stabil'})`;
-    if (lastSymEl) lastSymEl.textContent = `Gejala: ${tags.join(', ') || 'Nyeri ringan'}`;
+    closeModal("modal-checkin");
+    alert(
+      "✓ Check-in berhasil dikirim! Tim medis dan DPJP Mandaya memantau kondisi Anda.",
+    );
+
+    const lastPainEl = document.getElementById("home-last-pain");
+    const lastSymEl = document.getElementById("home-last-symptoms");
+    if (lastPainEl)
+      lastPainEl.textContent = `${pain} / 10 (${pain > 4 ? "Waspada" : "Stabil"})`;
+    if (lastSymEl)
+      lastSymEl.textContent = `Gejala: ${tags.join(", ") || "Nyeri ringan"}`;
 
     await loadPatientTimeline();
     await loadRiskQueue();
   } catch (e) {
-    alert('Gagal mengirim check-in.');
+    alert("Gagal mengirim check-in.");
   }
 }
 
 function confirmAppointment() {
-  alert('✓ Kehadiran Anda pada jadwal kontrol telah dikonfirmasi ke Poli Jantung Mandaya Royal Hospital Puri (+50 Poin Sehat ditambahkan)!');
+  alert(
+    "✓ Kehadiran Anda pada jadwal kontrol telah dikonfirmasi ke Poli Jantung Mandaya Royal Hospital Puri (+50 Poin Sehat ditambahkan)!",
+  );
 }
 
 /**
@@ -726,17 +899,17 @@ function confirmAppointment() {
  */
 async function loadRiskQueue() {
   try {
-    const res = await fetch('/api/risk/queue').then(r => r.json());
+    const res = await fetch("/api/risk/queue").then((r) => r.json());
     state.riskQueue = res.antrean || [];
     renderRiskQueue();
     renderHomeView();
   } catch (e) {
-    console.error('Error loading risk queue:', e);
+    console.error("Error loading risk queue:", e);
   }
 }
 
 function renderRiskQueue() {
-  const container = document.getElementById('staff-risk-queue-container');
+  const container = document.getElementById("staff-risk-queue-container");
   if (!container) return;
 
   if (state.riskQueue.length === 0) {
@@ -750,8 +923,10 @@ function renderRiskQueue() {
     return;
   }
 
-  container.innerHTML = state.riskQueue.map(item => `
-    <div style="background: #ffffff; border: 1px solid ${item.tingkat === 'tinggi' ? '#fca5a5' : 'var(--border-color)'}; border-left: 5px solid ${item.tingkat === 'tinggi' ? 'var(--risk-high)' : 'var(--risk-med)'}; border-radius: 12px; padding: 18px; margin-bottom: 14px; box-shadow: var(--shadow-sm);">
+  container.innerHTML = state.riskQueue
+    .map(
+      (item) => `
+    <div style="background: #ffffff; border: 1px solid ${item.tingkat === "tinggi" ? "#fca5a5" : "var(--border-color)"}; border-left: 5px solid ${item.tingkat === "tinggi" ? "var(--risk-high)" : "var(--risk-med)"}; border-radius: 12px; padding: 18px; margin-bottom: 14px; box-shadow: var(--shadow-sm);">
       <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;">
         <div>
           <div style="display: flex; align-items: center; gap: 8px;">
@@ -759,11 +934,11 @@ function renderRiskQueue() {
             <code style="background: var(--bg-page); color: var(--text-muted); padding: 2px 6px; border-radius: 4px; font-size: 11px;">${item.mpi_id}</code>
           </div>
           <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
-            Kontak: ${item.telepon || '-'} · Usia: ${item.usia || '-'} thn
+            Kontak: ${item.telepon || "-"} · Usia: ${item.usia || "-"} thn
           </div>
         </div>
         <div style="text-align: right;">
-          <span style="background: ${item.tingkat === 'tinggi' ? '#fee2e2' : '#fef3c7'}; color: ${item.tingkat === 'tinggi' ? '#b91c1c' : '#b45309'}; font-weight: 800; font-size: 12px; padding: 3px 10px; border-radius: 20px;">
+          <span style="background: ${item.tingkat === "tinggi" ? "#fee2e2" : "#fef3c7"}; color: ${item.tingkat === "tinggi" ? "#b91c1c" : "#b45309"}; font-weight: 800; font-size: 12px; padding: 3px 10px; border-radius: 20px;">
             SKOR: ${item.skor}/100 (${item.tingkat.toUpperCase()})
           </span>
         </div>
@@ -772,7 +947,7 @@ function renderRiskQueue() {
       <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; font-size: 12.5px;">
         <strong style="color: var(--text-main);">Alasan Inferensi XAI:</strong>
         <ul style="padding-left: 18px; margin-top: 4px; color: var(--text-muted);">
-          ${item.alasan.map(a => `<li>${a}</li>`).join('')}
+          ${item.alasan.map((a) => `<li>${a}</li>`).join("")}
         </ul>
       </div>
 
@@ -782,57 +957,64 @@ function renderRiskQueue() {
         </button>
       </div>
     </div>
-  `).join('');
+  `,
+    )
+    .join("");
 }
 
 async function callPatientAction(mpiId) {
   try {
-    await fetch('/api/events', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    await fetch("/api/events", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         mpi_id: mpiId,
-        sistem: 'CARE_DOKTER',
-        tipe: 'panggilan',
-        judul: 'Panggilan Intervensi Klinis Staf Medis Mandaya',
-        detail: 'Pasien telah dihubungi via telepon. Pasien menyanggupi hadir kontrol ulang & resep obat disesuaikan.',
-        outcome: 'tersambung'
-      })
+        sistem: "CARE_DOKTER",
+        tipe: "panggilan",
+        judul: "Panggilan Intervensi Klinis Staf Medis Mandaya",
+        detail:
+          "Pasien telah dihubungi via telepon. Pasien menyanggupi hadir kontrol ulang & resep obat disesuaikan.",
+        outcome: "tersambung",
+      }),
     });
-    alert('✓ Intervensi telepon berhasil dicatat dan masuk ke Closed Learning Loop (Data Latih AI)!');
+    alert(
+      "✓ Intervensi telepon berhasil dicatat dan masuk ke Closed Learning Loop (Data Latih AI)!",
+    );
     await loadRiskQueue();
     await loadPatientTimeline();
   } catch (e) {
-    alert('Gagal mencatat intervensi.');
+    alert("Gagal mencatat intervensi.");
   }
 }
 
 async function runMpiResolution() {
   try {
-    const res = await fetch('/api/mpi/resolve', { method: 'POST' }).then(r => r.json());
-    alert(res.pesan || 'Resolusi MPI Selesai!');
+    const res = await fetch("/api/mpi/resolve", { method: "POST" }).then((r) =>
+      r.json(),
+    );
+    alert(res.pesan || "Resolusi MPI Selesai!");
     await loadInitialData();
     renderRoleComparison();
     loadMpiPatientsTable();
     loadMpiReviews();
   } catch (e) {
-    alert('Gagal menjalankan resolusi MPI.');
+    alert("Gagal menjalankan resolusi MPI.");
   }
 }
 
 async function loadMpiReviews() {
   try {
-    const res = await fetch('/api/mpi/review').then(r => r.json());
+    const res = await fetch("/api/mpi/review").then((r) => r.json());
     state.reviewQueue = res.data || [];
     renderMpiReviewQueue();
   } catch (e) {
-    console.error('Error loading reviews:', e);
+    console.error("Error loading reviews:", e);
   }
 }
 
 function renderMpiReviewQueue() {
-  const container = document.getElementById('mpi-review-list');
-  const badge = document.getElementById('review-count-badge');
+  const container = document.getElementById("mpi-review-list");
+  const badge = document.getElementById("review-count-badge");
   if (badge) badge.textContent = `${state.reviewQueue.length} Perlu Tinjauan`;
   if (!container) return;
 
@@ -845,151 +1027,191 @@ function renderMpiReviewQueue() {
     return;
   }
 
-  container.innerHTML = state.reviewQueue.map(r => `
+  container.innerHTML = state.reviewQueue
+    .map(
+      (r) => `
     <div style="background: var(--bg-page); border: 1px solid var(--border-color); border-radius: 10px; padding: 14px; margin-bottom: 10px; font-size: 13px;">
       <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
         <strong>Skor Kecocokan: ${(r.skor * 100).toFixed(1)}% (${r.sistem} - ID: ${r.local_id})</strong>
         <span class="badge-system badge-LOYALITAS">Ambang Tinjau 0.70 - 0.92</span>
       </div>
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; background: white; padding: 8px; border-radius: 6px;">
-        <div><strong>Data Master MPI:</strong> ${r.nama_pasien_mpi} (NIK: ${r.nik_pasien_mpi || '-'})</div>
-        <div><strong>Data Sumber Baru:</strong> ${r.nama_sumber} (NIK: ${r.nik_sumber || '-'})</div>
+        <div><strong>Data Master MPI:</strong> ${r.nama_pasien_mpi} (NIK: ${r.nik_pasien_mpi || "-"})</div>
+        <div><strong>Data Sumber Baru:</strong> ${r.nama_sumber} (NIK: ${r.nik_sumber || "-"})</div>
       </div>
       <div style="display: flex; justify-content: flex-end; gap: 8px;">
         <button class="btn btn-secondary btn-sm" onclick="reviewDecision(${r.link_id}, 'tolak')">✕ Tolak (Pasien Berbeda)</button>
         <button class="btn btn-primary btn-sm" onclick="reviewDecision(${r.link_id}, 'setuju')">✓ Setujui (Gabung Pasien)</button>
       </div>
     </div>
-  `).join('');
+  `,
+    )
+    .join("");
 }
 
 async function reviewDecision(linkId, keputusan) {
   try {
     const res = await fetch(`/api/mpi/review/${linkId}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ keputusan, petugas: 'dr. Verifikator Medis' })
-    }).then(r => r.json());
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ keputusan, petugas: "dr. Verifikator Medis" }),
+    }).then((r) => r.json());
 
     alert(res.pesan);
     await loadInitialData();
     loadMpiReviews();
     loadMpiPatientsTable();
   } catch (e) {
-    alert('Gagal memproses keputusan.');
+    alert("Gagal memproses keputusan.");
   }
 }
 
 async function renderRoleComparison() {
-  const container = document.getElementById('role-columns-grid');
+  const container = document.getElementById("role-columns-grid");
   if (!container) return;
 
-  const select = document.getElementById('role-test-patient');
-  const mpiId = select ? select.value : 'MPI-0001';
+  const select = document.getElementById("role-test-patient");
+  const mpiId = select ? select.value : "MPI-0001";
 
   try {
     const [doc, nurse, mkt, ai] = await Promise.all([
-      fetch(`/api/patient/${mpiId}?purpose=klinis`, { headers: { 'X-Peran': 'dokter' } }).then(r => r.json()),
-      fetch(`/api/patient/${mpiId}?purpose=klinis`, { headers: { 'X-Peran': 'perawat' } }).then(r => r.json()),
-      fetch(`/api/patient/${mpiId}?purpose=pemasaran`, { headers: { 'X-Peran': 'marketing' } }).then(r => r.json()),
-      fetch(`/api/patient/${mpiId}?purpose=analitik`, { headers: { 'X-Peran': 'ai' } }).then(r => r.json())
+      fetch(`/api/patient/${mpiId}?purpose=klinis`, {
+        headers: { "X-Peran": "dokter" },
+      }).then((r) => r.json()),
+      fetch(`/api/patient/${mpiId}?purpose=klinis`, {
+        headers: { "X-Peran": "perawat" },
+      }).then((r) => r.json()),
+      fetch(`/api/patient/${mpiId}?purpose=pemasaran`, {
+        headers: { "X-Peran": "marketing" },
+      }).then((r) => r.json()),
+      fetch(`/api/patient/${mpiId}?purpose=analitik`, {
+        headers: { "X-Peran": "ai" },
+      }).then((r) => r.json()),
     ]);
 
     const roles = [
-      { title: '👨‍⚕️ DPJP DOKTER', color: '#0369a1', data: doc.data || {} },
-      { title: '👩‍⚕️ PERAWAT', color: '#047857', data: nurse.data || {} },
-      { title: '📢 MARKETING', color: '#b45309', data: mkt.data || (mkt.error ? { error: mkt.error } : {}) },
-      { title: '🤖 AI (PSEUDONIM)', color: '#6d28d9', data: ai.data || {} }
+      { title: "👨‍⚕️ DPJP DOKTER", color: "#0369a1", data: doc.data || {} },
+      { title: "👩‍⚕️ PERAWAT", color: "#047857", data: nurse.data || {} },
+      {
+        title: "📢 MARKETING",
+        color: "#b45309",
+        data: mkt.data || (mkt.error ? { error: mkt.error } : {}),
+      },
+      { title: "🤖 AI (PSEUDONIM)", color: "#6d28d9", data: ai.data || {} },
     ];
 
-    container.innerHTML = roles.map(r => `
+    container.innerHTML = roles
+      .map(
+        (r) => `
       <div style="background: var(--bg-page); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; font-size: 11.5px;">
         <div style="font-weight: 800; color: ${r.color}; margin-bottom: 6px; border-bottom: 1px solid var(--border-color); padding-bottom: 4px;">${r.title}</div>
         <pre style="background: #0f172a; color: #38bdf8; padding: 8px; border-radius: 6px; max-height: 220px; overflow: auto; font-family: monospace;">${JSON.stringify(r.data, null, 2)}</pre>
       </div>
-    `).join('');
+    `,
+      )
+      .join("");
   } catch (e) {
-    console.error('Error rendering role comparison:', e);
+    console.error("Error rendering role comparison:", e);
   }
 }
 
 async function loadMpiPatientsTable() {
-  const tbody = document.getElementById('mpi-patients-table-body');
+  const tbody = document.getElementById("mpi-patients-table-body");
   if (!tbody) return;
 
   try {
-    const res = await fetch('/api/mpi/patients').then(r => r.json());
+    const res = await fetch("/api/mpi/patients").then((r) => r.json());
     const patients = res.data || [];
-    tbody.innerHTML = patients.map(p => `
+    tbody.innerHTML = patients
+      .map(
+        (p) => `
       <tr>
         <td><code>${p.mpi_id}</code></td>
         <td><strong>${p.nama}</strong></td>
-        <td>${p.nik || '-'}</td>
-        <td>${p.tgl_lahir || '-'}</td>
+        <td>${p.nik || "-"}</td>
+        <td>${p.tgl_lahir || "-"}</td>
         <td><span class="badge-system badge-LOYALITAS">${p.total_tautan} Tautan</span></td>
-        <td>${p.sistem_terhubung || '-'}</td>
+        <td>${p.sistem_terhubung || "-"}</td>
       </tr>
-    `).join('');
+    `,
+      )
+      .join("");
   } catch (e) {}
 }
 
 async function loadAccessLogs() {
-  const tbody = document.getElementById('access-log-table-body');
+  const tbody = document.getElementById("access-log-table-body");
   if (!tbody) return;
 
   try {
-    const res = await fetch('/api/access-logs').then(r => r.json());
+    const res = await fetch("/api/access-logs").then((r) => r.json());
     const logs = res.logs || [];
-    tbody.innerHTML = logs.slice(0, 30).map(l => `
+    tbody.innerHTML = logs
+      .slice(0, 30)
+      .map(
+        (l) => `
       <tr>
         <td style="font-size: 11.5px; color: var(--text-muted);">${l.waktu}</td>
         <td><strong>${l.aktor}</strong> (${l.peran})</td>
         <td><code>${l.mpi_id}</code></td>
         <td>${l.purpose}</td>
         <td>
-          <span style="font-size: 11px; font-weight: 800; color: ${l.diizinkan === 1 ? '#047857' : '#b91c1c'}; background: ${l.diizinkan === 1 ? '#ecfdf5' : '#fee2e2'}; padding: 2px 6px; border-radius: 4px;">
-            ${l.diizinkan === 1 ? '200 DIIZINKAN' : '403 DIBLOKIR'}
+          <span style="font-size: 11px; font-weight: 800; color: ${l.diizinkan === 1 ? "#047857" : "#b91c1c"}; background: ${l.diizinkan === 1 ? "#ecfdf5" : "#fee2e2"}; padding: 2px 6px; border-radius: 4px;">
+            ${l.diizinkan === 1 ? "200 DIIZINKAN" : "403 DIBLOKIR"}
           </span>
         </td>
-        <td style="font-size: 11px; color: var(--text-muted); max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${l.fields || '-'}</td>
+        <td style="font-size: 11px; color: var(--text-muted); max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${l.fields || "-"}</td>
       </tr>
-    `).join('');
+    `,
+      )
+      .join("");
   } catch (e) {}
 }
 
 async function advanceDaySimulation() {
   try {
-    const res = await fetch('/api/demo/advance-day', { method: 'POST' }).then(r => r.json());
+    const res = await fetch("/api/demo/advance-day", { method: "POST" }).then(
+      (r) => r.json(),
+    );
     alert(res.pesan);
     await loadRiskQueue();
     await loadPatientTimeline();
   } catch (e) {
-    alert('Gagal memajukan hari simulasi.');
+    alert("Gagal memajukan hari simulasi.");
   }
 }
 
 async function resetDemoDb() {
-  if (!confirm('Apakah Anda yakin ingin me-reset seluruh database ke kondisi awal demo?')) return;
+  if (
+    !confirm(
+      "Apakah Anda yakin ingin me-reset seluruh database ke kondisi awal demo?",
+    )
+  )
+    return;
   try {
-    const res = await fetch('/api/demo/reset', { method: 'POST' }).then(r => r.json());
+    const res = await fetch("/api/demo/reset", { method: "POST" }).then((r) =>
+      r.json(),
+    );
     alert(res.pesan);
     await loadInitialData();
   } catch (e) {
-    alert('Gagal me-reset database.');
+    alert("Gagal me-reset database.");
   }
 }
 
 function filterDoctorsChat(query) {
   const q = query.toLowerCase();
-  document.querySelectorAll('#chat-doctor-list .chat-doc-item').forEach(el => {
-    const text = el.textContent.toLowerCase();
-    el.style.display = text.includes(q) ? 'flex' : 'none';
-  });
+  document
+    .querySelectorAll("#chat-doctor-list .chat-doc-item")
+    .forEach((el) => {
+      const text = el.textContent.toLowerCase();
+      el.style.display = text.includes(q) ? "flex" : "none";
+    });
 }
 
 function closeModal(modalId) {
   const m = document.getElementById(modalId);
-  if (m) m.classList.remove('active');
+  if (m) m.classList.remove("active");
 }
 
 // ==========================================================================
@@ -1002,14 +1224,24 @@ let selectedQuizAnswerIndex = 0;
  * Muat seluruh data modul loyalitas
  */
 async function loadLoyaltyData() {
-  const mpiId = state.currentMpiId || 'MPI-0001';
+  const mpiId = state.currentMpiId || "MPI-0001";
   try {
     const [accRes, presRes, rewRes, poolRes, misRes] = await Promise.all([
-      fetch(`/api/loyalty/account/${mpiId}`).then(r => r.json()).catch(() => ({ data: null })),
-      fetch(`/api/loyalty/prescriptions/${mpiId}`).then(r => r.json()).catch(() => ({ data: null })),
-      fetch('/api/loyalty/rewards').then(r => r.json()).catch(() => ({ data: [] })),
-      fetch('/api/loyalty/family-pool/FAM-001').then(r => r.json()).catch(() => ({ data: null })),
-      fetch(`/api/loyalty/missions/${mpiId}`).then(r => r.json()).catch(() => ({ data: null }))
+      fetch(`/api/loyalty/account/${mpiId}`)
+        .then((r) => r.json())
+        .catch(() => ({ data: null })),
+      fetch(`/api/loyalty/prescriptions/${mpiId}`)
+        .then((r) => r.json())
+        .catch(() => ({ data: null })),
+      fetch("/api/loyalty/rewards")
+        .then((r) => r.json())
+        .catch(() => ({ data: [] })),
+      fetch("/api/loyalty/family-pool/FAM-001")
+        .then((r) => r.json())
+        .catch(() => ({ data: null })),
+      fetch(`/api/loyalty/missions/${mpiId}`)
+        .then((r) => r.json())
+        .catch(() => ({ data: null })),
     ]);
 
     state.loyaltyAccount = accRes.data;
@@ -1022,7 +1254,7 @@ async function loadLoyaltyData() {
     renderLoyaltyView();
     updateHeaderPointsBadge();
   } catch (err) {
-    console.error('Error loading loyalty data:', err);
+    console.error("Error loading loyalty data:", err);
   }
 }
 
@@ -1031,9 +1263,9 @@ async function loadLoyaltyData() {
  */
 function updateHeaderPointsBadge() {
   const pts = state.loyaltyAccount?.points_balance ?? 2450;
-  const el = document.getElementById('nav-header-points');
+  const el = document.getElementById("nav-header-points");
   if (el) {
-    el.textContent = `${pts.toLocaleString('id-ID')} Pts`;
+    el.textContent = `${pts.toLocaleString("id-ID")} Pts`;
   }
 }
 
@@ -1043,48 +1275,50 @@ function updateHeaderPointsBadge() {
 function renderLoyaltyView() {
   const acc = state.loyaltyAccount || {
     points_balance: 2450,
-    tier: 'Gold Care',
+    tier: "Gold Care",
     care_streak_days: 5,
-    auto_use_points: 1
+    auto_use_points: 1,
   };
 
   // Hero Card Info
-  const ptsEl = document.getElementById('loyalty-points-val');
-  if (ptsEl) ptsEl.textContent = (acc.points_balance || 0).toLocaleString('id-ID');
+  const ptsEl = document.getElementById("loyalty-points-val");
+  if (ptsEl)
+    ptsEl.textContent = (acc.points_balance || 0).toLocaleString("id-ID");
 
-  const tierEl = document.getElementById('loyalty-hero-tier');
+  const tierEl = document.getElementById("loyalty-hero-tier");
   if (tierEl) {
-    tierEl.textContent = `⭐ ${acc.tier || 'Gold Care'}`;
-    tierEl.className = `tier-badge-pill ${acc.tier === 'Diamond Elite' ? 'tier-diamond' : acc.tier === 'Platinum Royale' ? 'tier-platinum' : acc.tier === 'Gold Care' ? 'tier-gold' : 'tier-silver'}`;
+    tierEl.textContent = `⭐ ${acc.tier || "Gold Care"}`;
+    tierEl.className = `tier-badge-pill ${acc.tier === "Diamond Elite" ? "tier-diamond" : acc.tier === "Platinum Royale" ? "tier-platinum" : acc.tier === "Gold Care" ? "tier-gold" : "tier-silver"}`;
   }
 
-  const streakCountEl = document.getElementById('loyalty-streak-count');
-  if (streakCountEl) streakCountEl.textContent = `${acc.care_streak_days || 5} Hari Care Streak`;
+  const streakCountEl = document.getElementById("loyalty-streak-count");
+  if (streakCountEl)
+    streakCountEl.textContent = `${acc.care_streak_days || 5} Hari Care Streak`;
 
-  const autoUseToggle = document.getElementById('toggle-auto-use');
+  const autoUseToggle = document.getElementById("toggle-auto-use");
   if (autoUseToggle) autoUseToggle.checked = acc.auto_use_points === 1;
 
   // Next Tier Progress
-  const progressBar = document.getElementById('loyalty-tier-progress-bar');
-  const nextTierName = document.getElementById('loyalty-next-tier-name');
-  const nextTierText = document.getElementById('loyalty-next-tier-text');
+  const progressBar = document.getElementById("loyalty-tier-progress-bar");
+  const nextTierName = document.getElementById("loyalty-next-tier-name");
+  const nextTierText = document.getElementById("loyalty-next-tier-text");
   if (progressBar && nextTierName && nextTierText) {
-    if (acc.tier === 'Silver Care') {
-      nextTierName.textContent = 'Gold Care';
+    if (acc.tier === "Silver Care") {
+      nextTierName.textContent = "Gold Care";
       nextTierText.textContent = `${Math.max(0, 1000 - acc.points_balance)} Pts lagi`;
       progressBar.style.width = `${Math.min(100, (acc.points_balance / 1000) * 100)}%`;
-    } else if (acc.tier === 'Gold Care') {
-      nextTierName.textContent = 'Platinum Royale';
+    } else if (acc.tier === "Gold Care") {
+      nextTierName.textContent = "Platinum Royale";
       nextTierText.textContent = `${Math.max(0, 3000 - acc.points_balance)} Pts lagi`;
       progressBar.style.width = `${Math.min(100, (acc.points_balance / 3000) * 100)}%`;
-    } else if (acc.tier === 'Platinum Royale') {
-      nextTierName.textContent = 'Diamond Elite';
+    } else if (acc.tier === "Platinum Royale") {
+      nextTierName.textContent = "Diamond Elite";
       nextTierText.textContent = `${Math.max(0, 5000 - acc.points_balance)} Pts lagi`;
       progressBar.style.width = `${Math.min(100, (acc.points_balance / 5000) * 100)}%`;
     } else {
-      nextTierName.textContent = 'Maksimal (Diamond Elite)';
-      nextTierText.textContent = 'Tier Tertinggi';
-      progressBar.style.width = '100%';
+      nextTierName.textContent = "Maksimal (Diamond Elite)";
+      nextTierText.textContent = "Tier Tertinggi";
+      progressBar.style.width = "100%";
     }
   }
 
@@ -1100,7 +1334,7 @@ function renderLoyaltyView() {
  * 1. Render Point Prescription Engine
  */
 function renderPointPrescriptions() {
-  const container = document.getElementById('point-prescriptions-grid');
+  const container = document.getElementById("point-prescriptions-grid");
   if (!container) return;
 
   const list = state.pointPrescriptions;
@@ -1109,7 +1343,9 @@ function renderPointPrescriptions() {
     return;
   }
 
-  container.innerHTML = list.map(item => `
+  container.innerHTML = list
+    .map(
+      (item) => `
     <div class="prescription-card" style="display: flex; flex-direction: column; justify-content: space-between;">
       <div>
         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; gap: 8px;">
@@ -1144,19 +1380,21 @@ function renderPointPrescriptions() {
         </button>
       </div>
     </div>
-  `).join('');
+  `,
+    )
+    .join("");
 }
 
 /**
  * 2 & 3. Render Katalog Care Rewards & Lifestyle Rewards
  */
 function renderRewardsCatalog() {
-  const container = document.getElementById('rewards-catalog-grid');
+  const container = document.getElementById("rewards-catalog-grid");
   if (!container) return;
 
-  const filter = state.activeRewardsFilter || 'ALL';
-  const list = state.rewardsCatalog.filter(r => {
-    if (filter === 'ALL') return true;
+  const filter = state.activeRewardsFilter || "ALL";
+  const list = state.rewardsCatalog.filter((r) => {
+    if (filter === "ALL") return true;
     return r.category === filter;
   });
 
@@ -1167,11 +1405,12 @@ function renderRewardsCatalog() {
 
   const userBalance = state.loyaltyAccount?.points_balance ?? 2450;
 
-  container.innerHTML = list.map(item => {
-    const isAffordable = userBalance >= item.pointsCost;
-    const isMicro = item.category === 'lifestyle_micro';
+  container.innerHTML = list
+    .map((item) => {
+      const isAffordable = userBalance >= item.pointsCost;
+      const isMicro = item.category === "lifestyle_micro";
 
-    return `
+      return `
       <div class="reward-card">
         <div>
           <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
@@ -1192,26 +1431,31 @@ function renderRewardsCatalog() {
 
         <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid var(--border-color);">
           <div>
-            <div style="font-size: 16px; font-weight: 800; color: ${isAffordable ? 'var(--primary)' : '#94a3b8'};">
+            <div style="font-size: 16px; font-weight: 800; color: ${isAffordable ? "var(--primary)" : "#94a3b8"};">
               ${item.pointsCost} <span style="font-size: 12px; font-weight: 600;">Pts</span>
             </div>
           </div>
           <button 
-            class="btn btn-sm ${isAffordable ? 'btn-primary' : 'btn-secondary'}" 
+            class="btn btn-sm ${isAffordable ? "btn-primary" : "btn-secondary"}" 
             style="font-size: 12px; padding: 6px 12px;"
             ${!isAffordable ? 'disabled title="Poin tidak mencukupi"' : `onclick="redeemReward('${item.id}')"`}>
-            ${isAffordable ? 'Tukar Poin' : 'Poin Kurang'}
+            ${isAffordable ? "Tukar Poin" : "Poin Kurang"}
           </button>
         </div>
       </div>
     `;
-  }).join('');
+    })
+    .join("");
 }
 
 function filterRewardsCatalog(category, btn) {
   state.activeRewardsFilter = category;
-  document.querySelectorAll('[id^="btn-filter-all-rewards"], #view-loyalty .section-header-row .btn-secondary').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
+  document
+    .querySelectorAll(
+      '[id^="btn-filter-all-rewards"], #view-loyalty .section-header-row .btn-secondary',
+    )
+    .forEach((b) => b.classList.remove("active"));
+  if (btn) btn.classList.add("active");
   renderRewardsCatalog();
 }
 
@@ -1220,42 +1464,47 @@ function filterRewardsCatalog(category, btn) {
  */
 function renderFamilyPool() {
   const pool = state.familyPool || {
-    name: 'Keluarga Rahayu Sudiro',
+    name: "Keluarga Rahayu Sudiro",
     total_points: 3800,
-    members: []
+    members: [],
   };
 
-  const poolNameEl = document.getElementById('family-pool-name');
+  const poolNameEl = document.getElementById("family-pool-name");
   if (poolNameEl) poolNameEl.textContent = `Family Health Pool: ${pool.name}`;
 
-  const poolPtsEl = document.getElementById('family-pool-total-pts');
-  if (poolPtsEl) poolPtsEl.textContent = `${(pool.total_points || 0).toLocaleString('id-ID')} Pts`;
+  const poolPtsEl = document.getElementById("family-pool-total-pts");
+  if (poolPtsEl)
+    poolPtsEl.textContent = `${(pool.total_points || 0).toLocaleString("id-ID")} Pts`;
 
-  const container = document.getElementById('family-pool-members-grid');
+  const container = document.getElementById("family-pool-members-grid");
   if (!container) return;
 
   const members = pool.members || [];
-  container.innerHTML = members.map(m => `
+  container.innerHTML = members
+    .map(
+      (m) => `
     <div style="background: rgba(255, 255, 255, 0.85); border: 1px solid #bbf7d0; border-radius: 12px; padding: 12px; display: flex; align-items: center; gap: 12px;">
       <div style="font-size: 26px; background: #ffffff; width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm);">
-        ${m.avatar || '👤'}
+        ${m.avatar || "👤"}
       </div>
       <div>
         <div style="font-weight: 700; font-size: 13px; color: #14532d;">${m.name}</div>
         <div style="font-size: 11px; color: #166534;">${m.relation}</div>
         <div style="font-size: 11.5px; font-weight: 800; color: #15803d; margin-top: 2px;">
-          +${(m.contributedPoints || 0).toLocaleString('id-ID')} Pts
+          +${(m.contributedPoints || 0).toLocaleString("id-ID")} Pts
         </div>
       </div>
     </div>
-  `).join('');
+  `,
+    )
+    .join("");
 }
 
 /**
  * 5. Render Misi Gamifikasi & Kuis Kesehatan
  */
 function renderGamificationMissions() {
-  const container = document.getElementById('gamification-missions-container');
+  const container = document.getElementById("gamification-missions-container");
   if (!container) return;
 
   const missions = state.gamificationMissions;
@@ -1264,8 +1513,10 @@ function renderGamificationMissions() {
     return;
   }
 
-  container.innerHTML = missions.map(m => `
-    <div class="gamification-mission-card ${m.completed ? 'completed' : ''}">
+  container.innerHTML = missions
+    .map(
+      (m) => `
+    <div class="gamification-mission-card ${m.completed ? "completed" : ""}">
       <div style="display: flex; align-items: center; gap: 12px;">
         <span style="font-size: 24px;">${m.icon}</span>
         <div>
@@ -1278,43 +1529,53 @@ function renderGamificationMissions() {
         </div>
       </div>
       <div style="text-align: right; min-width: 80px;">
-        ${m.completed ? `
+        ${
+          m.completed
+            ? `
           <span style="font-size: 11px; font-weight: 800; color: #047857; background: #ecfdf5; padding: 4px 8px; border-radius: 6px;">
             ✓ Selesai
           </span>
-        ` : `
+        `
+            : `
           <button class="btn btn-sm btn-primary" onclick="claimMissionReward('${m.id}', ${m.points})" style="font-size: 11px; padding: 4px 8px;">
             +${m.points} Pts
           </button>
-        `}
+        `
+        }
       </div>
     </div>
-  `).join('');
+  `,
+    )
+    .join("");
 }
 
 function renderActiveQuiz() {
   const quiz = state.activeQuiz;
   if (!quiz) return;
 
-  const qText = document.getElementById('quiz-question-text');
+  const qText = document.getElementById("quiz-question-text");
   if (qText) qText.textContent = quiz.question;
 
-  const optionsContainer = document.getElementById('quiz-options-list');
+  const optionsContainer = document.getElementById("quiz-options-list");
   if (!optionsContainer) return;
 
-  optionsContainer.innerHTML = quiz.options.map((opt, idx) => `
+  optionsContainer.innerHTML = quiz.options
+    .map(
+      (opt, idx) => `
     <label style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #f8fafc; border: 1px solid var(--border-color); border-radius: 10px; cursor: pointer; font-size: 13px; transition: all 0.2s;" class="quiz-option-label" id="quiz-opt-label-${idx}">
-      <input type="radio" name="quiz_opt" value="${idx}" ${idx === selectedQuizAnswerIndex ? 'checked' : ''} onchange="selectQuizOption(${idx})">
+      <input type="radio" name="quiz_opt" value="${idx}" ${idx === selectedQuizAnswerIndex ? "checked" : ""} onchange="selectQuizOption(${idx})">
       <span>${opt}</span>
     </label>
-  `).join('');
+  `,
+    )
+    .join("");
 }
 
 function selectQuizOption(idx) {
   selectedQuizAnswerIndex = idx;
-  document.querySelectorAll('.quiz-option-label').forEach((el, i) => {
-    el.style.borderColor = (i === idx) ? 'var(--primary)' : 'var(--border-color)';
-    el.style.background = (i === idx) ? '#f0f9ff' : '#f8fafc';
+  document.querySelectorAll(".quiz-option-label").forEach((el, i) => {
+    el.style.borderColor = i === idx ? "var(--primary)" : "var(--border-color)";
+    el.style.background = i === idx ? "#f0f9ff" : "#f8fafc";
   });
 }
 
@@ -1322,49 +1583,72 @@ function selectQuizOption(idx) {
  * 6. Render Riwayat Transaksi Poin
  */
 function renderLoyaltyTransactions() {
-  const tbody = document.getElementById('loyalty-transactions-table-body');
+  const tbody = document.getElementById("loyalty-transactions-table-body");
   if (!tbody) return;
 
   const history = state.loyaltyAccount?.history || [
-    { waktu: 'Hari ini 09:30', title: 'Kunjungan Rawat Inap & Tindakan RS', category: 'Klinis', detail: 'Akumulasi transaksi paket kardiologi', points: 500, type: 'earn' },
-    { waktu: 'Kemarin 14:00', title: 'Bonus Care Streak 7 Hari', category: 'Misi', detail: 'Kepatuhan minum obat & check-in mandiri', points: 150, type: 'earn' },
-    { waktu: '2 hari lalu', title: 'Gratis Parkir VIP / Valet Mandaya', category: 'Lifestyle', detail: 'Penggunaan tiket valet lobby utama', points: -100, type: 'redeem' }
+    {
+      waktu: "Hari ini 09:30",
+      title: "Kunjungan Rawat Inap & Tindakan RS",
+      category: "Klinis",
+      detail: "Akumulasi transaksi paket kardiologi",
+      points: 500,
+      type: "earn",
+    },
+    {
+      waktu: "Kemarin 14:00",
+      title: "Bonus Care Streak 7 Hari",
+      category: "Misi",
+      detail: "Kepatuhan minum obat & check-in mandiri",
+      points: 150,
+      type: "earn",
+    },
+    {
+      waktu: "2 hari lalu",
+      title: "Gratis Parkir VIP / Valet Mandaya",
+      category: "Lifestyle",
+      detail: "Penggunaan tiket valet lobby utama",
+      points: -100,
+      type: "redeem",
+    },
   ];
 
-  tbody.innerHTML = history.map(item => {
-    const isEarn = item.points > 0 || item.type === 'earn';
-    return `
+  tbody.innerHTML = history
+    .map((item) => {
+      const isEarn = item.points > 0 || item.type === "earn";
+      return `
       <tr>
-        <td style="font-size: 12px; color: var(--text-muted);">${item.waktu || item.created_at || '-'}</td>
+        <td style="font-size: 12px; color: var(--text-muted);">${item.waktu || item.created_at || "-"}</td>
         <td style="font-weight: 700; font-size: 13px;">${item.title}</td>
         <td>
-          <span class="badge-system badge-${item.category === 'Klinis' || item.category === 'clinical' ? 'HIS' : item.category === 'Misi' || item.category === 'mission' ? 'CARE_DOKTER' : 'LOYALITAS'}" style="font-size: 11px;">
+          <span class="badge-system badge-${item.category === "Klinis" || item.category === "clinical" ? "HIS" : item.category === "Misi" || item.category === "mission" ? "CARE_DOKTER" : "LOYALITAS"}" style="font-size: 11px;">
             ${item.category}
           </span>
         </td>
-        <td style="font-size: 12px; color: var(--text-muted);">${item.detail || '-'}</td>
-        <td style="font-weight: 800; font-size: 14px; color: ${isEarn ? '#059669' : '#dc2626'};">
+        <td style="font-size: 12px; color: var(--text-muted);">${item.detail || "-"}</td>
+        <td style="font-weight: 800; font-size: 14px; color: ${isEarn ? "#059669" : "#dc2626"};">
           ${isEarn ? `+${item.points}` : item.points} Pts
         </td>
       </tr>
     `;
-  }).join('');
+    })
+    .join("");
 }
 
 /**
  * Aksi Penukaran Reward & Tampilkan Next-Best-Action Modal
  */
 async function redeemReward(rewardId) {
-  const mpiId = state.currentMpiId || 'MPI-0001';
+  const mpiId = state.currentMpiId || "MPI-0001";
   try {
-    const res = await fetch('/api/loyalty/redeem', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mpiId, rewardId })
-    }).then(r => r.json());
+    const res = await fetch("/api/loyalty/redeem", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ mpiId, rewardId }),
+    }).then((r) => r.json());
 
     if (!res.sukses) {
-      alert(res.error || 'Gagal menukarkan reward.');
+      alert(res.error || "Gagal menukarkan reward.");
       return;
     }
 
@@ -1372,7 +1656,7 @@ async function redeemReward(rewardId) {
     await loadLoyaltyData();
     showNextBestActionModal(res);
   } catch (err) {
-    alert('Terjadi kesalahan saat memproses penukaran poin.');
+    alert("Terjadi kesalahan saat memproses penukaran poin.");
   }
 }
 
@@ -1380,50 +1664,58 @@ async function redeemReward(rewardId) {
  * Tampilkan Modal Post-Redemption Next-Best-Action
  */
 function showNextBestActionModal(res) {
-  const voucherEl = document.getElementById('nba-voucher-code');
-  if (voucherEl) voucherEl.textContent = `Kode Voucher: ${res.voucherCode || 'MNY-2026-CARE'}`;
+  const voucherEl = document.getElementById("nba-voucher-code");
+  if (voucherEl)
+    voucherEl.textContent = `Kode Voucher: ${res.voucherCode || "MNY-2026-CARE"}`;
 
-  const rewardTitleEl = document.getElementById('nba-reward-title');
-  if (rewardTitleEl) rewardTitleEl.textContent = res.reward?.name || 'Voucher Manfaat Medis Mandaya';
+  const rewardTitleEl = document.getElementById("nba-reward-title");
+  if (rewardTitleEl)
+    rewardTitleEl.textContent =
+      res.reward?.name || "Voucher Manfaat Medis Mandaya";
 
-  const ptsDeductedEl = document.getElementById('nba-points-deducted');
-  if (ptsDeductedEl) ptsDeductedEl.textContent = `-${res.reward?.pointsCost || 0} Poin Terpotong (Sisa Saldo: ${res.newBalance.toLocaleString('id-ID')} Pts)`;
+  const ptsDeductedEl = document.getElementById("nba-points-deducted");
+  if (ptsDeductedEl)
+    ptsDeductedEl.textContent = `-${res.reward?.pointsCost || 0} Poin Terpotong (Sisa Saldo: ${res.newBalance.toLocaleString("id-ID")} Pts)`;
 
-  const container = document.getElementById('nba-recommendations-list');
+  const container = document.getElementById("nba-recommendations-list");
   if (container && res.nextBestActions) {
-    container.innerHTML = res.nextBestActions.map((nba, idx) => `
+    container.innerHTML = res.nextBestActions
+      .map(
+        (nba, idx) => `
       <div class="next-best-action-card">
         <div style="display: flex; align-items: flex-start; gap: 10px;">
-          <span style="font-size: 20px;">${nba.icon || '📌'}</span>
+          <span style="font-size: 20px;">${nba.icon || "📌"}</span>
           <div>
             <div style="font-weight: 700; font-size: 13px; color: #0f172a;">${nba.title}</div>
             <div style="font-size: 11.5px; color: var(--text-muted);">${nba.description}</div>
           </div>
         </div>
         <button class="btn btn-secondary btn-sm" onclick="executeNbaAction('${nba.actionType}')" style="font-size: 11px; white-space: nowrap;">
-          ${nba.actionLabel || 'Lakukan'}
+          ${nba.actionLabel || "Lakukan"}
         </button>
       </div>
-    `).join('');
+    `,
+      )
+      .join("");
   }
 
-  const modal = document.getElementById('modal-next-best-action');
-  if (modal) modal.classList.add('active');
+  const modal = document.getElementById("modal-next-best-action");
+  if (modal) modal.classList.add("active");
 }
 
 function handleNbaPrimaryAction() {
-  closeModal('modal-next-best-action');
-  switchView('booking');
+  closeModal("modal-next-best-action");
+  switchView("booking");
 }
 
 function executeNbaAction(type) {
-  closeModal('modal-next-best-action');
-  if (type === 'booking' || type === 'schedule_lab') {
-    switchView('booking');
-  } else if (type === 'share_family') {
+  closeModal("modal-next-best-action");
+  if (type === "booking" || type === "schedule_lab") {
+    switchView("booking");
+  } else if (type === "share_family") {
     openFamilyTransferModal();
   } else {
-    switchView('loyalty');
+    switchView("loyalty");
   }
 }
 
@@ -1431,18 +1723,18 @@ function executeNbaAction(type) {
  * Toggle Auto-Use My Points
  */
 async function toggleAutoUseSetting(enabled) {
-  const mpiId = state.currentMpiId || 'MPI-0001';
+  const mpiId = state.currentMpiId || "MPI-0001";
   try {
-    await fetch('/api/loyalty/auto-use', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mpiId, enabled: enabled ? 1 : 0 })
+    await fetch("/api/loyalty/auto-use", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ mpiId, enabled: enabled ? 1 : 0 }),
     });
     if (state.loyaltyAccount) {
       state.loyaltyAccount.auto_use_points = enabled ? 1 : 0;
     }
   } catch (err) {
-    console.error('Error toggling auto use:', err);
+    console.error("Error toggling auto use:", err);
   }
 }
 
@@ -1450,20 +1742,22 @@ async function toggleAutoUseSetting(enabled) {
  * Klaim Care Streak Harian
  */
 async function claimDailyStreak() {
-  const mpiId = state.currentMpiId || 'MPI-0001';
+  const mpiId = state.currentMpiId || "MPI-0001";
   try {
-    const res = await fetch('/api/loyalty/streak/increment', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mpiId })
-    }).then(r => r.json());
+    const res = await fetch("/api/loyalty/streak/increment", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ mpiId }),
+    }).then((r) => r.json());
 
     if (res.sukses) {
-      alert(`🔥 Selamat! Care Streak bertambah menjadi ${res.streakDays} hari. Bonus +${res.bonusPoints} Poin!`);
+      alert(
+        `🔥 Selamat! Care Streak bertambah menjadi ${res.streakDays} hari. Bonus +${res.bonusPoints} Poin!`,
+      );
       await loadLoyaltyData();
     }
   } catch (err) {
-    alert('Gagal klaim Care Streak.');
+    alert("Gagal klaim Care Streak.");
   }
 }
 
@@ -1471,7 +1765,7 @@ async function claimDailyStreak() {
  * Klaim Poin Misi Harian
  */
 async function claimMissionReward(missionId, points) {
-  const mpiId = state.currentMpiId || 'MPI-0001';
+  const mpiId = state.currentMpiId || "MPI-0001";
   try {
     alert(`🎉 Misi selesai! Anda mendapatkan +${points} Mandaya CarePoint.`);
     await loadLoyaltyData();
@@ -1483,14 +1777,15 @@ async function claimMissionReward(missionId, points) {
  */
 function openFamilyTransferModal() {
   const userBalance = state.loyaltyAccount?.points_balance ?? 2450;
-  const hint = document.getElementById('transfer-pool-available-hint');
-  if (hint) hint.textContent = `Saldo Anda saat ini: ${userBalance.toLocaleString('id-ID')} Poin`;
+  const hint = document.getElementById("transfer-pool-available-hint");
+  if (hint)
+    hint.textContent = `Saldo Anda saat ini: ${userBalance.toLocaleString("id-ID")} Poin`;
 
-  const input = document.getElementById('transfer-points-amount');
+  const input = document.getElementById("transfer-points-amount");
   if (input) input.max = userBalance;
 
-  const modal = document.getElementById('modal-family-transfer');
-  if (modal) modal.classList.add('active');
+  const modal = document.getElementById("modal-family-transfer");
+  if (modal) modal.classList.add("active");
 }
 
 /**
@@ -1498,26 +1793,29 @@ function openFamilyTransferModal() {
  */
 async function submitFamilyPoolTransfer(e) {
   e.preventDefault();
-  const points = parseInt(document.getElementById('transfer-points-amount').value, 10);
-  const mpiId = state.currentMpiId || 'MPI-0001';
+  const points = parseInt(
+    document.getElementById("transfer-points-amount").value,
+    10,
+  );
+  const mpiId = state.currentMpiId || "MPI-0001";
 
   try {
-    const res = await fetch('/api/loyalty/family-pool/transfer', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mpiId, points })
-    }).then(r => r.json());
+    const res = await fetch("/api/loyalty/family-pool/transfer", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ mpiId, points }),
+    }).then((r) => r.json());
 
     if (!res.sukses) {
-      alert(res.error || 'Gagal transfer poin ke kolam keluarga.');
+      alert(res.error || "Gagal transfer poin ke kolam keluarga.");
       return;
     }
 
-    closeModal('modal-family-transfer');
+    closeModal("modal-family-transfer");
     alert(`👨‍👩‍👧‍👦 Berhasil mentransfer ${points} Poin ke Family Health Pool!`);
     await loadLoyaltyData();
   } catch (err) {
-    alert('Terjadi kesalahan saat memproses transfer.');
+    alert("Terjadi kesalahan saat memproses transfer.");
   }
 }
 
@@ -1528,35 +1826,35 @@ async function submitActiveQuiz() {
   const quiz = state.activeQuiz;
   if (!quiz) return;
 
-  const mpiId = state.currentMpiId || 'MPI-0001';
-  const submitBtn = document.getElementById('btn-submit-quiz');
-  const feedbackBox = document.getElementById('quiz-feedback-box');
+  const mpiId = state.currentMpiId || "MPI-0001";
+  const submitBtn = document.getElementById("btn-submit-quiz");
+  const feedbackBox = document.getElementById("quiz-feedback-box");
 
   try {
-    const res = await fetch('/api/loyalty/quiz/submit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const res = await fetch("/api/loyalty/quiz/submit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         mpiId,
         quizId: quiz.id,
-        selectedOption: selectedQuizAnswerIndex
-      })
-    }).then(r => r.json());
+        selectedOption: selectedQuizAnswerIndex,
+      }),
+    }).then((r) => r.json());
 
     if (feedbackBox) {
-      feedbackBox.style.display = 'block';
+      feedbackBox.style.display = "block";
       if (res.isCorrect) {
-        feedbackBox.style.background = '#ecfdf5';
-        feedbackBox.style.border = '1px solid #a7f3d0';
-        feedbackBox.style.color = '#065f46';
+        feedbackBox.style.background = "#ecfdf5";
+        feedbackBox.style.border = "1px solid #a7f3d0";
+        feedbackBox.style.color = "#065f46";
         feedbackBox.innerHTML = `
           <strong>✓ Jawaban Benar (+${res.pointsAwarded} Pts)!</strong><br>
           ${res.explanation}
         `;
       } else {
-        feedbackBox.style.background = '#fef2f2';
-        feedbackBox.style.border = '1px solid #fecaca';
-        feedbackBox.style.color = '#991b1b';
+        feedbackBox.style.background = "#fef2f2";
+        feedbackBox.style.border = "1px solid #fecaca";
+        feedbackBox.style.color = "#991b1b";
         feedbackBox.innerHTML = `
           <strong>✕ Jawaban Kurang Tepat:</strong> ${res.explanation}
         `;
@@ -1565,12 +1863,12 @@ async function submitActiveQuiz() {
 
     if (submitBtn) {
       submitBtn.disabled = true;
-      submitBtn.textContent = '✓ Kuis Telah Dikerjakan';
+      submitBtn.textContent = "✓ Kuis Telah Dikerjakan";
     }
 
     await loadLoyaltyData();
   } catch (err) {
-    alert('Gagal mengirim jawaban kuis.');
+    alert("Gagal mengirim jawaban kuis.");
   }
 }
 
@@ -1578,19 +1876,21 @@ async function submitActiveQuiz() {
  * Update Quote Auto-Use Diskon di Form Booking
  */
 async function updateBookingPointQuote() {
-  const mpiId = state.currentMpiId || 'MPI-0001';
+  const mpiId = state.currentMpiId || "MPI-0001";
   try {
-    const res = await fetch(`/api/loyalty/auto-use/quote?mpiId=${mpiId}&price=350000`).then(r => r.json());
+    const res = await fetch(
+      `/api/loyalty/auto-use/quote?mpiId=${mpiId}&price=350000`,
+    ).then((r) => r.json());
     if (res.sukses && res.data) {
       const q = res.data;
-      const banner = document.getElementById('booking-auto-use-banner');
-      const textEl = document.getElementById('booking-point-quote-text');
+      const banner = document.getElementById("booking-auto-use-banner");
+      const textEl = document.getElementById("booking-point-quote-text");
       if (banner && textEl) {
         if (q.autoUseEnabled && q.pointsToUse > 0) {
-          banner.style.display = 'flex';
-          textEl.textContent = `Estimasi potongan: ${q.pointsToUse} Poin (Diskon Rp ${q.discountAmount.toLocaleString('id-ID')}) dari total normal Rp ${q.originalPrice.toLocaleString('id-ID')}.`;
+          banner.style.display = "flex";
+          textEl.textContent = `Estimasi potongan: ${q.pointsToUse} Poin (Diskon Rp ${q.discountAmount.toLocaleString("id-ID")}) dari total normal Rp ${q.originalPrice.toLocaleString("id-ID")}.`;
         } else {
-          banner.style.display = 'none';
+          banner.style.display = "none";
         }
       }
     }
@@ -1605,9 +1905,9 @@ async function updateBookingPointQuote() {
  * Muat data Care Pathway aktif pasien & fase saat ini
  */
 async function loadMiraPathway() {
-  const mpiId = state.currentMpiId || 'MPI-0001';
+  const mpiId = state.currentMpiId || "MPI-0001";
   try {
-    const res = await fetch(`/api/mira/pathway/${mpiId}`).then(r => r.json());
+    const res = await fetch(`/api/mira/pathway/${mpiId}`).then((r) => r.json());
     if (res.sukses && res.data) {
       state.miraData = res.data;
       renderMiraHero(res.data);
@@ -1616,15 +1916,15 @@ async function loadMiraPathway() {
       renderMiraMedsAndRedFlags(res.data);
 
       // Sinkronisasi info ke kartu beranda (Home Card 2)
-      const homePathwayName = document.getElementById('home-mira-pathway-name');
-      const homePhasePrompt = document.getElementById('home-mira-phase-prompt');
+      const homePathwayName = document.getElementById("home-mira-pathway-name");
+      const homePhasePrompt = document.getElementById("home-mira-phase-prompt");
       if (homePathwayName) homePathwayName.textContent = res.data.pathway.name;
       if (homePhasePrompt && res.data.currentPhase) {
         homePhasePrompt.textContent = `💬 "${res.data.currentPhase.question}"`;
       }
     }
   } catch (err) {
-    console.error('Error loading MIRA pathway:', err);
+    console.error("Error loading MIRA pathway:", err);
   }
 }
 
@@ -1632,14 +1932,18 @@ async function loadMiraPathway() {
  * Render Hero Header MIRA
  */
 function renderMiraHero(data) {
-  const dpjpEl = document.getElementById('mira-hero-dpjp');
-  const diagEl = document.getElementById('mira-hero-diagnosis');
-  const phaseEl = document.getElementById('mira-hero-current-phase');
-  const simSelect = document.getElementById('mira-sim-pathway-select');
+  const dpjpEl = document.getElementById("mira-hero-dpjp");
+  const diagEl = document.getElementById("mira-hero-diagnosis");
+  const phaseEl = document.getElementById("mira-hero-current-phase");
+  const simSelect = document.getElementById("mira-sim-pathway-select");
 
-  if (dpjpEl) dpjpEl.textContent = data.patientPathway.dpjp_name || 'dr. Beny Hartono, Sp.JP(K)';
-  if (diagEl) diagEl.textContent = data.patientPathway.diagnosis || data.pathway.name;
-  if (phaseEl) phaseEl.textContent = `Hari ke-${data.patientPathway.current_day} (H+${data.patientPathway.current_day})`;
+  if (dpjpEl)
+    dpjpEl.textContent =
+      data.patientPathway.dpjp_name || "dr. Beny Hartono, Sp.JP(K)";
+  if (diagEl)
+    diagEl.textContent = data.patientPathway.diagnosis || data.pathway.name;
+  if (phaseEl)
+    phaseEl.textContent = `Hari ke-${data.patientPathway.current_day} (H+${data.patientPathway.current_day})`;
   if (simSelect && data.pathway) simSelect.value = data.pathway.id;
 }
 
@@ -1647,28 +1951,33 @@ function renderMiraHero(data) {
  * Render Stepper Visual Titik Sentuh Pemulihan (H+1, H+3, H+7, H+14, H+30)
  */
 function renderMiraStepper(data) {
-  const container = document.getElementById('mira-pathway-stepper');
-  const progressText = document.getElementById('mira-progress-text');
+  const container = document.getElementById("mira-pathway-stepper");
+  const progressText = document.getElementById("mira-progress-text");
   if (!container || !data.pathway || !data.pathway.schedule) return;
 
   const currentDay = data.patientPathway.current_day;
   const schedule = data.pathway.schedule;
-  
-  let completedCount = 0;
-  container.innerHTML = schedule.map((sch, idx) => {
-    const isCompleted = sch.day < currentDay || (data.pastResponses && data.pastResponses.some(r => r.phase_day === sch.day));
-    const isActive = sch.day === data.currentPhase.day;
-    if (isCompleted) completedCount++;
 
-    return `
-      <div class="stepper-step ${isCompleted ? 'completed' : (isActive ? 'active' : '')}" onclick="setMiraDaySimulation(${sch.day})">
+  let completedCount = 0;
+  container.innerHTML = schedule
+    .map((sch, idx) => {
+      const isCompleted =
+        sch.day < currentDay ||
+        (data.pastResponses &&
+          data.pastResponses.some((r) => r.phase_day === sch.day));
+      const isActive = sch.day === data.currentPhase.day;
+      if (isCompleted) completedCount++;
+
+      return `
+      <div class="stepper-step ${isCompleted ? "completed" : isActive ? "active" : ""}" onclick="setMiraDaySimulation(${sch.day})">
         <div class="stepper-dot">
-          ${isCompleted ? '✓' : `H+${sch.day}`}
+          ${isCompleted ? "✓" : `H+${sch.day}`}
         </div>
         <div class="stepper-label">${sch.phase}</div>
       </div>
     `;
-  }).join('');
+    })
+    .join("");
 
   if (progressText) {
     const percent = Math.round((completedCount / schedule.length) * 100);
@@ -1680,13 +1989,13 @@ function renderMiraStepper(data) {
  * Render Thread Percakapan Proaktif WhatsApp-Style MIRA
  */
 function renderMiraChat(data) {
-  const container = document.getElementById('mira-chat-messages');
-  const subtitleEl = document.getElementById('mira-chat-subtitle');
-  const expressionBadge = document.getElementById('mira-live-expression-badge');
+  const container = document.getElementById("mira-chat-messages");
+  const subtitleEl = document.getElementById("mira-chat-subtitle");
+  const expressionBadge = document.getElementById("mira-live-expression-badge");
   if (!container || !data.currentPhase) return;
 
   if (subtitleEl) {
-    subtitleEl.textContent = `Bekerja di bawah supervisi ${data.patientPathway.dpjp_name || 'DPJP Konsultan'}`;
+    subtitleEl.textContent = `Bekerja di bawah supervisi ${data.patientPathway.dpjp_name || "DPJP Konsultan"}`;
   }
 
   const phase = data.currentPhase;
@@ -1694,7 +2003,7 @@ function renderMiraChat(data) {
 
   const avatarImgHtml = `
     <div class="mira-avatar-circle" style="width: 36px; height: 36px;">
-      <img src="/assets/mira/mira_avatar.jpg" alt="MIRA" onerror="this.src='/assets/mira/mira_full.jpg'">
+      <img src="/assets/mira/mira_avatar.png" alt="MIRA Recovery Assistant" onerror="this.src='/assets/mira/mira_full.jpg'">
     </div>
   `;
 
@@ -1713,7 +2022,13 @@ function renderMiraChat(data) {
         <div class="mira-bubble-value">
           <strong>💊 Pengingat Obat Terjadwal Hari Ini:</strong>
           <div style="margin-top: 4px;">
-            ${meds.slice(0, 2).map(m => `• <strong>${m.name}</strong> (${m.dose}) - <em>${m.timing}</em>`).join('<br>')}
+            ${meds
+              .slice(0, 2)
+              .map(
+                (m) =>
+                  `• <strong>${m.name}</strong> (${m.dose}) - <em>${m.timing}</em>`,
+              )
+              .join("<br>")}
           </div>
         </div>
       </div>
@@ -1750,20 +2065,25 @@ function renderMiraChat(data) {
 
   // Render respons masa lalu jika ada di hari ini
   if (data.pastResponses && data.pastResponses.length > 0) {
-    const todayResp = data.pastResponses.find(r => r.phase_day === phase.day);
+    const todayResp = data.pastResponses.find((r) => r.phase_day === phase.day);
     if (todayResp) {
-      const optLabel = todayResp.response_option === 'membaik' ? '🟢 Kondisi Membaik / Nyaman' : (todayResp.response_option === 'masih_gejala' ? '🟡 Masih Ada Gejala Ringan' : '🔴 Butuh Bantuan Medis Segera');
+      const optLabel =
+        todayResp.response_option === "membaik"
+          ? "🟢 Kondisi Membaik / Nyaman"
+          : todayResp.response_option === "masih_gejala"
+            ? "🟡 Masih Ada Gejala Ringan"
+            : "🔴 Butuh Bantuan Medis Segera";
       html += `
         <div class="mira-msg-row user">
           <div class="mira-bubble user">
             <div style="font-size: 11px; color: #bae6fd; margin-bottom: 4px;">JAWABAN ANDA (${todayResp.created_at})</div>
             <strong style="font-size: 14px;">${optLabel}</strong>
-            ${todayResp.patient_notes ? `<p style="margin: 6px 0 0 0; font-size: 13px; opacity: 0.95;">"${todayResp.patient_notes}"</p>` : ''}
+            ${todayResp.patient_notes ? `<p style="margin: 6px 0 0 0; font-size: 13px; opacity: 0.95;">"${todayResp.patient_notes}"</p>` : ""}
           </div>
         </div>
       `;
       if (expressionBadge) {
-        expressionBadge.textContent = '👏 Great job!';
+        expressionBadge.textContent = "👏 Great job!";
       }
     }
   }
@@ -1776,12 +2096,14 @@ function renderMiraChat(data) {
  * Render Daftar Obat & Red Flags di Kolom Kanan
  */
 function renderMiraMedsAndRedFlags(data) {
-  const medsContainer = document.getElementById('mira-prescribed-meds-list');
-  const redFlagsContainer = document.getElementById('mira-red-flags-list');
-  const kontrolText = document.getElementById('mira-kontrol-text');
+  const medsContainer = document.getElementById("mira-prescribed-meds-list");
+  const redFlagsContainer = document.getElementById("mira-red-flags-list");
+  const kontrolText = document.getElementById("mira-kontrol-text");
 
   if (medsContainer && data.pathway.common_medications) {
-    medsContainer.innerHTML = data.pathway.common_medications.map(m => `
+    medsContainer.innerHTML = data.pathway.common_medications
+      .map(
+        (m) => `
       <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: 10px; padding: 10px 14px;">
         <div style="display: flex; justify-content: space-between; align-items: center;">
           <strong style="font-size: 13.5px; color: var(--text-main);">${m.name}</strong>
@@ -1791,13 +2113,19 @@ function renderMiraMedsAndRedFlags(data) {
           ⏰ ${m.timing} · <em>${m.purpose}</em>
         </div>
       </div>
-    `).join('');
+    `,
+      )
+      .join("");
   }
 
   if (redFlagsContainer && data.pathway.red_flags) {
-    redFlagsContainer.innerHTML = data.pathway.red_flags.map(rf => `
+    redFlagsContainer.innerHTML = data.pathway.red_flags
+      .map(
+        (rf) => `
       <li style="margin-bottom: 6px;">${rf}</li>
-    `).join('');
+    `,
+      )
+      .join("");
   }
 
   if (kontrolText && data.pathway.target_kontrol_interval) {
@@ -1810,20 +2138,27 @@ function renderMiraMedsAndRedFlags(data) {
  */
 function selectOneTapOption(optionKey) {
   state.selectedOneTapOption = optionKey;
-  document.querySelectorAll('.one-tap-card').forEach(card => card.classList.remove('selected'));
+  document
+    .querySelectorAll(".one-tap-card")
+    .forEach((card) => card.classList.remove("selected"));
 
-  const cardId = optionKey === 'membaik' ? 'card-opt-membaik' : (optionKey === 'masih_gejala' ? 'card-opt-gejala' : 'card-opt-bantuan');
+  const cardId =
+    optionKey === "membaik"
+      ? "card-opt-membaik"
+      : optionKey === "masih_gejala"
+        ? "card-opt-gejala"
+        : "card-opt-bantuan";
   const el = document.getElementById(cardId);
-  if (el) el.classList.add('selected');
+  if (el) el.classList.add("selected");
 
-  const expressionBadge = document.getElementById('mira-live-expression-badge');
+  const expressionBadge = document.getElementById("mira-live-expression-badge");
   if (expressionBadge) {
-    if (optionKey === 'membaik') {
-      expressionBadge.textContent = '👏 Great job!';
-    } else if (optionKey === 'masih_gejala') {
-      expressionBadge.textContent = '🔍 Let me check that for you.';
+    if (optionKey === "membaik") {
+      expressionBadge.textContent = "👏 Great job!";
+    } else if (optionKey === "masih_gejala") {
+      expressionBadge.textContent = "🔍 Let me check that for you.";
     } else {
-      expressionBadge.textContent = '❤️ I\'m here for you.';
+      expressionBadge.textContent = "❤️ I'm here for you.";
     }
   }
 }
@@ -1833,38 +2168,45 @@ function selectOneTapOption(optionKey) {
  */
 async function submitMiraCheckin() {
   if (!state.selectedOneTapOption) {
-    alert('Silakan pilih salah satu dari 3 opsi respons (🟢 Membaik, 🟡 Masih Gejala, atau 🔴 Butuh Bantuan) terlebih dahulu.');
+    alert(
+      "Silakan pilih salah satu dari 3 opsi respons (🟢 Membaik, 🟡 Masih Gejala, atau 🔴 Butuh Bantuan) terlebih dahulu.",
+    );
     return;
   }
 
-  const mpiId = state.currentMpiId || 'MPI-0001';
-  const pathwayId = state.miraData ? state.miraData.pathway.id : 'pasca_pci_jantung';
-  const phaseId = state.miraData && state.miraData.currentPhase ? state.miraData.currentPhase.id : 'phase_h3';
-  const notesInput = document.getElementById('mira-checkin-notes');
-  const patientNotes = notesInput ? notesInput.value.trim() : '';
+  const mpiId = state.currentMpiId || "MPI-0001";
+  const pathwayId = state.miraData
+    ? state.miraData.pathway.id
+    : "pasca_pci_jantung";
+  const phaseId =
+    state.miraData && state.miraData.currentPhase
+      ? state.miraData.currentPhase.id
+      : "phase_h3";
+  const notesInput = document.getElementById("mira-checkin-notes");
+  const patientNotes = notesInput ? notesInput.value.trim() : "";
 
-  const btn = document.getElementById('btn-submit-mira-checkin');
+  const btn = document.getElementById("btn-submit-mira-checkin");
   if (btn) {
     btn.disabled = true;
-    btn.textContent = '⏳ Menjalankan Triase Engine MIRA...';
+    btn.textContent = "⏳ Menjalankan Triase Engine MIRA...";
   }
 
   try {
-    const res = await fetch('/api/mira/checkin', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const res = await fetch("/api/mira/checkin", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         mpiId,
         pathwayId,
         phaseId,
         responseOption: state.selectedOneTapOption,
-        patientNotes
-      })
-    }).then(r => r.json());
+        patientNotes,
+      }),
+    }).then((r) => r.json());
 
     if (btn) {
       btn.disabled = false;
-      btn.textContent = '🚀 Kirim Jawaban Check-in & Jalankan Triase';
+      btn.textContent = "🚀 Kirim Jawaban Check-in & Jalankan Triase";
     }
 
     if (res.sukses) {
@@ -1878,16 +2220,16 @@ async function submitMiraCheckin() {
       await loadNursePriorityQueue();
 
       // Reset form input
-      if (notesInput) notesInput.value = '';
+      if (notesInput) notesInput.value = "";
     } else {
-      alert('Gagal mengirim check-in: ' + (res.error || 'Terjadi kesalahan'));
+      alert("Gagal mengirim check-in: " + (res.error || "Terjadi kesalahan"));
     }
   } catch (err) {
     if (btn) {
       btn.disabled = false;
-      btn.textContent = '🚀 Kirim Jawaban Check-in & Jalankan Triase';
+      btn.textContent = "🚀 Kirim Jawaban Check-in & Jalankan Triase";
     }
-    alert('Terjadi kesalahan koneksi saat mengirim check-in MIRA.');
+    alert("Terjadi kesalahan koneksi saat mengirim check-in MIRA.");
   }
 }
 
@@ -1895,21 +2237,21 @@ async function submitMiraCheckin() {
  * Render Banner Hasil Triase Klinis MIRA
  */
 function renderTriageOutcome(res) {
-  const container = document.getElementById('mira-triage-outcome-container');
+  const container = document.getElementById("mira-triage-outcome-container");
   if (!container) return;
 
-  container.style.display = 'block';
-  const level = res.triage_level || 'rendah';
+  container.style.display = "block";
+  const level = res.triage_level || "rendah";
 
-  let bannerClass = 'triage-rendah';
-  let badgeIcon = '🟢';
-  let badgeTitle = 'Triase Rendah · Pemulihan Sesuai Jalur Klinis';
-  let extraActions = '';
+  let bannerClass = "triage-rendah";
+  let badgeIcon = "🟢";
+  let badgeTitle = "Triase Rendah · Pemulihan Sesuai Jalur Klinis";
+  let extraActions = "";
 
-  if (level === 'tinggi') {
-    bannerClass = 'triage-tinggi';
-    badgeIcon = '🚨';
-    badgeTitle = 'TRIASE TINGGI · BUTUH PENANGANAN KLINIS SEGERA';
+  if (level === "tinggi") {
+    bannerClass = "triage-tinggi";
+    badgeIcon = "🚨";
+    badgeTitle = "TRIASE TINGGI · BUTUH PENANGANAN KLINIS SEGERA";
     extraActions = `
       <div class="emergency-btn-row">
         <a href="tel:1500111" class="btn-emergency">
@@ -1920,10 +2262,10 @@ function renderTriageOutcome(res) {
         </button>
       </div>
     `;
-  } else if (level === 'sedang') {
-    bannerClass = 'triage-sedang';
-    badgeIcon = '⚠️';
-    badgeTitle = 'Triase Sedang · Pemantauan Gejala & Tele-Nurse';
+  } else if (level === "sedang") {
+    bannerClass = "triage-sedang";
+    badgeIcon = "⚠️";
+    badgeTitle = "Triase Sedang · Pemantauan Gejala & Tele-Nurse";
     extraActions = `
       <div style="margin-top: 10px;">
         <button class="btn btn-primary btn-sm" onclick="switchView('doctors')">
@@ -1946,11 +2288,15 @@ function renderTriageOutcome(res) {
         <div style="font-size: 12px; opacity: 0.9;">
           <strong>Rekomendasi Tindakan:</strong> ${res.triage_action}
         </div>
-        ${res.points_awarded > 0 ? `
+        ${
+          res.points_awarded > 0
+            ? `
           <div style="display: inline-flex; align-items: center; gap: 6px; background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 8px; font-weight: 700; font-size: 12px; margin-top: 8px;">
             🎉 Selamat! +${res.points_awarded} Mandaya CarePoint berhasil ditambahkan ke akun Anda!
           </div>
-        ` : ''}
+        `
+            : ""
+        }
         ${extraActions}
       </div>
     </div>
@@ -1961,20 +2307,20 @@ function renderTriageOutcome(res) {
  * Ganti Pathway Template Simulasi MIRA
  */
 async function changeMiraPathwaySimulation() {
-  const select = document.getElementById('mira-sim-pathway-select');
+  const select = document.getElementById("mira-sim-pathway-select");
   if (!select) return;
   const pathwayId = select.value;
-  const mpiId = state.currentMpiId || 'MPI-0001';
+  const mpiId = state.currentMpiId || "MPI-0001";
 
   try {
-    await fetch('/api/mira/pathway/set-phase', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mpiId, pathwayId, targetDay: 3 })
+    await fetch("/api/mira/pathway/set-phase", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ mpiId, pathwayId, targetDay: 3 }),
     });
     await loadMiraPathway();
   } catch (err) {
-    console.error('Error changing pathway simulation:', err);
+    console.error("Error changing pathway simulation:", err);
   }
 }
 
@@ -1982,19 +2328,19 @@ async function changeMiraPathwaySimulation() {
  * Lompat Hari Simulasi MIRA (H+1, H+3, H+7, H+14, H+30)
  */
 async function setMiraDaySimulation(targetDay) {
-  const select = document.getElementById('mira-sim-pathway-select');
-  const pathwayId = select ? select.value : 'pasca_pci_jantung';
-  const mpiId = state.currentMpiId || 'MPI-0001';
+  const select = document.getElementById("mira-sim-pathway-select");
+  const pathwayId = select ? select.value : "pasca_pci_jantung";
+  const mpiId = state.currentMpiId || "MPI-0001";
 
   try {
-    await fetch('/api/mira/pathway/set-phase', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mpiId, pathwayId, targetDay })
+    await fetch("/api/mira/pathway/set-phase", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ mpiId, pathwayId, targetDay }),
     });
     await loadMiraPathway();
   } catch (err) {
-    console.error('Error setting day simulation:', err);
+    console.error("Error setting day simulation:", err);
   }
 }
 
@@ -2003,14 +2349,14 @@ async function setMiraDaySimulation(targetDay) {
  */
 async function loadNursePriorityQueue() {
   try {
-    const res = await fetch('/api/mira/nurse-queue').then(r => r.json());
+    const res = await fetch("/api/mira/nurse-queue").then((r) => r.json());
     if (res.sukses && res.data) {
       state.miraNurseQueue = res.data.queue || [];
 
       // Update KPI counters
-      const highEl = document.getElementById('nurse-stat-high');
-      const medEl = document.getElementById('nurse-stat-medium');
-      const lowEl = document.getElementById('nurse-stat-low');
+      const highEl = document.getElementById("nurse-stat-high");
+      const medEl = document.getElementById("nurse-stat-medium");
+      const lowEl = document.getElementById("nurse-stat-low");
 
       if (highEl) highEl.textContent = `${res.data.stats.tinggi} Pasien`;
       if (medEl) medEl.textContent = `${res.data.stats.sedang} Pasien`;
@@ -2019,7 +2365,7 @@ async function loadNursePriorityQueue() {
       renderNurseQueueTable(res.data.queue);
     }
   } catch (err) {
-    console.error('Error loading nurse queue:', err);
+    console.error("Error loading nurse queue:", err);
   }
 }
 
@@ -2027,7 +2373,7 @@ async function loadNursePriorityQueue() {
  * Render Tabel Antrean Prioritas Perawat
  */
 function renderNurseQueueTable(queue) {
-  const container = document.getElementById('mira-nurse-queue-container');
+  const container = document.getElementById("mira-nurse-queue-container");
   if (!container) return;
 
   if (!queue || queue.length === 0) {
@@ -2056,14 +2402,23 @@ function renderNurseQueueTable(queue) {
           </tr>
         </thead>
         <tbody>
-          ${queue.map(item => {
-            const isHigh = item.triage_level === 'tinggi';
-            const isMed = item.triage_level === 'sedang';
-            const badgeClass = isHigh ? 'triage-badge-tinggi' : (isMed ? 'triage-badge-sedang' : 'triage-badge-rendah');
-            const badgeText = isHigh ? '🚨 TINGGI (RED FLAG)' : (isMed ? '⚠️ SEDANG (PANTAU)' : '🟢 RENDAH (AMAN)');
+          ${queue
+            .map((item) => {
+              const isHigh = item.triage_level === "tinggi";
+              const isMed = item.triage_level === "sedang";
+              const badgeClass = isHigh
+                ? "triage-badge-tinggi"
+                : isMed
+                  ? "triage-badge-sedang"
+                  : "triage-badge-rendah";
+              const badgeText = isHigh
+                ? "🚨 TINGGI (RED FLAG)"
+                : isMed
+                  ? "⚠️ SEDANG (PANTAU)"
+                  : "🟢 RENDAH (AMAN)";
 
-            return `
-              <tr style="${isHigh ? 'background: #fff1f2;' : ''}">
+              return `
+              <tr style="${isHigh ? "background: #fff1f2;" : ""}">
                 <td>
                   <span class="triage-badge-pill ${badgeClass}">${badgeText}</span>
                 </td>
@@ -2074,14 +2429,14 @@ function renderNurseQueueTable(queue) {
                 <td>${item.pathway_name}</td>
                 <td>${item.phase_name}</td>
                 <td>
-                  <div style="font-weight: 600; color: ${isHigh ? '#991b1b' : 'var(--text-main)'};">${item.symptom_summary}</div>
-                  ${item.red_flags ? `<div style="font-size: 11px; color: #dc2626; margin-top: 2px;">⚠️ Red flags: ${item.red_flags}</div>` : ''}
+                  <div style="font-weight: 600; color: ${isHigh ? "#991b1b" : "var(--text-main)"};">${item.symptom_summary}</div>
+                  ${item.red_flags ? `<div style="font-size: 11px; color: #dc2626; margin-top: 2px;">⚠️ Red flags: ${item.red_flags}</div>` : ""}
                 </td>
                 <td>
-                  <span style="font-size: 11.5px; font-weight: 700; color: ${item.nurse_status === 'selesai' ? '#16a34a' : '#d97706'};">
-                    ${item.nurse_status === 'selesai' ? '✓ Ditangani' : '⏳ Perlu Tindakan'}
+                  <span style="font-size: 11.5px; font-weight: 700; color: ${item.nurse_status === "selesai" ? "#16a34a" : "#d97706"};">
+                    ${item.nurse_status === "selesai" ? "✓ Ditangani" : "⏳ Perlu Tindakan"}
                   </span>
-                  ${item.assigned_nurse ? `<div style="font-size: 11px; color: var(--text-muted);">${item.assigned_nurse}</div>` : ''}
+                  ${item.assigned_nurse ? `<div style="font-size: 11px; color: var(--text-muted);">${item.assigned_nurse}</div>` : ""}
                 </td>
                 <td>
                   <div style="display: flex; gap: 4px; flex-wrap: wrap;">
@@ -2098,7 +2453,8 @@ function renderNurseQueueTable(queue) {
                 </td>
               </tr>
             `;
-          }).join('')}
+            })
+            .join("")}
         </tbody>
       </table>
     </div>
@@ -2109,36 +2465,41 @@ function renderNurseQueueTable(queue) {
  * Handle Aksi Perawat pada Antrean Prioritas
  */
 async function handleNurseAction(queueId, actionType) {
-  let notes = '';
-  if (actionType === 'call') {
-    notes = prompt('Catatan panggilan tele-nurse kepada pasien / keluarga:', 'Pasien dihubungi via WhatsApp call, kondisi keluhan telah dievaluasi dan diberikan edukasi penanganan.');
+  let notes = "";
+  if (actionType === "call") {
+    notes = prompt(
+      "Catatan panggilan tele-nurse kepada pasien / keluarga:",
+      "Pasien dihubungi via WhatsApp call, kondisi keluhan telah dievaluasi dan diberikan edukasi penanganan.",
+    );
     if (notes === null) return;
-  } else if (actionType === 'escalate') {
-    notes = prompt('Catatan eskalasi ke dokter penanggung jawab (DPJP):', 'Laporan dikirim ke dr. Sp.JP untuk instruksi penyesuaian dosis atau evaluasi poli.');
+  } else if (actionType === "escalate") {
+    notes = prompt(
+      "Catatan eskalasi ke dokter penanggung jawab (DPJP):",
+      "Laporan dikirim ke dr. Sp.JP untuk instruksi penyesuaian dosis atau evaluasi poli.",
+    );
     if (notes === null) return;
   }
 
   try {
-    const res = await fetch('/api/mira/nurse-queue/action', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const res = await fetch("/api/mira/nurse-queue/action", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         queueId,
         actionType,
         notes,
-        nurseName: 'Ns. Ratih Wardani, S.Kep'
-      })
-    }).then(r => r.json());
+        nurseName: "Ns. Ratih Wardani, S.Kep",
+      }),
+    }).then((r) => r.json());
 
     if (res.sukses) {
       alert(res.pesan);
       await loadNursePriorityQueue();
       await loadPatientTimeline();
     } else {
-      alert('Gagal memproses aksi perawat: ' + res.error);
+      alert("Gagal memproses aksi perawat: " + res.error);
     }
   } catch (err) {
-    alert('Terjadi kesalahan saat memproses tindakan perawat.');
+    alert("Terjadi kesalahan saat memproses tindakan perawat.");
   }
 }
-

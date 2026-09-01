@@ -1517,12 +1517,16 @@ for (const [routePath, svgFileName] of Object.entries(imageFallbacks)) {
 
 // Explicit handler for MIRA assets (Avatar and Full Body illustration)
 const miraAssetRoutes = [
+  "/assets/mira/mira_avatar.png",
   "/assets/mira/mira_avatar.jpg",
   "/assets/mira/mira_avatar_1788093112718.jpg",
+  "/assets/images/mira_avatar.png",
   "/assets/images/mira_avatar_1788093112718.jpg",
   "/assets/images/mira_avatar.jpg",
+  "/src/assets/images/mira_avatar.png",
   "/src/assets/images/mira_avatar_1788093112718.jpg",
   "/src/assets/images/mira_avatar.jpg",
+  "/mira_avatar.png",
   "/mira_avatar.jpg",
   "/mira_avatar_1788093112718.jpg",
 ];
@@ -1530,7 +1534,9 @@ const miraAssetRoutes = [
 for (const route of miraAssetRoutes) {
   app.get(route, (req, res) => {
     const candidates = [
+      path.join(__dirname, "public", "assets", "mira", "mira_avatar.png"),
       path.join(__dirname, "public", "assets", "mira", "mira_avatar.jpg"),
+      path.join(__dirname, "src", "assets", "images", "mira_avatar.png"),
       path.join(
         __dirname,
         "src",
@@ -1538,6 +1544,7 @@ for (const route of miraAssetRoutes) {
         "images",
         "mira_avatar_1788093112718.jpg",
       ),
+      path.join(__dirname, "public", "assets", "images", "mira_avatar.png"),
       path.join(
         __dirname,
         "public",
@@ -1545,11 +1552,16 @@ for (const route of miraAssetRoutes) {
         "images",
         "mira_avatar_1788093112718.jpg",
       ),
+      path.join(__dirname, "public", "mira_avatar.png"),
       path.join(__dirname, "public", "mira_avatar.jpg"),
     ];
     for (const file of candidates) {
       if (fs.existsSync(file)) {
-        res.setHeader("Content-Type", "image/jpeg");
+        if (file.endsWith(".png")) {
+          res.setHeader("Content-Type", "image/png");
+        } else {
+          res.setHeader("Content-Type", "image/jpeg");
+        }
         return res.sendFile(file);
       }
     }
@@ -1559,12 +1571,14 @@ for (const route of miraAssetRoutes) {
 
 const miraFullRoutes = [
   "/assets/mira/mira_full.jpg",
+  "/assets/mira/mira_full.png",
   "/assets/mira/mira_full_pose_1788093140969.jpg",
-  "/assets/images/mira_full_pose_1788093140969.jpg",
   "/assets/images/mira_full.jpg",
-  "/src/assets/images/mira_full_pose_1788093140969.jpg",
+  "/assets/images/mira_full_pose_1788093140969.jpg",
   "/src/assets/images/mira_full.jpg",
+  "/src/assets/images/mira_full_pose_1788093140969.jpg",
   "/mira_full.jpg",
+  "/mira_full.png",
   "/mira_full_pose_1788093140969.jpg",
 ];
 
@@ -1572,6 +1586,8 @@ for (const route of miraFullRoutes) {
   app.get(route, (req, res) => {
     const candidates = [
       path.join(__dirname, "public", "assets", "mira", "mira_full.jpg"),
+      path.join(__dirname, "public", "assets", "mira", "mira_full.png"),
+      path.join(__dirname, "src", "assets", "images", "mira_full.jpg"),
       path.join(
         __dirname,
         "src",
@@ -1579,6 +1595,7 @@ for (const route of miraFullRoutes) {
         "images",
         "mira_full_pose_1788093140969.jpg",
       ),
+      path.join(__dirname, "public", "assets", "images", "mira_full.jpg"),
       path.join(
         __dirname,
         "public",
@@ -1590,7 +1607,11 @@ for (const route of miraFullRoutes) {
     ];
     for (const file of candidates) {
       if (fs.existsSync(file)) {
-        res.setHeader("Content-Type", "image/jpeg");
+        if (file.endsWith(".png")) {
+          res.setHeader("Content-Type", "image/png");
+        } else {
+          res.setHeader("Content-Type", "image/jpeg");
+        }
         return res.sendFile(file);
       }
     }
