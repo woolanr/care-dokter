@@ -1504,6 +1504,14 @@ body {
   margin: 0 auto 16px auto;
 }
 
+.feedback-success-logo {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+
 .modal-title {
   font-size: 17px;
   font-weight: 800;

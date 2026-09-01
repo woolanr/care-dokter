@@ -2600,6 +2600,15 @@ function submitPatientFeedback() {
 
   // 8. Open success / advocacy modal based on rating branch
 
+  // Update Point Badges in Modals
+  const neutralBadge = document.getElementById("neutral-thanks-pts-badge");
+  const posBadge = document.getElementById("pos-advocacy-pts-badge");
+  const badgeText = pointsAwardedThisTime
+    ? "+20 CarePoints Telah Ditambahkan"
+    : "✓ Feedback Diperbarui (Poin Telah Diterima)";
+  if (neutralBadge) neutralBadge.textContent = badgeText;
+  if (posBadge) posBadge.textContent = badgeText;
+
   // Branching: Ratings 1-3 (Neutral/Low) vs Ratings 4-5 (Positive Advocacy)
   if (currentFeedbackDraft.rating <= 3) {
     const neutralSummary = document.getElementById("neutral-feedback-summary");
