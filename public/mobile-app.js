@@ -2533,6 +2533,7 @@ function updateFeedbackSubmitBtn() {
  * Submit Patient Feedback with conditional branch (Neutral vs Positive Advocacy)
  */
 function submitPatientFeedback() {
+  // 1. Validate feedback rating
   if (!currentFeedbackDraft.rating) {
     showToast("Silakan pilih penilaian bintang terlebih dahulu.");
     return;
@@ -2544,18 +2545,60 @@ function submitPatientFeedback() {
   const now = new Date();
   const dateStr = `${now.getDate()} ${["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"][now.getMonth()]} ${now.getFullYear()}`;
 
+  // 2. Check duplicate reward eligibility
+  const wasAlreadyAwarded = Boolean(
+    state.feedback && state.feedback.pointsAwarded,
+  );
+  let pointsAwardedThisTime = false;
+
+  // 3. Add +20 points to centralized state and ledger first
+  if (!wasAlreadyAwarded) {
+    // 3.1. Add points to centralized user balance and ledger
+    state.addPoints(
+      20,
+      "Feedback Experience Reward",
+      "Masukan evaluasi pengalaman pelayanan perawatan",
+      "💬",
+    );
+
+    // 3.2. Mark mission-5 completed
+    const m5 = state.missions.find(
+      (m) =>
+        m.id === "mission-5" ||
+        m.title.toLowerCase().includes("ulasan") ||
+        m.title.toLowerCase().includes("feedback"),
+    );
+    if (m5) {
+      m5.status = "completed";
+      m5.btnText = "✓ Selesai";
+    }
+
+    pointsAwardedThisTime = true;
+  }
+
+  // 4. Update feedback state and set pointsAwarded = true
   state.feedback = {
     submitted: true,
     rating: currentFeedbackDraft.rating,
     categories: [...currentFeedbackDraft.categories],
     comment: commentText,
     submittedAt: dateStr,
+    pointsAwarded: true,
   };
+
+  // 5. Persist updated centralized state
   state.saveState();
 
+  // 6. Close feedback modal
   closeModal("modal-patient-feedback");
-  renderHomeScreenFeedback();
+
+  // 7. Re-render all affected UI components immediately
+  renderHomeScreen();
+  renderCarePointDashboard();
   renderCareJourneyTimeline();
+  renderMissionsList();
+
+  // 8. Open success / advocacy modal based on rating branch
 
   // Branching: Ratings 1-3 (Neutral/Low) vs Ratings 4-5 (Positive Advocacy)
   if (currentFeedbackDraft.rating <= 3) {
@@ -2568,9 +2611,26 @@ function submitPatientFeedback() {
       }
     }
     openModal("modal-feedback-neutral-thanks");
-    showToast("Feedback berhasil disimpan. Terima kasih atas masukan Anda.");
+    if (pointsAwardedThisTime) {
+      showToast(
+        "Terima kasih atas masukan Anda! +20 CarePoints telah ditambahkan.",
+      );
+    } else {
+      showToast(
+        "Feedback berhasil diperbarui. Anda telah menerima poin untuk masukan ini.",
+      );
+    }
   } else {
     openModal("modal-feedback-positive-advocacy");
+    if (pointsAwardedThisTime) {
+      showToast(
+        "Terima kasih atas masukan Anda! +20 CarePoints telah ditambahkan.",
+      );
+    } else {
+      showToast(
+        "Feedback berhasil diperbarui. Anda telah menerima poin untuk masukan ini.",
+      );
+    }
   }
 }
 
