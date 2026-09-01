@@ -989,9 +989,12 @@ body {
   height: 44px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #38bdf8;
-  box-shadow: 0 4px 10px rgba(6, 182, 212, 0.2);
+  object-position: center 20%;
+  border: 2px solid #4F79E8;
+  box-shadow: 0 4px 10px rgba(109, 75, 216, 0.2);
   flex-shrink: 0;
+  background: #EEF2FF;
+  display: block;
 }
 
 .mira-header-text {
@@ -3053,8 +3056,11 @@ input:checked + .slider-toggle:before {
   height: 100%;
   border-radius: 16px;
   object-fit: cover;
+  object-position: center 20%;
   border: 2px solid #4F79E8;
   box-shadow: 0 4px 10px rgba(109, 75, 216, 0.2);
+  background: #EEF2FF;
+  display: block;
 }
 
 .mira-status-pulse-dot {
@@ -3552,7 +3558,10 @@ input:checked + .slider-toggle:before {
   height: 36px;
   border-radius: 10px;
   object-fit: cover;
+  object-position: center 20%;
   border: 1.5px solid #4F79E8;
+  background: #EEF2FF;
+  display: block;
 }
 
 .mira-flow-title {
@@ -4338,7 +4347,10 @@ input:checked + .slider-toggle:before {
   border-radius: 50%;
   border: 1.5px solid #4F79E8;
   object-fit: cover;
+  object-position: center 20%;
   flex-shrink: 0;
+  background: #EEF2FF;
+  display: block;
 }
 
 .home-feedback-action-row {
@@ -4392,6 +4404,9 @@ input:checked + .slider-toggle:before {
   border-radius: 50%;
   border: 1.5px solid #4F79E8;
   object-fit: cover;
+  object-position: center 20%;
+  background: #EEF2FF;
+  display: block;
 }
 
 .mira-conv-text {

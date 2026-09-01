@@ -2215,7 +2215,7 @@ function renderHomeScreenFeedback() {
         <span style="font-size: 11px; color: var(--text-muted);">Continuous Feedback</span>
       </div>
       <div class="home-feedback-conv-intro">
-        <img src="/assets/mira/mira_avatar.jpg" alt="MIRA" class="home-mira-mini-avatar" onerror="this.src='/assets/care-dokter-logo.svg'">
+        <img src="/assets/mira/mira_avatar.jpg" alt="MIRA" class="home-mira-mini-avatar" onerror="this.src='/src/assets/images/mira_avatar_1788093112718.jpg'">
         <div>
           <h4 class="feedback-card-title" style="margin:0 0 2px 0;">MIRA Siap Mendengarkan 💬</h4>
           <p class="feedback-card-desc" style="margin:0;">
