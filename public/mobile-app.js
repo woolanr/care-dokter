@@ -2210,17 +2210,27 @@ function renderHomeScreenFeedback() {
     cardEl.innerHTML = `
       <div class="feedback-card-header">
         <div class="feedback-card-pill">
-          <span>💬</span> Masukan Pasien
+          <span>💬</span> MIRA Listen
         </div>
-        <span style="font-size: 11px; color: var(--text-muted);">Mandaya Quality Care</span>
+        <span style="font-size: 11px; color: var(--text-muted);">Continuous Feedback</span>
       </div>
-      <h4 class="feedback-card-title">Bagaimana pengalaman Anda?</h4>
-      <p class="feedback-card-desc">
-        Masukan Anda membantu kami terus meningkatkan mutu pelayanan dan kenyamanan perawatan.
-      </p>
-      <button class="btn-primary-mobile" style="padding: 10px 14px; font-size: 13px; width: 100%; border-radius: 10px;" onclick="openFeedbackModal()">
-        <span>✍️</span> Berikan Feedback Pasien
-      </button>
+      <div class="home-feedback-conv-intro">
+        <img src="/assets/mira/mira_avatar.jpg" alt="MIRA" class="home-mira-mini-avatar" onerror="this.src='/assets/care-dokter-logo.svg'">
+        <div>
+          <h4 class="feedback-card-title" style="margin:0 0 2px 0;">MIRA Siap Mendengarkan 💬</h4>
+          <p class="feedback-card-desc" style="margin:0;">
+            Bagaimana pengalaman Anda hari ini? Ceritakan langsung lewat teks atau suara.
+          </p>
+        </div>
+      </div>
+      <div class="home-feedback-action-row">
+        <button class="btn-primary-mobile" style="padding: 10px 14px; font-size: 12.5px; flex: 1; border-radius: 10px;" onclick="openFeedbackModal()">
+          <span>💬</span> Berikan Masukan (+20 Pts)
+        </button>
+        <button class="btn-voice-quick-action" onclick="openVoiceFeedbackModal()" title="Voice Feedback Preview">
+          <span>🎤</span>
+        </button>
+      </div>
     `;
   } else {
     cardEl.className = "feedback-home-card submitted";
@@ -2280,6 +2290,80 @@ function renderHomeScreenFeedback() {
       ${extraActionBtn}
     `;
   }
+}
+
+/**
+ * Focus comment textarea in feedback modal
+ */
+function focusFeedbackComment() {
+  const commentInput = document.getElementById("feedback-comment-input");
+  if (commentInput) {
+    commentInput.focus();
+  }
+}
+
+/**
+ * Open Voice Feedback Simulation Modal
+ */
+function openVoiceFeedbackModal() {
+  const timerEl = document.getElementById("voice-mock-timer");
+  const barsEl = document.getElementById("voice-mock-bars");
+  const hintEl = document.getElementById("voice-mock-hint");
+  const btnEl = document.getElementById("btn-mock-record");
+
+  if (timerEl) timerEl.textContent = "00:00";
+  if (barsEl) barsEl.classList.remove("animating");
+  if (hintEl)
+    hintEl.textContent = "Simulasi Voice-to-Insight (Fitur Prototype)";
+  if (btnEl) {
+    btnEl.innerHTML = "<span>🎙️</span> Tekan untuk Simulasi Rekaman";
+    btnEl.disabled = false;
+  }
+
+  openModal("modal-voice-feedback-demo");
+}
+
+/**
+ * Simulate Voice Feedback Recording action (visual mock only)
+ */
+function simulateVoiceFeedbackAction() {
+  const timerEl = document.getElementById("voice-mock-timer");
+  const barsEl = document.getElementById("voice-mock-bars");
+  const hintEl = document.getElementById("voice-mock-hint");
+  const btnEl = document.getElementById("btn-mock-record");
+
+  if (!btnEl || btnEl.disabled) return;
+
+  btnEl.disabled = true;
+  btnEl.innerHTML = "<span>🔴</span> Merekam Suara (Simulasi)...";
+  if (barsEl) barsEl.classList.add("animating");
+  if (hintEl)
+    hintEl.textContent = "MIRA sedang mendengarkan dan mentranskripsi...";
+
+  let seconds = 0;
+  const interval = setInterval(() => {
+    seconds++;
+    const secStr = seconds < 10 ? `0${seconds}` : `${seconds}`;
+    if (timerEl) timerEl.textContent = `00:0${secStr}`.slice(-5);
+    if (seconds >= 3) {
+      clearInterval(interval);
+      if (barsEl) barsEl.classList.remove("animating");
+      if (hintEl)
+        hintEl.textContent = "✓ Transkripsi suara berhasil disimulasikan!";
+      if (btnEl) btnEl.innerHTML = "<span>✓</span> Transkripsi Siap";
+
+      setTimeout(() => {
+        closeModal("modal-voice-feedback-demo");
+        openFeedbackModal();
+        const commentInput = document.getElementById("feedback-comment-input");
+        if (commentInput && !commentInput.value) {
+          commentInput.value =
+            "Pelayanan perawat sangat ramah dan dokter menjelaskan proses pemulihan dengan sangat jelas dan menenangkan.";
+        }
+        showToast("Transkripsi suara simulasi dimasukkan ke catatan feedback.");
+      }, 700);
+    }
+  }, 500);
 }
 
 /**

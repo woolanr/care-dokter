@@ -3294,8 +3294,26 @@
           </div>
         </div>
 
-        <!-- Question 3: Optional Text Feedback -->
+        <!-- Question 3: Optional Text Feedback with Conversational MIRA Toolbar -->
         <div style="margin-top: 10px">
+          <div class="mira-conversational-banner">
+            <div class="mira-conv-avatar-badge">
+              <img
+                src="/assets/mira/mira_avatar.jpg"
+                alt="MIRA"
+                class="mira-conv-avatar"
+                onerror="this.src = '/assets/care-dokter-logo.svg'"
+              />
+            </div>
+            <div class="mira-conv-text">
+              <strong>MIRA Mendengarkan</strong>
+              <span
+                >Ceritakan pengalaman Anda melalui ketikan pesan atau catatan
+                suara.</span
+              >
+            </div>
+          </div>
+
           <label
             style="
               font-size: 13px;
@@ -3332,6 +3350,27 @@
               placeholder="Ceritakan pengalaman Anda selama proses perawatan..."
               rows="3"
             ></textarea>
+          </div>
+
+          <!-- Conversational Input Toolbar (Chat & Voice) -->
+          <div class="conversational-input-toolbar">
+            <button
+              type="button"
+              class="btn-conv-tool active"
+              onclick="focusFeedbackComment()"
+              title="Ketik Masukan Chat"
+            >
+              <span>💬</span> Ketik Cerita
+            </button>
+            <button
+              type="button"
+              class="btn-conv-tool btn-voice-tool"
+              onclick="openVoiceFeedbackModal()"
+              title="Buka Voice Feedback (Simulasi)"
+            >
+              <span class="mic-pulse-dot"></span>
+              <span>🎤</span> Rekam Suara (Preview)
+            </button>
           </div>
         </div>
 
@@ -3701,6 +3740,90 @@
             onclick="closeModal('modal-advocacy-referral')"
           >
             Selesai
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 24. MIRA Voice Feedback Simulation Modal (Voice-to-Insight Preview) -->
+    <div class="modal-backdrop" id="modal-voice-feedback-demo">
+      <div
+        class="modal-content-card"
+        style="text-align: center; max-height: 85vh; overflow-y: auto"
+      >
+        <div class="modal-header-close">
+          <div style="display: flex; align-items: center; gap: 8px">
+            <span style="font-size: 20px">🎤</span>
+            <h3 class="modal-title" style="margin: 0; font-size: 15px">
+              MIRA Voice Feedback
+            </h3>
+          </div>
+          <button
+            class="close-btn"
+            onclick="closeModal('modal-voice-feedback-demo')"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div class="voice-feedback-hero">
+          <div class="voice-mic-circle">
+            <span class="voice-mic-icon">🎙️</span>
+            <div class="voice-mic-ripple"></div>
+          </div>
+
+          <h4 class="voice-hero-title">Ceritakan kepada MIRA</h4>
+          <p class="voice-hero-sub">
+            "Bagikan pengalaman Anda selama proses perawatan dan pemulihan
+            secara langsung lewat suara."
+          </p>
+
+          <!-- Visual Mock Soundwave & Timer -->
+          <div class="voice-waveform-box">
+            <div class="voice-timer" id="voice-mock-timer">00:00</div>
+            <div class="voice-wave-bars" id="voice-mock-bars">
+              <span class="bar bar-1"></span>
+              <span class="bar bar-2"></span>
+              <span class="bar bar-3"></span>
+              <span class="bar bar-4"></span>
+              <span class="bar bar-5"></span>
+              <span class="bar bar-6"></span>
+              <span class="bar bar-7"></span>
+            </div>
+            <div class="voice-status-hint" id="voice-mock-hint">
+              Simulasi Voice-to-Insight (Fitur Prototype)
+            </div>
+          </div>
+
+          <!-- Visual Interactive Hold/Tap Button -->
+          <div class="voice-action-container">
+            <button
+              type="button"
+              class="btn-hold-record"
+              id="btn-mock-record"
+              onclick="simulateVoiceFeedbackAction()"
+            >
+              <span>🎙️</span> Tekan untuk Simulasi Rekaman
+            </button>
+          </div>
+
+          <div class="voice-feature-notice">
+            <span>💡</span>
+            <div>
+              <strong>Teknologi Voice-to-Insight:</strong> Pada rilis penuh,
+              MIRA akan otomatis mentranskripsikan suara menjadi teks dan
+              memetakan sentimen pengalaman pasien secara cerdas tanpa perlu
+              mengetik manual.
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-actions" style="margin-top: 14px">
+          <button
+            class="btn-secondary-mobile"
+            onclick="closeModal('modal-voice-feedback-demo')"
+          >
+            Tutup & Gunakan Ketikan Teks
           </button>
         </div>
       </div>
