@@ -2679,7 +2679,56 @@ function handlePushNotificationClick(event) {
 // ============================================================================
 
 /**
- * Format WhatsApp-style text safely:
+ * Render WhatsApp-style message safely into a DOM container.
+ * 1. Parses raw text into regular text segments and *bold* segments.
+ * 2. Creates DOM text nodes for regular text.
+ * 3. Creates <strong> DOM elements for text inside *...*.
+ * 4. Appends DOM nodes directly, stripping formatting asterisks and preventing arbitrary HTML injection.
+ */
+function renderWhatsAppFormattedText(containerEl, rawText) {
+  if (!containerEl) return;
+
+  if (typeof containerEl.replaceChildren === "function") {
+    containerEl.replaceChildren();
+  } else {
+    containerEl.textContent = "";
+  }
+
+  if (!rawText) return;
+
+  const text = String(rawText);
+  const boldRegex = /\*+([^*\r\n]+?)\*+/g;
+  let lastIndex = 0;
+  let match;
+
+  while ((match = boldRegex.exec(text)) !== null) {
+    const matchStart = match.index;
+    const matchEnd = boldRegex.lastIndex;
+
+    // Append regular text preceding bold section
+    if (matchStart > lastIndex) {
+      const normalText = text.substring(lastIndex, matchStart);
+      containerEl.appendChild(document.createTextNode(normalText));
+    }
+
+    // Append bold element with inner text only (no asterisks)
+    const boldContent = match[1];
+    const strongEl = document.createElement("strong");
+    strongEl.textContent = boldContent;
+    containerEl.appendChild(strongEl);
+
+    lastIndex = matchEnd;
+  }
+
+  // Append any remaining regular text
+  if (lastIndex < text.length) {
+    const remainingText = text.substring(lastIndex);
+    containerEl.appendChild(document.createTextNode(remainingText));
+  }
+}
+
+/**
+ * Format WhatsApp-style text safely to HTML string:
  * Converts WhatsApp-style single-asterisk *bold text* (and **bold text**)
  * to <strong>bold text</strong>.
  * Escapes HTML characters (&, <, >) to prevent arbitrary HTML injection.
@@ -2693,12 +2742,8 @@ function formatWhatsAppText(rawText) {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
 
-  // 2. Normalize any double asterisks (**text**) to single asterisks (*text*)
-  escaped = escaped.replace(/\*\*(.+?)\*\*/g, "*$1*");
-
-  // 3. Convert WhatsApp single-asterisk bold (*text*) to <strong>text</strong>
-  // Replaces the * markers with <strong> without rendering literal asterisks
-  escaped = escaped.replace(/\*([^*\n\r]+?)\*/g, "<strong>$1</strong>");
+  // 2. Convert WhatsApp single/double-asterisk bold (*text*) to <strong>text</strong>
+  escaped = escaped.replace(/\*+([^*\r\n]+?)\*+/g, "<strong>$1</strong>");
 
   return escaped;
 }
@@ -2714,7 +2759,7 @@ function openWhatsAppPreviewModal() {
   const waTimeEl = document.getElementById("wa-preview-time");
 
   if (waBodyEl) {
-    waBodyEl.innerHTML = formatWhatsAppText(config.waBody);
+    renderWhatsAppFormattedText(waBodyEl, config.waBody);
   }
   if (waTimeEl) {
     waTimeEl.textContent = config.timeAgo.split("·")[1] || "09:00 WIB";
@@ -3942,7 +3987,9 @@ function openModal(modalId) {
     const config = TIMELINE_CONFIGS[stage] || TIMELINE_CONFIGS["H-3"];
     const waBodyEl = document.getElementById("wa-preview-message-body");
     const waTimeEl = document.getElementById("wa-preview-time");
-    if (waBodyEl) waBodyEl.textContent = config.waBody;
+    if (waBodyEl) {
+      renderWhatsAppFormattedText(waBodyEl, config.waBody);
+    }
     if (waTimeEl)
       waTimeEl.textContent = config.timeAgo.split("·")[1] || "09:00 WIB";
   } else if (modalId === "modal-mira-preview") {
