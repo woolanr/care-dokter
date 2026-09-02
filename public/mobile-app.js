@@ -5780,6 +5780,7 @@ function renderTestimonialShowcase() {
         const anonymized = anonymizePatientName(story.authorName);
         const stars = "★".repeat(story.rating) + "☆".repeat(5 - story.rating);
         const isUser = story.isUserSubmission;
+        const cleanQuote = (story.quote || "").trim().replace(/^["“'”]+|["“'”]+$/g, "");
 
         return `
         <div class="testimonial-item-card ${isUser ? "user-story" : ""}" id="testimonial-card-${story.id}">
@@ -5815,7 +5816,7 @@ function renderTestimonialShowcase() {
           </div>
 
           <div class="testimonial-quote-box">
-            ${story.quote}
+            "${cleanQuote}"
           </div>
 
           <div class="testimonial-footer-row">
