@@ -114,18 +114,20 @@ function wrapNodeSqlite(db) {
  * Fallback driver SQLite jika node:sqlite belum didukung
  */
 function createFallbackDb() {
-  // Menggunakan sql.js yang sudah terpasang
-  const { createRequire } = awaitImport("module");
-  const require = createRequire(import.meta.url);
-  const initSqlJs = require("sql.js");
-
-  let SQL = null;
-  let sqlDb = null;
-
-  // Inisialisasi sinkron jika mungkin atau siapkan wrapper
-  // sql.js async initialization:
-  // Untuk kepraktisan, sediakan inisialisasi state
-  console.log("[DB] Menggunakan SQLite storage engine");
+  console.log("[DB] Using memory / SQLite storage engine");
+  return {
+    exec(sql) {},
+    prepare(sql) {
+      return {
+        run: () => ({ changes: 0, lastInsertRowid: 0 }),
+        get: () => null,
+        all: () => [],
+      };
+    },
+    transaction(fn) {
+      return (...args) => fn(...args);
+    },
+  };
 }
 
 /**

@@ -23,6 +23,7 @@ global.document = {
         value: '',
         style: {},
         classList: { add: () => {}, remove: () => {}, contains: () => false },
+        remove: () => {},
         appendChild: () => {},
         removeChild: () => {}
       };
@@ -67,15 +68,15 @@ global.state = testState;
 console.log("Initial CarePoints:", state.currentUser.carePoints);
 console.log("Initial Advocacy State:", state.advocacy);
 
-// TEST 1: First Referral Reward
+// TEST 1: First Referral Reward (+50 CarePoints)
 const initialPoints = state.currentUser.carePoints;
 console.log("\n[TEST 1] Triggering executeReferralShare()...");
 executeReferralShare();
 
 const pointsAfterFirst = state.currentUser.carePoints;
 console.log("Points after 1st share:", pointsAfterFirst, `(Delta: +${pointsAfterFirst - initialPoints})`);
-if (pointsAfterFirst === initialPoints + 30 && state.advocacy.referralRewardAwarded === true && state.advocacy.referralShared === true) {
-  console.log("TEST 1: PASS (+30 points earned and status set)");
+if (pointsAfterFirst === initialPoints + 50 && state.advocacy.referralRewardAwarded === true && state.advocacy.referralShared === true) {
+  console.log("TEST 1: PASS (+50 points earned and status set)");
 } else {
   console.error("TEST 1: FAIL", { initialPoints, pointsAfterFirst, advocacy: state.advocacy });
   process.exit(1);
@@ -87,9 +88,9 @@ const latestTx = state.pointTransactions[0];
 console.log("Latest Transaction:", latestTx);
 if (
   latestTx &&
-  latestTx.title === "Referral Program Reward" &&
-  latestTx.desc === "Membagikan rekomendasi Care Dokter Mandaya" &&
-  latestTx.points === 30 &&
+  latestTx.title === "Referral Program" &&
+  latestTx.desc === "Anda membagikan rekomendasi Care Dokter" &&
+  latestTx.points === 50 &&
   latestTx.icon === "👥"
 ) {
   console.log("TEST 2: PASS (Transaction ledger matched exactly)");
@@ -98,14 +99,14 @@ if (
   process.exit(1);
 }
 
-// TEST 3 & 4: Duplicate Share / Rapid Click
+// TEST 3 & 4: Duplicate Share / Rapid Click (Strict Idempotency Guard)
 console.log("\n[TEST 3 & 4] Triggering subsequent executeReferralShare()...");
 executeReferralShare();
 executeReferralShare();
 executeReferralShare();
 
 const pointsAfterDuplicates = state.currentUser.carePoints;
-const txCount = state.pointTransactions.filter(tx => tx.title === "Referral Program Reward").length;
+const txCount = state.pointTransactions.filter(tx => tx.title === "Referral Program").length;
 console.log("Points after duplicates:", pointsAfterDuplicates);
 console.log("Referral transaction count in ledger:", txCount);
 
@@ -121,7 +122,7 @@ console.log("\n[TEST 5] Simulating browser refresh (loading new AppState from lo
 const freshStateAfterRefresh = new AppState();
 console.log("Restored CarePoints:", freshStateAfterRefresh.currentUser.carePoints);
 console.log("Restored Advocacy:", freshStateAfterRefresh.advocacy);
-const restoredTxCount = freshStateAfterRefresh.pointTransactions.filter(tx => tx.title === "Referral Program Reward").length;
+const restoredTxCount = freshStateAfterRefresh.pointTransactions.filter(tx => tx.title === "Referral Program").length;
 
 if (
   freshStateAfterRefresh.currentUser.carePoints === pointsAfterFirst &&
@@ -136,7 +137,7 @@ if (
   process.exit(1);
 }
 
-// TEST 6: Copy Link Repeatedly
+// TEST 6: Copy Link Repeatedly without Awarding Points
 console.log("\n[TEST 6] Calling copyReferralLink()...");
 const pointsBeforeCopy = freshStateAfterRefresh.currentUser.carePoints;
 copyReferralLink();
@@ -154,13 +155,13 @@ console.log("\n[TEST 7] Testing state.resetAllDemoData()...");
 freshStateAfterRefresh.resetAllDemoData(true);
 console.log("Points after Reset Demo:", freshStateAfterRefresh.currentUser.carePoints);
 console.log("Advocacy after Reset Demo:", freshStateAfterRefresh.advocacy);
-const txAfterReset = freshStateAfterRefresh.pointTransactions.filter(tx => tx.title === "Referral Program Reward").length;
+const txAfterReset = freshStateAfterRefresh.pointTransactions.filter(tx => tx.title === "Referral Program").length;
 
 if (
   freshStateAfterRefresh.currentUser.carePoints === 450 &&
   freshStateAfterRefresh.advocacy.referralRewardAwarded === false &&
   freshStateAfterRefresh.advocacy.referralShared === false &&
-  freshStateAfterRefresh.advocacy.referralCode === null &&
+  freshStateAfterRefresh.advocacy.referralCode === "MANDAYA-BUDI-0881" &&
   txAfterReset === 0
 ) {
   console.log("TEST 7: PASS (Demo reset restores baseline and enables new reward eligibility)");

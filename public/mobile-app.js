@@ -529,7 +529,7 @@ const DEFAULT_ADVOCACY = {
   referralShared: false,
   sharedAt: "",
   referralRewardAwarded: false,
-  referralCode: null,
+  referralCode: "MANDAYA-BUDI-0881",
   isEligible: false,
   eligibilityReason: null,
   eligibilityDetectedAt: null,
@@ -3782,7 +3782,7 @@ function renderHomeScreenFeedback() {
     if (adv && adv.referralShared) {
       chipsHtml += `
         <div class="feedback-status-chip chip-referral">
-          <span>✓</span> Mandaya Dibagikan${adv.referralRewardAwarded ? " (+30 Pts)" : ""}
+          <span>✓</span> Mandaya Dibagikan${adv.referralRewardAwarded ? " (+50 Pts)" : ""}
         </div>
       `;
     }
@@ -5476,7 +5476,10 @@ function updateReferralModalUI() {
     if (badgeEl) {
       badgeEl.innerHTML = `
         <div style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #047857; padding: 6px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; justify-content: center; width: 100%;">
-          <span>✓</span> Referral sudah pernah dibagikan · 🪙 +30 CarePoints diterima
+          <span>✓</span> Referral sudah dibagikan · Reward referral telah diklaim (+50 CarePoints)
+        </div>
+        <div style="font-size: 10.5px; color: var(--text-muted); margin-top: 4px; text-align: center;">
+          Reward referral diberikan satu kali untuk setiap pasien.
         </div>
       `;
     }
@@ -5487,12 +5490,15 @@ function updateReferralModalUI() {
     if (badgeEl) {
       badgeEl.innerHTML = `
         <div style="background: #fef3c7; border: 1px solid #fde68a; color: #b45309; padding: 6px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; justify-content: center; width: 100%;">
-          <span>🪙</span> Dapatkan <strong>+30 CarePoints</strong> saat membagikan rekomendasi
+          <span>🪙</span> Dapatkan <strong>+50 CarePoints</strong> saat membagikan rekomendasi
+        </div>
+        <div style="font-size: 10.5px; color: var(--text-muted); margin-top: 4px; text-align: center;">
+          Reward referral diberikan satu kali untuk setiap pasien.
         </div>
       `;
     }
     if (shareBtn) {
-      shareBtn.innerHTML = `<span>📤</span> Bagikan (+30 Pts)`;
+      shareBtn.innerHTML = `<span>📤</span> Bagikan (+50 Pts)`;
     }
   }
 }
@@ -5507,7 +5513,7 @@ function openReferralFromAdvocacy() {
 }
 
 /**
- * Execute Referral Sharing Action (privacy-safe, +30 CarePoints on FIRST share only)
+ * Execute Referral Sharing Action (privacy-safe, +50 CarePoints on FIRST share only)
  */
 function executeReferralShare() {
   if (isReferralShareProcessing) return; // Prevent rapid double click race
@@ -5518,7 +5524,7 @@ function executeReferralShare() {
 
   const shareData = {
     title: "Care Dokter - Mandaya Royal Hospital Puri",
-    text: `Temukan pendamping perjalanan perawatan kesehatan di Mandaya Royal Hospital bersama aplikasi Care Dokter. Gunakan kode rekomendasi: ${refCode}`,
+    text: "Temukan pendamping perjalanan perawatan kesehatan di Mandaya Royal Hospital melalui Care Dokter.",
     url: refUrl,
   };
 
@@ -5531,9 +5537,9 @@ function executeReferralShare() {
   // STRICT IDEMPOTENCY GUARD: One-time CarePoints reward
   if (!wasAlreadyRewarded) {
     state.addPoints(
-      30,
-      "Referral Program Reward",
-      "Membagikan rekomendasi Care Dokter Mandaya",
+      50,
+      "Referral Program",
+      "Anda membagikan rekomendasi Care Dokter",
       "👥"
     );
     state.advocacy.referralRewardAwarded = true;
@@ -5545,18 +5551,20 @@ function executeReferralShare() {
   state.saveState();
 
   // Re-render UI components
-  renderHomeScreenPoints();
-  renderHomeScreenFeedback();
-  renderTestimonialShowcase();
-  renderCareJourneyTimeline();
-  updatePointPrescriptionUI();
+  if (typeof renderHomeScreenPoints === "function") renderHomeScreenPoints();
+  if (typeof renderHomeScreenFeedback === "function") renderHomeScreenFeedback();
+  if (typeof renderTestimonialShowcase === "function") renderTestimonialShowcase();
+  if (typeof renderCareJourneyTimeline === "function") renderCareJourneyTimeline();
+  if (typeof renderCarePointDashboard === "function") renderCarePointDashboard();
 
   if (navigator.share) {
     navigator.share(shareData).catch(() => {});
-  } else if (navigator.clipboard) {
+  } else if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard
       .writeText(`${shareData.text}\n${shareData.url}`)
       .catch(() => {});
+  } else {
+    fallbackCopyText(`${shareData.text}\n${shareData.url}`);
   }
 
   closeModal("modal-advocacy-referral");
@@ -7164,7 +7172,11 @@ function toggleDeviceFrame() {
 
 function showToast(message) {
   const existing = document.getElementById("app-toast");
-  if (existing) existing.remove();
+  if (existing && typeof existing.remove === "function") {
+    existing.remove();
+  } else if (existing && existing.parentNode) {
+    existing.parentNode.removeChild(existing);
+  }
 
   const toast = document.createElement("div");
   toast.id = "app-toast";
@@ -7193,7 +7205,13 @@ function showToast(message) {
   setTimeout(() => {
     toast.style.opacity = "0";
     toast.style.transition = "opacity 0.3s ease";
-    setTimeout(() => toast.remove(), 300);
+    setTimeout(() => {
+      if (typeof toast.remove === "function") {
+        toast.remove();
+      } else if (toast.parentNode) {
+        toast.parentNode.removeChild(toast);
+      }
+    }, 300);
   }, 2800);
 }
 
