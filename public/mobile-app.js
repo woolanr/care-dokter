@@ -4768,16 +4768,20 @@ function saveVoiceInsightFeedback() {
   if (thanksPtsBadge && thanksPtsText) {
     if (pointsAwardedThisTime) {
       thanksPtsBadge.style.display = "inline-flex";
+      thanksPtsBadge.style.justifyContent = "center";
+      thanksPtsBadge.style.margin = "0 auto 12px auto";
       thanksPtsBadge.style.background = "#ecfdf5";
       thanksPtsBadge.style.color = "#047857";
       thanksPtsBadge.style.borderColor = "#a7f3d0";
       thanksPtsText.textContent = "+20 CarePoints Telah Ditambahkan";
     } else {
       thanksPtsBadge.style.display = "inline-flex";
+      thanksPtsBadge.style.justifyContent = "center";
+      thanksPtsBadge.style.margin = "0 auto 12px auto";
       thanksPtsBadge.style.background = "#f1f5f9";
       thanksPtsBadge.style.color = "#475569";
       thanksPtsBadge.style.borderColor = "#cbd5e1";
-      thanksPtsText.textContent = "✓ Poin Feedback Telah Diterima Sebelumnya";
+      thanksPtsText.textContent = "Poin Feedback Telah Diterima Sebelumnya";
     }
   }
 
@@ -6164,10 +6168,10 @@ function updateMicroFeedbackModalUI() {
     );
     if (wasAlreadyAwarded) {
       rewardNoticeText.textContent =
-        "✓ Poin reward feedback (+20 CarePoints) telah diklaim sebelumnya.";
+        "Poin reward feedback (+20 CarePoints) telah diklaim sebelumnya.";
     } else {
       rewardNoticeText.textContent =
-        "🪙 Dapatkan +20 CarePoints untuk feedback pertama Anda.";
+        "Dapatkan +20 CarePoints untuk feedback pertama Anda.";
     }
   }
 
@@ -6467,16 +6471,20 @@ function submitMicroFeedback() {
   if (thanksPtsBadge && thanksPtsText) {
     if (pointsAwardedThisTime) {
       thanksPtsBadge.style.display = "inline-flex";
+      thanksPtsBadge.style.justifyContent = "center";
+      thanksPtsBadge.style.margin = "0 auto 12px auto";
       thanksPtsBadge.style.background = "#ecfdf5";
       thanksPtsBadge.style.color = "#047857";
       thanksPtsBadge.style.borderColor = "#a7f3d0";
       thanksPtsText.textContent = "+20 CarePoints Telah Ditambahkan";
     } else {
       thanksPtsBadge.style.display = "inline-flex";
+      thanksPtsBadge.style.justifyContent = "center";
+      thanksPtsBadge.style.margin = "0 auto 12px auto";
       thanksPtsBadge.style.background = "#f1f5f9";
       thanksPtsBadge.style.color = "#475569";
       thanksPtsBadge.style.borderColor = "#cbd5e1";
-      thanksPtsText.textContent = "✓ Poin Feedback Telah Diterima Sebelumnya";
+      thanksPtsText.textContent = "Poin Feedback Telah Diterima Sebelumnya";
     }
   }
 
