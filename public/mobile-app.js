@@ -258,13 +258,13 @@ const DEFAULT_NOTIFICATIONS = [
     id: "notif-appointment-reminder",
     type: "appointment",
     badgeLabel: "Jadwal Kontrol",
-    title: "Pengingat Jadwal Kontrol DPJP Ortopedi",
+    title: "📅 Kontrol Anda tinggal 3 hari lagi",
     desc: "Konsultasi evaluasi pemulihan H+21 bersama Dr. Andi Pratama, Sp.OT terjadwal pada 7 September 2026 pukul 10:00 WIB di Poli Ortopedi Mandaya Puri.",
-    timeAgo: "Kemarin · 14:00 WIB",
+    timeAgo: "4 Sep 2026 · 09:00 WIB",
     read: false,
     completed: false,
-    actionType: "journey",
-    actionLabel: "Lihat Jadwal Perawatan",
+    actionType: "appointment",
+    actionLabel: "Konfirmasi Kehadiran",
   },
   {
     id: "notif-mission-walk",
@@ -291,6 +291,40 @@ const DEFAULT_NOTIFICATIONS = [
     actionLabel: "Cek Saldo Poin",
   },
 ];
+
+// Module 3: Timeline Configurations for Simulated Reminder Engine
+const TIMELINE_CONFIGS = {
+  "H-3": {
+    daysLeft: 3,
+    title: "📅 Kontrol Anda tinggal 3 hari lagi",
+    desc: "Jangan lupa mempersiapkan kunjungan kontrol Anda bersama Dr. Andi Pratama, Sp.OT (Senin, 7 Sep).",
+    timeAgo: "4 Sep 2026 · 09:00 WIB",
+    statusLabel: "H-3 (3 hari menuju kontrol)",
+    sender: "Mandaya Care Dokter",
+    role: "Pengingat Kontrol DPJP",
+    waBody: `Halo Budi,\n\n📅 Kontrol lanjutan pasca-operasi Anda tinggal *3 hari lagi* (Senin, 7 September 2026 pukul 10:00 WIB bersama Dr. Andi Pratama, Sp.OT di Poli Ortopedi Mandaya Royal Hospital Puri).\n\nMohon pastikan membawa hasil rontgen lutut terakhir Anda.\n\n👉 Konfirmasi kehadiran Anda & klaim *+20 CarePoints*:\nhttps://care.mandayahospitalgroup.com/kontrol-budi`,
+  },
+  "H-1": {
+    daysLeft: 1,
+    title: "💙 Besok Anda memiliki jadwal kontrol",
+    desc: "Pastikan Anda sudah mempersiapkan diri untuk kunjungan besok pukul 10:00 WIB.",
+    timeAgo: "6 Sep 2026 · 14:00 WIB",
+    statusLabel: "H-1 (Besok jadwal kontrol)",
+    sender: "Mandaya Care Dokter",
+    role: "Pengingat H-1",
+    waBody: `Halo Budi,\n\n💙 *Besok* Anda memiliki jadwal kontrol lanjutan pasca-operasi bersama Dr. Andi Pratama, Sp.OT pukul 10:00 WIB di Poli Ortopedi Mandaya Puri.\n\nPastikan Anda sudah mempersiapkan diri dan dokumen rontgen terakhir.\n\n👉 Buka jadwal di Care Dokter:\nhttps://care.mandayahospitalgroup.com/kontrol-budi`,
+  },
+  today: {
+    daysLeft: 0,
+    title: "📍 Jadwal kontrol Anda hari ini",
+    desc: "Konsultasi evaluasi bersama Dr. Andi Pratama, Sp.OT pukul 10:00 WIB di Poli Ortopedi.",
+    timeAgo: "Hari ini · 07:30 WIB",
+    statusLabel: "Hari-H (Jadwal kontrol hari ini)",
+    sender: "Mandaya Care Dokter",
+    role: "Hari Kunjungan",
+    waBody: `Halo Budi,\n\n📍 Jadwal kontrol ortopedi Anda adalah *HARI INI* pukul 10:00 WIB di Lantai 3 Poli Ortopedi Mandaya Puri.\n\nTim medis Mandaya siap menyambut kedatangan Anda. Sampai jumpa di rumah sakit!`,
+  },
+};
 
 const DEFAULT_MIRA_DATA = {
   patientName: "Budi Santoso",
@@ -453,6 +487,12 @@ class AppState {
     const savedBannerDismissed = localStorage.getItem(
       "care_dokter_banner_dismissed",
     );
+    const savedTimeline = localStorage.getItem("care_dokter_timeline");
+    const savedReminderState = localStorage.getItem(
+      "care_dokter_reminder_state",
+    );
+    const savedAnalytics = localStorage.getItem("care_dokter_analytics");
+    const savedMultiChannel = localStorage.getItem("care_dokter_multichannel");
 
     this.isLoggedIn = savedLoggedIn ? JSON.parse(savedLoggedIn) : false;
     this.onboardingCompleted = savedOnboarding
@@ -504,6 +544,50 @@ class AppState {
     this.bannerDismissed = savedBannerDismissed
       ? JSON.parse(savedBannerDismissed)
       : false;
+    this.pushNotificationShown = false;
+
+    // Module 3: Retention Loop & Multi-Channel State
+    this.demoTimeline = savedTimeline ? JSON.parse(savedTimeline) : "H-3";
+    this.reminderState = savedReminderState
+      ? JSON.parse(savedReminderState)
+      : {
+          "H-3": {
+            shown: false,
+            read: false,
+            dismissed: false,
+            clicked: false,
+          },
+          "H-1": {
+            shown: false,
+            read: false,
+            dismissed: false,
+            clicked: false,
+          },
+          today: {
+            shown: false,
+            read: false,
+            dismissed: false,
+            clicked: false,
+          },
+        };
+    this.analytics = savedAnalytics
+      ? JSON.parse(savedAnalytics)
+      : {
+          notificationTriggered: 1,
+          notificationDisplayed: 1,
+          notificationOpened: 0,
+          notificationDismissed: 0,
+          appointmentReminderViewed: 0,
+          checkInStarted: 0,
+          checkInCompleted: 0,
+        };
+    this.multiChannelState = savedMultiChannel
+      ? JSON.parse(savedMultiChannel)
+      : {
+          appDelivered: true,
+          whatsappSent: true,
+          lastSentDate: "4 Sep 2026, 09:00 WIB",
+        };
 
     // Sync mission-5 status if feedback was already submitted
     if (
@@ -567,6 +651,22 @@ class AppState {
     localStorage.setItem(
       "care_dokter_banner_dismissed",
       JSON.stringify(this.bannerDismissed),
+    );
+    localStorage.setItem(
+      "care_dokter_timeline",
+      JSON.stringify(this.demoTimeline),
+    );
+    localStorage.setItem(
+      "care_dokter_reminder_state",
+      JSON.stringify(this.reminderState),
+    );
+    localStorage.setItem(
+      "care_dokter_analytics",
+      JSON.stringify(this.analytics),
+    );
+    localStorage.setItem(
+      "care_dokter_multichannel",
+      JSON.stringify(this.multiChannelState),
     );
   }
 
@@ -665,6 +765,10 @@ class AppState {
     localStorage.removeItem("care_dokter_advocacy");
     localStorage.removeItem("care_dokter_notifications");
     localStorage.removeItem("care_dokter_banner_dismissed");
+    localStorage.removeItem("care_dokter_timeline");
+    localStorage.removeItem("care_dokter_reminder_state");
+    localStorage.removeItem("care_dokter_analytics");
+    localStorage.removeItem("care_dokter_multichannel");
 
     this.isLoggedIn = stayLoggedIn;
     this.onboardingCompleted = stayLoggedIn;
@@ -679,6 +783,29 @@ class AppState {
     this.advocacy = { ...DEFAULT_ADVOCACY };
     this.notifications = DEFAULT_NOTIFICATIONS.map((n) => ({ ...n }));
     this.bannerDismissed = false;
+    this.pushNotificationShown = false;
+    this.demoTimeline = "H-3";
+    this.reminderState = {
+      "H-3": { shown: false, read: false, dismissed: false, clicked: false },
+      "H-1": { shown: false, read: false, dismissed: false, clicked: false },
+      today: { shown: false, read: false, dismissed: false, clicked: false },
+    };
+    this.analytics = {
+      notificationTriggered: 1,
+      notificationDisplayed: 1,
+      notificationOpened: 0,
+      notificationDismissed: 0,
+      appointmentReminderViewed: 0,
+      checkInStarted: 0,
+      checkInCompleted: 0,
+    };
+    this.multiChannelState = {
+      appDelivered: true,
+      whatsappSent: true,
+      lastSentDate: "4 Sep 2026, 09:00 WIB",
+    };
+    clearPushNotificationTimers();
+    hidePushNotification(false);
     this.currentTab = "home";
     this.onboardingStep = 1;
     this.saveState();
@@ -812,12 +939,17 @@ function navigateToScreen(screenId) {
   // Sync all dynamic views whenever entering screens
   if (screenId === "screen-home") {
     renderHomeScreen();
-  } else if (screenId === "screen-care-journey") {
-    renderCareJourneyTimeline();
-  } else if (screenId === "screen-mira") {
-    renderMiraScreen();
-  } else if (screenId === "screen-rewards") {
-    renderCarePointDashboard();
+    scheduleSimulatedPushNotification();
+  } else {
+    clearPushNotificationTimers();
+    hidePushNotification(false);
+    if (screenId === "screen-care-journey") {
+      renderCareJourneyTimeline();
+    } else if (screenId === "screen-mira") {
+      renderMiraScreen();
+    } else if (screenId === "screen-rewards") {
+      renderCarePointDashboard();
+    }
   }
 }
 
@@ -1553,14 +1685,44 @@ function confirmAppointmentAction() {
       "Konfirmasi jadwal kontrol ortopedi 7 Sep 2026",
       "📅",
     );
+
+    // Update appointment notification item in notification center if present
+    if (state.notifications) {
+      const aptNotif = state.notifications.find(
+        (n) =>
+          n.id === "notif-appointment-reminder" || n.type === "appointment",
+      );
+      if (aptNotif) {
+        aptNotif.completed = true;
+        aptNotif.read = true;
+      }
+    }
+
     state.saveState();
     renderCarePointDashboard();
     renderHomeScreen();
     renderAppointmentState();
     renderCareJourneyTimeline();
+    updateNotificationUI();
     showToast(
       "Jadwal kontrol 7 Sep 2026 terkonfirmasi! +20 CarePoints ditambahkan.",
     );
+
+    console.log("[Appointment] Confirmation successful");
+
+    // Auto-close appointment modal after 600ms if open so patient sees the updated state then returns to viewport
+    const aptModal = document.getElementById("modal-appointment-detail");
+    if (aptModal && aptModal.classList.contains("active")) {
+      setTimeout(() => {
+        closeModal("modal-appointment-detail");
+      }, 600);
+    }
+
+    // Trigger showMiraAppointmentNotification after 1000ms (within 800-1200ms range)
+    console.log("[MIRA Notification] Triggered");
+    setTimeout(() => {
+      showMiraAppointmentNotification();
+    }, 1000);
   } else {
     showToast("Jadwal kontrol 7 Sep 2026 telah terkonfirmasi.");
   }
@@ -2208,6 +2370,7 @@ function handleNotificationAction(notifId) {
   const notif = state.notifications.find((n) => n.id === notifId);
   if (notif) {
     notif.read = true;
+    trackAnalyticsEvent("notificationOpened");
     state.saveState();
   }
 
@@ -2217,6 +2380,9 @@ function handleNotificationAction(notifId) {
   if (notif) {
     if (notif.actionType === "checkin") {
       openMiraCheckin();
+    } else if (notif.actionType === "appointment") {
+      trackAnalyticsEvent("appointmentReminderViewed");
+      openModal("modal-appointment-detail");
     } else if (notif.actionType === "journey") {
       switchTab("journey");
     } else if (notif.actionType === "rewards") {
@@ -2239,19 +2405,438 @@ function markAllNotificationsAsRead() {
 }
 
 /**
- * Dismiss In-App Notification Banner
+ * Dismiss In-App Notification Banner (Legacy fallback)
  */
 function dismissInAppBanner() {
   state.bannerDismissed = true;
+  trackAnalyticsEvent("notificationDismissed");
   state.saveState();
   updateNotificationUI();
 }
 
 /**
- * Handle In-App Notification Banner CTA
+ * Handle In-App Notification Banner CTA (Legacy fallback)
  */
 function handleInAppBannerCTA() {
+  trackAnalyticsEvent("notificationOpened");
   openMiraCheckin();
+}
+
+// ============================================================================
+// MODULE 3.1 & 3.3: RETENTION LOOP ENGINE, ANALYTICS & SIMULATED PUSH BANNER
+// ============================================================================
+
+let pushNotificationScheduleTimer = null;
+let pushNotificationAutoDismissTimer = null;
+let currentPushNotificationAction = "mira"; // 'mira' or 'appointment'
+
+/**
+ * Track Patient Journey & Retention Loop Analytics Event
+ */
+function trackAnalyticsEvent(eventName) {
+  if (!state.analytics) {
+    state.analytics = {
+      notificationTriggered: 1,
+      notificationDisplayed: 1,
+      notificationOpened: 0,
+      notificationDismissed: 0,
+      appointmentReminderViewed: 0,
+      checkInStarted: 0,
+      checkInCompleted: 0,
+    };
+  }
+
+  if (eventName in state.analytics) {
+    state.analytics[eventName] = (state.analytics[eventName] || 0) + 1;
+    state.saveState();
+    console.log(
+      `[Retention Analytics] Event logged: ${eventName} (Total: ${state.analytics[eventName]})`,
+    );
+    updateRetentionAnalyticsUI();
+  }
+}
+
+/**
+ * Clear any active simulated push notification timers
+ */
+function clearPushNotificationTimers() {
+  if (pushNotificationScheduleTimer) {
+    clearTimeout(pushNotificationScheduleTimer);
+    pushNotificationScheduleTimer = null;
+  }
+  if (pushNotificationAutoDismissTimer) {
+    clearTimeout(pushNotificationAutoDismissTimer);
+    pushNotificationAutoDismissTimer = null;
+  }
+}
+
+/**
+ * Set Simulated Demo Timeline (H-3, H-1, today)
+ */
+function setDemoTimeline(stage, triggerBanner = true) {
+  if (!TIMELINE_CONFIGS[stage]) stage = "H-3";
+  state.demoTimeline = stage;
+  const config = TIMELINE_CONFIGS[stage];
+
+  // Sync notification in Notification Center
+  const aptNotif = state.notifications.find(
+    (n) => n.id === "notif-appointment-reminder" || n.type === "appointment",
+  );
+  if (aptNotif) {
+    aptNotif.title = config.title;
+    aptNotif.desc = `${config.desc} Jadwal kontrol ortopedi bersama Dr. Andi Pratama, Sp.OT di Poli Ortopedi Mandaya Puri.`;
+    aptNotif.timeAgo = config.timeAgo;
+    aptNotif.read = false;
+  }
+
+  state.saveState();
+  renderNotificationCenter();
+  updateRetentionAnalyticsUI();
+
+  if (triggerBanner) {
+    triggerTimelineReminder(stage, true);
+  }
+
+  showToast(`Skenario timeline diubah ke: ${config.statusLabel}`);
+}
+
+/**
+ * Trigger Timeline Reminder Banner (H-3, H-1, today)
+ */
+function triggerTimelineReminder(stage, force = false) {
+  const config = TIMELINE_CONFIGS[stage] || TIMELINE_CONFIGS["H-3"];
+
+  if (!state.reminderState) {
+    state.reminderState = {
+      "H-3": { shown: false, read: false, dismissed: false, clicked: false },
+      "H-1": { shown: false, read: false, dismissed: false, clicked: false },
+      today: { shown: false, read: false, dismissed: false, clicked: false },
+    };
+  }
+
+  if (force || !state.reminderState[stage].shown) {
+    state.reminderState[stage].shown = true;
+    trackAnalyticsEvent("notificationTriggered");
+    trackAnalyticsEvent("notificationDisplayed");
+    state.saveState();
+
+    showPushBanner({
+      title: config.title,
+      desc: config.desc,
+      sender: config.sender,
+      role: config.role,
+      avatar: "/assets/logo_mandaya.png",
+      actionType: "appointment",
+    });
+  }
+}
+
+/**
+ * Unified Push Notification Banner Display
+ */
+function showPushBanner({ title, desc, sender, role, avatar, actionType }) {
+  clearPushNotificationTimers();
+
+  const el = document.getElementById("mira-push-notification");
+  if (!el) return;
+
+  currentPushNotificationAction = actionType || "appointment";
+
+  const avatarEl = document.getElementById("mira-push-avatar");
+  const senderEl = document.getElementById("mira-push-sender");
+  const roleEl = document.getElementById("mira-push-role");
+  const titleEl = document.getElementById("mira-push-title");
+  const descEl = document.getElementById("mira-push-desc");
+
+  if (avatarEl && avatar) avatarEl.src = avatar;
+  if (senderEl) senderEl.textContent = sender || "Mandaya Care Dokter";
+  if (roleEl) roleEl.textContent = role || "DPJP Assistant";
+  if (titleEl) titleEl.textContent = title || "Pengingat Jadwal Perawatan";
+  if (descEl) descEl.textContent = desc || "Buka untuk melihat detail.";
+
+  el.style.display = "block";
+  requestAnimationFrame(() => {
+    el.classList.add("show");
+  });
+
+  pushNotificationAutoDismissTimer = setTimeout(() => {
+    hidePushNotification(true);
+  }, 4500);
+}
+
+/**
+ * Show MIRA Appointment Notification
+ * Explicit reusable function triggered upon confirming attendance or schedule
+ */
+function showMiraAppointmentNotification(customTitle, customDesc) {
+  console.log("[MIRA Notification] Displayed");
+
+  showPushBanner({
+    title:
+      customTitle ||
+      "Terima kasih sudah mengonfirmasi jadwal kontrol Anda, Budi.",
+    desc: customDesc || "Bagaimana kondisi pemulihan Anda hari ini?",
+    sender: "MIRA Assistant",
+    role: "Recovery AI",
+    avatar: "/assets/mira/mira_avatar.png",
+    actionType: "mira",
+  });
+}
+
+/**
+ * Backward compatibility alias for showPushNotification
+ */
+function showPushNotification() {
+  showMiraAppointmentNotification();
+}
+
+/**
+ * Schedule simulated push notification fallback (if needed)
+ */
+function scheduleSimulatedPushNotification() {
+  clearPushNotificationTimers();
+}
+
+/**
+ * Hide the floating in-app push notification banner with slide-up
+ */
+function hidePushNotification(animated = true) {
+  if (pushNotificationAutoDismissTimer) {
+    clearTimeout(pushNotificationAutoDismissTimer);
+    pushNotificationAutoDismissTimer = null;
+  }
+
+  const el = document.getElementById("mira-push-notification");
+  if (el) {
+    el.classList.remove("show");
+  }
+}
+
+/**
+ * Manual dismissal of push notification (via close button ×)
+ */
+function dismissPushNotification(event) {
+  if (event) {
+    event.stopPropagation();
+  }
+  hidePushNotification(true);
+  trackAnalyticsEvent("notificationDismissed");
+  state.bannerDismissed = true;
+  state.saveState();
+}
+
+/**
+ * Handle push notification card click -> Open appropriate modal
+ */
+function handlePushNotificationClick(event) {
+  hidePushNotification(true);
+  trackAnalyticsEvent("notificationOpened");
+
+  if (currentPushNotificationAction === "appointment") {
+    trackAnalyticsEvent("appointmentReminderViewed");
+    const aptNotif = state.notifications.find(
+      (n) => n.id === "notif-appointment-reminder" || n.type === "appointment",
+    );
+    if (aptNotif) {
+      aptNotif.read = true;
+      state.saveState();
+      updateNotificationUI();
+    }
+    openModal("modal-appointment-detail");
+  } else {
+    // Action 'mira'
+    const checkinNotif = state.notifications.find(
+      (n) => n.id === "notif-mira-checkin" || n.type === "checkin",
+    );
+    if (checkinNotif) {
+      checkinNotif.read = true;
+      state.saveState();
+      updateNotificationUI();
+    }
+    openMiraCheckin();
+  }
+}
+
+// ============================================================================
+// MODULE 3.2: MULTI-CHANNEL WHATSAPP SIMULATION HANDLERS
+// ============================================================================
+
+/**
+ * Open WhatsApp Preview Modal
+ */
+function openWhatsAppPreviewModal() {
+  const stage = state.demoTimeline || "H-3";
+  const config = TIMELINE_CONFIGS[stage] || TIMELINE_CONFIGS["H-3"];
+
+  const waBodyEl = document.getElementById("wa-preview-message-body");
+  const waTimeEl = document.getElementById("wa-preview-time");
+
+  if (waBodyEl) {
+    waBodyEl.textContent = config.waBody;
+  }
+  if (waTimeEl) {
+    waTimeEl.textContent = config.timeAgo.split("·")[1] || "09:00 WIB";
+  }
+
+  openModal("modal-whatsapp-preview");
+}
+
+/**
+ * Open Appointment from WhatsApp Simulation
+ */
+function openAppointmentFromWhatsAppSimulation() {
+  closeModal("modal-whatsapp-preview");
+  trackAnalyticsEvent("appointmentReminderViewed");
+  openModal("modal-appointment-detail");
+}
+
+// ============================================================================
+// MODULE 3.3: RETENTION LOOP ANALYTICS MODAL & EVENT CHAIN
+// ============================================================================
+
+/**
+ * Open Retention Analytics Modal
+ */
+function openRetentionAnalyticsModal() {
+  updateRetentionAnalyticsUI();
+  openModal("modal-retention-analytics");
+}
+
+/**
+ * Update Retention Analytics Modal UI
+ */
+function updateRetentionAnalyticsUI() {
+  const a = state.analytics || {
+    notificationTriggered: 1,
+    notificationDisplayed: 1,
+    notificationOpened: 0,
+    notificationDismissed: 0,
+    appointmentReminderViewed: 0,
+    checkInStarted: 0,
+    checkInCompleted: 0,
+  };
+
+  const displayed = Math.max(a.notificationDisplayed || 0, 1);
+  const opened = Math.max(
+    a.notificationOpened || 0,
+    a.appointmentReminderViewed || 0,
+  );
+  const openRate = Math.min(100, Math.round((opened / displayed) * 100));
+
+  const started = Math.max(
+    a.checkInStarted || 0,
+    state.miraData && state.miraData.todayCheckinDone ? 1 : 0,
+  );
+  const completed = Math.max(
+    a.checkInCompleted || 0,
+    state.miraData && state.miraData.todayCheckinDone ? 1 : 0,
+  );
+  const completionRate =
+    started > 0 ? Math.min(100, Math.round((completed / started) * 100)) : 0;
+
+  // Fill KPI cards
+  const elDisplayed = document.getElementById("metric-notifs-displayed");
+  const elOpened = document.getElementById("metric-notifs-opened");
+  const elOpenRate = document.getElementById("metric-open-rate");
+  const elOpenRateBar = document.getElementById("metric-open-rate-bar");
+
+  const elStarted = document.getElementById("metric-checkins-started");
+  const elCompleted = document.getElementById("metric-checkins-completed");
+  const elCompRate = document.getElementById("metric-completion-rate");
+  const elCompRateBar = document.getElementById("metric-completion-rate-bar");
+
+  if (elDisplayed) elDisplayed.textContent = displayed;
+  if (elOpened) elOpened.textContent = opened;
+  if (elOpenRate) elOpenRate.textContent = `${openRate}%`;
+  if (elOpenRateBar) elOpenRateBar.style.width = `${openRate}%`;
+
+  if (elStarted) elStarted.textContent = started;
+  if (elCompleted) elCompleted.textContent = completed;
+  if (elCompRate) elCompRate.textContent = `${completionRate}%`;
+  if (elCompRateBar) elCompRateBar.style.width = `${completionRate}%`;
+
+  // Update Timeline Buttons Active Class
+  const currentStage = state.demoTimeline || "H-3";
+  ["h3", "h1", "today"].forEach((key) => {
+    const btn = document.getElementById(`btn-timeline-${key}`);
+    if (btn) {
+      const match =
+        (key === "h3" && currentStage === "H-3") ||
+        (key === "h1" && currentStage === "H-1") ||
+        (key === "today" && currentStage === "today");
+      if (match) btn.classList.add("active");
+      else btn.classList.remove("active");
+    }
+  });
+
+  const labelEl = document.getElementById("retention-current-timeline-label");
+  if (labelEl && TIMELINE_CONFIGS[currentStage]) {
+    labelEl.textContent = `Status: ${TIMELINE_CONFIGS[currentStage].statusLabel}`;
+  }
+
+  // Populate Retention Event Chain Checklist
+  const chainListEl = document.getElementById("retention-event-chain-list");
+  if (chainListEl) {
+    const isAptConfirmed = Boolean(
+      state.currentUser && state.currentUser.appointmentConfirmed,
+    );
+    const isCheckinDone = Boolean(
+      state.miraData && state.miraData.todayCheckinDone,
+    );
+
+    const steps = [
+      {
+        title: "1. Pengingat Jadwal Terpicu (H-3/H-1/Today)",
+        done: a.notificationTriggered > 0,
+        sub: "Sistem mendeteksi jadwal kontrol H+21",
+      },
+      {
+        title: "2. Notifikasi Diterima & Dilihat Pasien",
+        done: a.notificationDisplayed > 0,
+        sub: "In-App Banner & Multi-Channel SMS/WA Delivery",
+      },
+      {
+        title: "3. Pasien Membuka Pengingat Jadwal",
+        done: opened > 0,
+        sub: "Interaksi pada banner push atau kartu notifikasi",
+      },
+      {
+        title: "4. Konfirmasi Kehadiran (+20 CarePoints)",
+        done: isAptConfirmed,
+        sub: isAptConfirmed
+          ? "Terkonfirmasi (7 Sep 2026)"
+          : "Menunggu konfirmasi pasien",
+      },
+      {
+        title: "5. MIRA Follow-up Push Notification",
+        done: isAptConfirmed,
+        sub: "Pemicu check-in kondisi pemulihan pasca-konfirmasi",
+      },
+      {
+        title: "6. MIRA Recovery Check-in Selesai (+25 CarePoints)",
+        done: isCheckinDone,
+        sub: isCheckinDone
+          ? "Triage klinis terverifikasi (Kondisi stabil)"
+          : "Menunggu pengisian 4 langkah check-in",
+      },
+    ];
+
+    chainListEl.innerHTML = steps
+      .map(
+        (s) => `
+      <div class="event-chain-item ${s.done ? "completed" : ""}">
+        <div class="event-chain-icon ${s.done ? "completed" : "pending"}">
+          ${s.done ? "✓" : "○"}
+        </div>
+        <div style="flex: 1;">
+          <div>${s.title}</div>
+          <div style="font-size: 10.5px; color: var(--text-muted);">${s.sub}</div>
+        </div>
+      </div>
+    `,
+      )
+      .join("");
+  }
 }
 
 // ============================================================================
@@ -2262,6 +2847,8 @@ function handleInAppBannerCTA() {
  * Open MIRA Check-in Flow Modal
  */
 function openMiraCheckin() {
+  hidePushNotification(false);
+  clearPushNotificationTimers();
   if (state.miraData.todayCheckinDone) {
     const details = document.getElementById("already-done-details");
     if (details) {
@@ -2270,6 +2857,8 @@ function openMiraCheckin() {
     openModal("modal-mira-already-completed");
     return;
   }
+
+  trackAnalyticsEvent("checkInStarted");
 
   // Reset Answers
   miraCurrentAnswers = {
@@ -2594,6 +3183,9 @@ function finalizeMiraCheckinSubmission() {
     "Check-in kondisi pemulihan lutut H+14 Mandaya",
     "💙",
   );
+
+  // 7. Track analytics event
+  trackAnalyticsEvent("checkInCompleted");
 
   // Save State
   state.saveState();
@@ -3299,7 +3891,18 @@ function openModal(modalId) {
   }
 
   if (modalId === "modal-appointment-detail") {
+    trackAnalyticsEvent("appointmentReminderViewed");
     renderAppointmentState();
+  } else if (modalId === "modal-retention-analytics") {
+    updateRetentionAnalyticsUI();
+  } else if (modalId === "modal-whatsapp-preview") {
+    const stage = state.demoTimeline || "H-3";
+    const config = TIMELINE_CONFIGS[stage] || TIMELINE_CONFIGS["H-3"];
+    const waBodyEl = document.getElementById("wa-preview-message-body");
+    const waTimeEl = document.getElementById("wa-preview-time");
+    if (waBodyEl) waBodyEl.textContent = config.waBody;
+    if (waTimeEl)
+      waTimeEl.textContent = config.timeAgo.split("·")[1] || "09:00 WIB";
   } else if (modalId === "modal-mira-preview") {
     const mission1 = state.missions.find((m) => m.id === "mission-1");
     const isDone = mission1 && mission1.status === "completed";
@@ -3455,4 +4058,11 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+
+  // Global window bindings for debugging & explicit calls
+  window.showMiraAppointmentNotification = showMiraAppointmentNotification;
+  window.confirmAppointmentAction = confirmAppointmentAction;
+  window.handlePushNotificationClick = handlePushNotificationClick;
+  window.dismissPushNotification = dismissPushNotification;
+  window.openMiraCheckin = openMiraCheckin;
 });
