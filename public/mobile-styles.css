@@ -5317,6 +5317,8 @@ input:checked + .slider-toggle:before {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .whatsapp-bubble {
@@ -5324,12 +5326,15 @@ input:checked + .slider-toggle:before {
   border-radius: 10px 10px 10px 2px;
   padding: 10px 12px;
   max-width: 90%;
+  min-width: 0;
   font-size: 12.5px;
   line-height: 1.45;
   color: #111827;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   position: relative;
   text-align: left;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .whatsapp-bubble-brand {
@@ -5340,6 +5345,23 @@ input:checked + .slider-toggle:before {
   display: flex;
   align-items: center;
   gap: 4px;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.whatsapp-bubble-message {
+  white-space: pre-line;
+  font-size: 12.5px;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  word-wrap: break-word;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.whatsapp-bubble-message strong {
+  font-weight: 700;
+  color: #0f172a;
 }
 
 .whatsapp-bubble-time {

@@ -2679,6 +2679,31 @@ function handlePushNotificationClick(event) {
 // ============================================================================
 
 /**
+ * Format WhatsApp-style text safely:
+ * Converts WhatsApp-style single-asterisk *bold text* (and **bold text**)
+ * to <strong>bold text</strong>.
+ * Escapes HTML characters (&, <, >) to prevent arbitrary HTML injection.
+ */
+function formatWhatsAppText(rawText) {
+  if (!rawText) return "";
+
+  // 1. Escape HTML special characters safely
+  let escaped = String(rawText)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+  // 2. Normalize any double asterisks (**text**) to single asterisks (*text*)
+  escaped = escaped.replace(/\*\*(.+?)\*\*/g, "*$1*");
+
+  // 3. Convert WhatsApp single-asterisk bold (*text*) to <strong>text</strong>
+  // Replaces the * markers with <strong> without rendering literal asterisks
+  escaped = escaped.replace(/\*([^*\n\r]+?)\*/g, "<strong>$1</strong>");
+
+  return escaped;
+}
+
+/**
  * Open WhatsApp Preview Modal
  */
 function openWhatsAppPreviewModal() {
@@ -2689,7 +2714,7 @@ function openWhatsAppPreviewModal() {
   const waTimeEl = document.getElementById("wa-preview-time");
 
   if (waBodyEl) {
-    waBodyEl.textContent = config.waBody;
+    waBodyEl.innerHTML = formatWhatsAppText(config.waBody);
   }
   if (waTimeEl) {
     waTimeEl.textContent = config.timeAgo.split("·")[1] || "09:00 WIB";
