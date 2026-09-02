@@ -2034,39 +2034,7 @@
           </div>
         </div>
 
-        <!-- Multi-Channel Delivery Status (Module 3.2 Simulation) -->
-        <div class="multichannel-status-card">
-          <div class="multichannel-header">
-            <span class="multichannel-title">
-              <span>📡</span> Saluran Pengingat Multi-Channel
-            </span>
-            <button
-              type="button"
-              class="btn-preview-wa"
-              onclick="openWhatsAppPreviewModal()"
-            >
-              <span>💬</span> Preview WA
-            </button>
-          </div>
-          <div class="multichannel-channels">
-            <div class="channel-row">
-              <span class="channel-tag"><span>🔔</span> Care Dokter App:</span>
-              <span class="channel-status" style="color: #2563eb"
-                >✓ Terkirim (In-App Banner)</span
-              >
-            </div>
-            <div class="channel-row">
-              <span class="channel-tag"
-                ><span>💬</span> WhatsApp Fallback:</span
-              >
-              <span class="channel-status" style="color: #16a34a"
-                >✓ Terkirim (Automated SMS/WA)</span
-              >
-            </div>
-          </div>
-        </div>
-
-        <div id="modal-apt-action-container" style="margin-bottom: 8px">
+        <div id="modal-apt-action-container" style="margin-bottom: 12px">
           <button
             class="btn-primary-mobile"
             id="btn-modal-confirm-apt"
@@ -2075,6 +2043,40 @@
           >
             📅 Konfirmasi Kehadiran (+20 CarePoints)
           </button>
+        </div>
+
+        <!-- Multi-Channel Delivery Status (Module 3.2 Simulation - Contextual Secondary Feature available after confirmation) -->
+        <div
+          class="multichannel-status-card"
+          id="apt-multichannel-container"
+          style="display: none"
+        >
+          <div class="multichannel-header">
+            <span class="multichannel-title">
+              <span>📡</span> Saluran Pengingat
+            </span>
+            <button
+              type="button"
+              class="btn-preview-wa"
+              onclick="openWhatsAppPreviewModal()"
+            >
+              <span>💬</span> Preview Reminder
+            </button>
+          </div>
+          <div class="multichannel-channels">
+            <div class="channel-row">
+              <span class="channel-tag"><span>🔔</span> Care Dokter App:</span>
+              <span class="channel-status" style="color: #2563eb"
+                >Delivered</span
+              >
+            </div>
+            <div class="channel-row">
+              <span class="channel-tag"><span>💬</span> WhatsApp:</span>
+              <span class="channel-status" style="color: #16a34a"
+                >Fallback Simulation Available</span
+              >
+            </div>
+          </div>
         </div>
 
         <div class="modal-actions">
@@ -2202,33 +2204,35 @@
           </div>
         </div>
 
-        <!-- Multi-Channel Delivery Simulation Bar (Module 3.2) -->
-        <div class="multichannel-status-card" style="margin-bottom: 8px">
+        <!-- Multi-Channel Delivery Simulation Bar (Module 3.2 - Contextual Secondary Feature) -->
+        <div
+          class="multichannel-status-card"
+          id="notif-multichannel-container"
+          style="margin-bottom: 8px; display: none"
+        >
           <div class="multichannel-header">
             <span class="multichannel-title">
-              <span>📡</span> Status Pengiriman Multi-Channel
+              <span>📡</span> Saluran Pengingat
             </span>
             <button
               type="button"
               class="btn-preview-wa"
               onclick="openWhatsAppPreviewModal()"
             >
-              <span>💬</span> Preview WA
+              <span>💬</span> Preview Reminder
             </button>
           </div>
           <div class="multichannel-channels">
             <div class="channel-row">
               <span class="channel-tag"><span>🔔</span> Care Dokter App:</span>
               <span class="channel-status" style="color: #2563eb"
-                >✓ Terkirim (Notifikasi In-App)</span
+                >Delivered</span
               >
             </div>
             <div class="channel-row">
-              <span class="channel-tag"
-                ><span>💬</span> WhatsApp Fallback:</span
-              >
+              <span class="channel-tag"><span>💬</span> WhatsApp:</span>
               <span class="channel-status" style="color: #16a34a"
-                >✓ Terkirim (Simulasi SMS/WA)</span
+                >Fallback Simulation Available</span
               >
             </div>
           </div>

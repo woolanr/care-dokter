@@ -1735,11 +1735,19 @@ function confirmAppointmentAction() {
  * Sync Appointment UI across Home and Modal
  */
 function renderAppointmentState() {
-  const mission2 = state.missions.find((m) => m.id === "mission-2");
-  const isConfirmed = mission2 && mission2.status === "completed";
+  const mission2 = state.missions
+    ? state.missions.find((m) => m.id === "mission-2")
+    : null;
+  const isConfirmed =
+    Boolean(state.currentUser && state.currentUser.appointmentConfirmed) ||
+    Boolean(mission2 && mission2.status === "completed");
 
   const modalBtn = document.getElementById("btn-modal-confirm-apt");
   const modalBadge = document.getElementById("modal-apt-status-badge");
+  const aptMultiChannel = document.getElementById("apt-multichannel-container");
+  const notifMultiChannel = document.getElementById(
+    "notif-multichannel-container",
+  );
 
   if (modalBtn) {
     if (isConfirmed) {
@@ -1763,6 +1771,14 @@ function renderAppointmentState() {
       modalBadge.style.background = "#e0f2fe";
       modalBadge.style.color = "#0284c7";
     }
+  }
+
+  // Contextual Secondary Multi-Channel Section (Hidden before confirmation, available after confirmation)
+  if (aptMultiChannel) {
+    aptMultiChannel.style.display = isConfirmed ? "flex" : "none";
+  }
+  if (notifMultiChannel) {
+    notifMultiChannel.style.display = isConfirmed ? "flex" : "none";
   }
 }
 
@@ -2308,6 +2324,7 @@ function openNotificationCenter() {
  * Render Notification Center Modal Content
  */
 function renderNotificationCenter() {
+  renderAppointmentState();
   const listEl = document.getElementById("notif-center-list");
   if (!listEl) return;
 
@@ -3944,6 +3961,7 @@ function resetPrototypeDemo() {
   closeAllModals();
   renderCarePointDashboard();
   renderHomeScreen();
+  renderAppointmentState();
   renderCareJourneyTimeline();
   renderMiraScreen();
   if (wasLoggedIn) {
@@ -4026,6 +4044,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initialize CarePoint, Home, Care Journey, and MIRA views
   renderCarePointDashboard();
   renderHomeScreen();
+  renderAppointmentState();
   renderCareJourneyTimeline();
   renderMiraScreen();
 
