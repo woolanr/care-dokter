@@ -2679,7 +2679,56 @@ function handlePushNotificationClick(event) {
 // ============================================================================
 
 /**
- * Format WhatsApp-style text safely:
+ * Render WhatsApp-style message safely into a DOM container.
+ * 1. Parses raw text into regular text segments and *bold* segments.
+ * 2. Creates DOM text nodes for regular text.
+ * 3. Creates <strong> DOM elements for text inside *...*.
+ * 4. Appends DOM nodes directly, stripping formatting asterisks and preventing arbitrary HTML injection.
+ */
+function renderWhatsAppFormattedText(containerEl, rawText) {
+  if (!containerEl) return;
+
+  if (typeof containerEl.replaceChildren === "function") {
+    containerEl.replaceChildren();
+  } else {
+    containerEl.textContent = "";
+  }
+
+  if (!rawText) return;
+
+  const text = String(rawText);
+  const boldRegex = /\*+([^*\r\n]+?)\*+/g;
+  let lastIndex = 0;
+  let match;
+
+  while ((match = boldRegex.exec(text)) !== null) {
+    const matchStart = match.index;
+    const matchEnd = boldRegex.lastIndex;
+
+    // Append regular text preceding bold section
+    if (matchStart > lastIndex) {
+      const normalText = text.substring(lastIndex, matchStart);
+      containerEl.appendChild(document.createTextNode(normalText));
+    }
+
+    // Append bold element with inner text only (no asterisks)
+    const boldContent = match[1];
+    const strongEl = document.createElement("strong");
+    strongEl.textContent = boldContent;
+    containerEl.appendChild(strongEl);
+
+    lastIndex = matchEnd;
+  }
+
+  // Append any remaining regular text
+  if (lastIndex < text.length) {
+    const remainingText = text.substring(lastIndex);
+    containerEl.appendChild(document.createTextNode(remainingText));
+  }
+}
+
+/**
+ * Format WhatsApp-style text safely to HTML string:
  * Converts WhatsApp-style single-asterisk *bold text* (and **bold text**)
  * to <strong>bold text</strong>.
  * Escapes HTML characters (&, <, >) to prevent arbitrary HTML injection.
@@ -2693,12 +2742,8 @@ function formatWhatsAppText(rawText) {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
 
-  // 2. Normalize any double asterisks (**text**) to single asterisks (*text*)
-  escaped = escaped.replace(/\*\*(.+?)\*\*/g, "*$1*");
-
-  // 3. Convert WhatsApp single-asterisk bold (*text*) to <strong>text</strong>
-  // Replaces the * markers with <strong> without rendering literal asterisks
-  escaped = escaped.replace(/\*([^*\n\r]+?)\*/g, "<strong>$1</strong>");
+  // 2. Convert WhatsApp single/double-asterisk bold (*text*) to <strong>text</strong>
+  escaped = escaped.replace(/\*+([^*\r\n]+?)\*+/g, "<strong>$1</strong>");
 
   return escaped;
 }
@@ -2714,7 +2759,7 @@ function openWhatsAppPreviewModal() {
   const waTimeEl = document.getElementById("wa-preview-time");
 
   if (waBodyEl) {
-    waBodyEl.innerHTML = formatWhatsAppText(config.waBody);
+    renderWhatsAppFormattedText(waBodyEl, config.waBody);
   }
   if (waTimeEl) {
     waTimeEl.textContent = config.timeAgo.split("·")[1] || "09:00 WIB";
@@ -2733,11 +2778,11 @@ function openAppointmentFromWhatsAppSimulation() {
 }
 
 // ============================================================================
-// MODULE 3.3: RETENTION LOOP ANALYTICS MODAL & EVENT CHAIN
+// MODULE 3.3: PATIENT CARE RETENTION JOURNEY & CARE CONTINUUM
 // ============================================================================
 
 /**
- * Open Retention Analytics Modal
+ * Open Patient Retention Care Journey Modal
  */
 function openRetentionAnalyticsModal() {
   updateRetentionAnalyticsUI();
@@ -2745,59 +2790,16 @@ function openRetentionAnalyticsModal() {
 }
 
 /**
- * Update Retention Analytics Modal UI
+ * Update Patient Care Retention Journey Modal UI
+ * Renders the 5 chronological care continuum stages:
+ * 1. H-3: 🔔 Pengingat Jadwal Kontrol
+ * 2. H-1: 💬 Persiapan Menjelang Kontrol
+ * 3. D-DAY: 📅 Konfirmasi Kehadiran
+ * 4. SETELAH KONTROL: ❤️ MIRA Follow-up
+ * 5. PEMULIHAN: 💬 MIRA Recovery Check-in
  */
 function updateRetentionAnalyticsUI() {
-  const a = state.analytics || {
-    notificationTriggered: 1,
-    notificationDisplayed: 1,
-    notificationOpened: 0,
-    notificationDismissed: 0,
-    appointmentReminderViewed: 0,
-    checkInStarted: 0,
-    checkInCompleted: 0,
-  };
-
-  const displayed = Math.max(a.notificationDisplayed || 0, 1);
-  const opened = Math.max(
-    a.notificationOpened || 0,
-    a.appointmentReminderViewed || 0,
-  );
-  const openRate = Math.min(100, Math.round((opened / displayed) * 100));
-
-  const started = Math.max(
-    a.checkInStarted || 0,
-    state.miraData && state.miraData.todayCheckinDone ? 1 : 0,
-  );
-  const completed = Math.max(
-    a.checkInCompleted || 0,
-    state.miraData && state.miraData.todayCheckinDone ? 1 : 0,
-  );
-  const completionRate =
-    started > 0 ? Math.min(100, Math.round((completed / started) * 100)) : 0;
-
-  // Fill KPI cards
-  const elDisplayed = document.getElementById("metric-notifs-displayed");
-  const elOpened = document.getElementById("metric-notifs-opened");
-  const elOpenRate = document.getElementById("metric-open-rate");
-  const elOpenRateBar = document.getElementById("metric-open-rate-bar");
-
-  const elStarted = document.getElementById("metric-checkins-started");
-  const elCompleted = document.getElementById("metric-checkins-completed");
-  const elCompRate = document.getElementById("metric-completion-rate");
-  const elCompRateBar = document.getElementById("metric-completion-rate-bar");
-
-  if (elDisplayed) elDisplayed.textContent = displayed;
-  if (elOpened) elOpened.textContent = opened;
-  if (elOpenRate) elOpenRate.textContent = `${openRate}%`;
-  if (elOpenRateBar) elOpenRateBar.style.width = `${openRate}%`;
-
-  if (elStarted) elStarted.textContent = started;
-  if (elCompleted) elCompleted.textContent = completed;
-  if (elCompRate) elCompRate.textContent = `${completionRate}%`;
-  if (elCompRateBar) elCompRateBar.style.width = `${completionRate}%`;
-
-  // Update Timeline Buttons Active Class
+  // 1. Update Timeline Buttons Active Class
   const currentStage = state.demoTimeline || "H-3";
   ["h3", "h1", "today"].forEach((key) => {
     const btn = document.getElementById(`btn-timeline-${key}`);
@@ -2816,69 +2818,168 @@ function updateRetentionAnalyticsUI() {
     labelEl.textContent = `Status: ${TIMELINE_CONFIGS[currentStage].statusLabel}`;
   }
 
-  // Populate Retention Event Chain Checklist
-  const chainListEl = document.getElementById("retention-event-chain-list");
-  if (chainListEl) {
-    const isAptConfirmed = Boolean(
-      state.currentUser && state.currentUser.appointmentConfirmed,
-    );
-    const isCheckinDone = Boolean(
-      state.miraData && state.miraData.todayCheckinDone,
-    );
+  // 2. Render Chronological Care Journey Timeline
+  const timelineContainer = document.getElementById(
+    "patient-care-timeline-list",
+  );
+  if (!timelineContainer) return;
 
-    const steps = [
-      {
-        title: "1. Pengingat Jadwal Terpicu (H-3/H-1/Today)",
-        done: a.notificationTriggered > 0,
-        sub: "Sistem mendeteksi jadwal kontrol H+21",
-      },
-      {
-        title: "2. Notifikasi Diterima & Dilihat Pasien",
-        done: a.notificationDisplayed > 0,
-        sub: "In-App Banner & Multi-Channel SMS/WA Delivery",
-      },
-      {
-        title: "3. Pasien Membuka Pengingat Jadwal",
-        done: opened > 0,
-        sub: "Interaksi pada banner push atau kartu notifikasi",
-      },
-      {
-        title: "4. Konfirmasi Kehadiran (+20 CarePoints)",
-        done: isAptConfirmed,
-        sub: isAptConfirmed
-          ? "Terkonfirmasi (7 Sep 2026)"
-          : "Menunggu konfirmasi pasien",
-      },
-      {
-        title: "5. MIRA Follow-up Push Notification",
-        done: isAptConfirmed,
-        sub: "Pemicu check-in kondisi pemulihan pasca-konfirmasi",
-      },
-      {
-        title: "6. MIRA Recovery Check-in Selesai (+25 CarePoints)",
-        done: isCheckinDone,
-        sub: isCheckinDone
-          ? "Triage klinis terverifikasi (Kondisi stabil)"
-          : "Menunggu pengisian 4 langkah check-in",
-      },
-    ];
+  const isH3Shown = Boolean(
+    state.reminderState &&
+    state.reminderState["H-3"] &&
+    (state.reminderState["H-3"].shown ||
+      state.reminderState["H-3"].read ||
+      state.reminderState["H-3"].clicked),
+  );
+  const isH1Shown = Boolean(
+    state.reminderState &&
+    state.reminderState["H-1"] &&
+    (state.reminderState["H-1"].shown ||
+      state.reminderState["H-1"].read ||
+      state.reminderState["H-1"].clicked),
+  );
+  const isAptConfirmed = Boolean(
+    state.currentUser && state.currentUser.appointmentConfirmed,
+  );
+  const isCheckinDone = Boolean(
+    state.miraData && state.miraData.todayCheckinDone,
+  );
+  const isMiraFollowupViewed = Boolean(
+    isCheckinDone ||
+    (state.notifications &&
+      state.notifications.some(
+        (n) =>
+          (n.id === "notif-mira-checkin" || n.type === "checkin") &&
+          (n.read || n.completed),
+      )),
+  );
 
-    chainListEl.innerHTML = steps
-      .map(
-        (s) => `
-      <div class="event-chain-item ${s.done ? "completed" : ""}">
-        <div class="event-chain-icon ${s.done ? "completed" : "pending"}">
-          ${s.done ? "✓" : "○"}
-        </div>
-        <div style="flex: 1;">
-          <div>${s.title}</div>
-          <div style="font-size: 10.5px; color: var(--text-muted);">${s.sub}</div>
-        </div>
-      </div>
-    `,
-      )
-      .join("");
+  // Stage 1: H-3 — Pengingat Jadwal Kontrol
+  let stage1Status = "current";
+  if (
+    isH3Shown ||
+    currentStage === "H-1" ||
+    currentStage === "today" ||
+    isAptConfirmed
+  ) {
+    stage1Status = "completed";
   }
+
+  // Stage 2: H-1 — Persiapan Menjelang Kontrol
+  let stage2Status = "upcoming";
+  if (isAptConfirmed || currentStage === "today" || isH1Shown) {
+    stage2Status = "completed";
+  } else if (currentStage === "H-1") {
+    stage2Status = "current";
+  }
+
+  // Stage 3: D-DAY — Konfirmasi Kehadiran
+  let stage3Status = "upcoming";
+  if (isAptConfirmed) {
+    stage3Status = "completed";
+  } else if (
+    currentStage === "today" ||
+    (state.reminderState &&
+      state.reminderState.today &&
+      state.reminderState.today.shown)
+  ) {
+    stage3Status = "current";
+  }
+
+  // Stage 4: SETELAH KONTROL — MIRA Follow-up
+  let stage4Status = "upcoming";
+  if (isCheckinDone || isMiraFollowupViewed) {
+    stage4Status = "completed";
+  } else if (isAptConfirmed) {
+    stage4Status = "current";
+  }
+
+  // Stage 5: PEMULIHAN — MIRA Recovery Check-in
+  let stage5Status = "upcoming";
+  if (isCheckinDone) {
+    stage5Status = "completed";
+  } else if (isAptConfirmed) {
+    stage5Status = "current";
+  }
+
+  const stages = [
+    {
+      phase: "H-3",
+      title: "🔔 Pengingat Jadwal Kontrol",
+      desc: "Pemberitahuan awal jadwal kontrol H-3 bersama Dr. Andi Pratama, Sp.OT di Poli Ortopedi Mandaya.",
+      status: stage1Status,
+      badgeText:
+        stage1Status === "completed"
+          ? "✓ Selesai"
+          : stage1Status === "current"
+            ? "● Tahap Saat Ini"
+            : "○ Akan Datang",
+    },
+    {
+      phase: "H-1",
+      title: "💬 Persiapan Menjelang Kontrol",
+      desc: "Panduan persiapan berkas rontgen lutut terakhir dan rincian waktu kedatangan di rumah sakit.",
+      status: stage2Status,
+      badgeText:
+        stage2Status === "completed"
+          ? "✓ Selesai"
+          : stage2Status === "current"
+            ? "● Tahap Saat Ini"
+            : "○ Akan Datang",
+    },
+    {
+      phase: "D-DAY",
+      title: "📅 Konfirmasi Kehadiran",
+      desc: "Konfirmasi kehadiran kontrol langsung dari Care Dokter untuk mempercepat proses kedatangan di poli.",
+      status: stage3Status,
+      badgeText:
+        stage3Status === "completed"
+          ? "✓ Selesai"
+          : stage3Status === "current"
+            ? "● Tahap Saat Ini"
+            : "○ Akan Datang",
+    },
+    {
+      phase: "SETELAH KONTROL",
+      title: "❤️ MIRA Follow-up",
+      desc: "Pendampingan proaktif pasca-kunjungan untuk menanyakan kenyamanan dan respon setelah konsultasi dokter.",
+      status: stage4Status,
+      badgeText:
+        stage4Status === "completed"
+          ? "✓ Selesai"
+          : stage4Status === "current"
+            ? "● Tahap Saat Ini"
+            : "○ Akan Datang",
+    },
+    {
+      phase: "PEMULIHAN",
+      title: "💬 MIRA Recovery Check-in",
+      desc: "Check-in harian pemulihan lutut, evaluasi skor nyeri, dan pemantauan klinis terhubung ke tim perawat.",
+      status: stage5Status,
+      badgeText:
+        stage5Status === "completed"
+          ? "✓ Selesai"
+          : stage5Status === "current"
+            ? "● Tahap Saat Ini"
+            : "○ Akan Datang",
+    },
+  ];
+
+  timelineContainer.innerHTML = stages
+    .map(
+      (s, idx) => `
+      <div class="care-timeline-step ${s.status}">
+        <div class="care-step-topbar">
+          <span class="care-phase-tag">${s.phase}</span>
+          <span class="care-status-badge ${s.status}">${s.badgeText}</span>
+        </div>
+        <div class="care-step-title">${s.title}</div>
+        <div class="care-step-desc">${s.desc}</div>
+      </div>
+      ${idx < stages.length - 1 ? '<div class="care-timeline-connector">↓</div>' : ""}
+    `,
+    )
+    .join("");
 }
 
 // ============================================================================
@@ -3942,7 +4043,9 @@ function openModal(modalId) {
     const config = TIMELINE_CONFIGS[stage] || TIMELINE_CONFIGS["H-3"];
     const waBodyEl = document.getElementById("wa-preview-message-body");
     const waTimeEl = document.getElementById("wa-preview-time");
-    if (waBodyEl) waBodyEl.textContent = config.waBody;
+    if (waBodyEl) {
+      renderWhatsAppFormattedText(waBodyEl, config.waBody);
+    }
     if (waTimeEl)
       waTimeEl.textContent = config.timeAgo.split("·")[1] || "09:00 WIB";
   } else if (modalId === "modal-mira-preview") {

@@ -45,9 +45,9 @@
           <button
             class="btn-topbar"
             onclick="openRetentionAnalyticsModal()"
-            title="Lihat Metrik & Status Loop Retensi Pasien"
+            title="Lihat Tahapan Perjalanan Perawatan Anda"
           >
-            <span>📊</span> Loop Insights
+            <span>🗺️</span> Perjalanan Perawatan
           </button>
           <button
             class="btn-topbar"
@@ -57,7 +57,7 @@
             <span>🔄</span> Reset Demo
           </button>
           <button
-            class="btn-topbar"
+            class="btn-toggle-frame"
             id="btn-toggle-frame"
             onclick="toggleDeviceFrame()"
             title="Ubah ukuran tampilan"
@@ -1447,7 +1447,7 @@
                 <span class="menu-item-arrow">→</span>
               </button>
 
-              <!-- Retention Loop Insights (Module 3 Demonstration) -->
+              <!-- Patient Care Journey (Module 3 Demonstration) -->
               <button
                 class="profile-menu-item"
                 onclick="openRetentionAnalyticsModal()"
@@ -1457,14 +1457,14 @@
                     class="menu-item-icon"
                     style="color: #6366f1; background: #eef2ff"
                   >
-                    📊
+                    🗺️
                   </div>
                   <div>
                     <div class="menu-item-title" style="color: #4f46e5">
-                      Retention Loop Insights
+                      Perjalanan Perawatan Anda
                     </div>
                     <div class="menu-item-sub">
-                      Metrik reminder H-3, open rate & MIRA triage
+                      Tahapan pengingat, jadwal kontrol & pemulihan MIRA
                     </div>
                   </div>
                 </div>
@@ -2275,7 +2275,7 @@
               background: #eef2ff;
             "
           >
-            <span>📊</span> Loop Insights
+            <span>🗺️</span> Perjalanan Perawatan
           </button>
           <button
             class="btn-secondary-mobile"
@@ -4239,7 +4239,7 @@
       </div>
     </div>
 
-    <!-- 26. Retention Loop Analytics & Timeline Simulator Modal (Module 3.3) -->
+    <!-- 26. Patient Care Retention Journey Timeline Modal (Module 3.3) -->
     <div class="modal-backdrop" id="modal-retention-analytics">
       <div
         class="modal-content-card"
@@ -4259,7 +4259,7 @@
           "
         >
           <div style="display: flex; align-items: center; gap: 6px">
-            <span style="font-size: 18px">📊</span>
+            <span style="font-size: 18px">🗺️</span>
             <span
               style="
                 font-size: 11px;
@@ -4270,7 +4270,7 @@
                 border-radius: 6px;
               "
             >
-              RETENTION LOOP INSIGHTS
+              CARE CONTINUUM
             </span>
           </div>
           <button
@@ -4282,12 +4282,22 @@
           </button>
         </div>
 
-        <h3 class="modal-title" style="margin-bottom: 2px; font-size: 16px">
-          Demo Metrics & Retention Chain
+        <h3
+          class="modal-title"
+          style="margin-bottom: 4px; font-size: 16px; font-weight: 800"
+        >
+          PERJALANAN PERAWATAN ANDA
         </h3>
-        <p class="modal-text" style="margin-bottom: 12px; font-size: 12px">
-          Analitik terukur membuktikan loop retensi pasien dari reminder H-3
-          hingga MIRA recovery check-in.
+        <p
+          class="modal-text"
+          style="
+            margin-bottom: 12px;
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.45;
+          "
+        >
+          Tetap terhubung dengan Mandaya di setiap tahap perawatan Anda.
         </p>
 
         <!-- Simulated Demo Timeline Switcher -->
@@ -4300,7 +4310,7 @@
             text-transform: uppercase;
           "
         >
-          ⏱️ Timeline Skenario Demo:
+          ⏱️ Simulasi Tahap Jadwal:
         </div>
         <div class="retention-timeline-switcher">
           <button
@@ -4358,124 +4368,25 @@
               border: 1px solid #c7d2fe;
             "
           >
-            ▶️ Picu Banner
+            ▶️ Picu Pengingat
           </button>
         </div>
 
-        <!-- KPI Metrics Grid -->
-        <div class="retention-kpi-grid">
-          <div class="retention-kpi-card">
-            <div class="retention-kpi-label">Notifications Displayed</div>
-            <div class="retention-kpi-val" id="metric-notifs-displayed">0</div>
-          </div>
-          <div class="retention-kpi-card">
-            <div class="retention-kpi-label">Notifications Opened</div>
-            <div class="retention-kpi-val" id="metric-notifs-opened">0</div>
-          </div>
-          <div
-            class="retention-kpi-card"
-            style="
-              grid-column: span 2;
-              background: #f0fdf4;
-              border-color: #bbf7d0;
-            "
-          >
-            <div
-              style="
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-              "
-            >
-              <div class="retention-kpi-label" style="color: #166534">
-                Notification Open Rate
-              </div>
-              <div
-                class="retention-kpi-val"
-                style="color: #15803d; font-size: 16px"
-                id="metric-open-rate"
-              >
-                0%
-              </div>
-            </div>
-            <div class="retention-rate-bar-wrap">
-              <div
-                class="retention-rate-bar"
-                id="metric-open-rate-bar"
-                style="width: 0%"
-              ></div>
-            </div>
-          </div>
-
-          <div class="retention-kpi-card">
-            <div class="retention-kpi-label">Check-ins Started</div>
-            <div class="retention-kpi-val" id="metric-checkins-started">0</div>
-          </div>
-          <div class="retention-kpi-card">
-            <div class="retention-kpi-label">Check-ins Completed</div>
-            <div class="retention-kpi-val" id="metric-checkins-completed">
-              0
-            </div>
-          </div>
-          <div
-            class="retention-kpi-card"
-            style="
-              grid-column: span 2;
-              background: #eff6ff;
-              border-color: #bfdbfe;
-            "
-          >
-            <div
-              style="
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-              "
-            >
-              <div class="retention-kpi-label" style="color: #1e40af">
-                Check-in Completion Rate
-              </div>
-              <div
-                class="retention-kpi-val"
-                style="color: #2563eb; font-size: 16px"
-                id="metric-completion-rate"
-              >
-                0%
-              </div>
-            </div>
-            <div class="retention-rate-bar-wrap">
-              <div
-                class="retention-rate-bar"
-                id="metric-completion-rate-bar"
-                style="
-                  width: 0%;
-                  background: linear-gradient(90deg, #2563eb, #38bdf8);
-                "
-              ></div>
-            </div>
-          </div>
+        <!-- Patient Care Timeline -->
+        <div class="patient-care-timeline" id="patient-care-timeline-list">
+          <!-- Populated dynamically by updateRetentionAnalyticsUI() -->
         </div>
 
-        <!-- Live Journey Event Chain Checklist -->
-        <div class="journey-event-chain">
-          <div class="event-chain-title">
-            <span>🔄 Retention Event Chain</span>
-            <span style="font-size: 10.5px; font-weight: 600; color: #64748b"
-              >Status Terkini</span
-            >
-          </div>
-          <div class="event-chain-list" id="retention-event-chain-list">
-            <!-- Populated dynamically by updateRetentionAnalyticsUI() -->
-          </div>
-        </div>
-
-        <div class="modal-actions" style="display: flex; gap: 8px">
+        <div
+          class="modal-actions"
+          style="display: flex; gap: 8px; margin-top: 10px"
+        >
           <button
             class="btn-primary-mobile"
             onclick="closeModal('modal-retention-analytics')"
             style="flex: 1"
           >
-            Tutup Insights
+            Tutup
           </button>
         </div>
       </div>
