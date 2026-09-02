@@ -44,10 +44,32 @@
         <div class="prototype-actions">
           <button
             class="btn-topbar"
-            onclick="openRetentionAnalyticsModal()"
-            title="Lihat Metrik & Status Loop Retensi Pasien"
+            onclick="openVoiceFeedbackModal()"
+            title="Buka MIRA Listen Voice-to-Insight Engine"
+            style="background: linear-gradient(135deg, rgba(109, 75, 216, 0.15) 0%, rgba(46, 212, 199, 0.15) 100%); border-color: #a78bfa; color: #5b21b6; font-weight: 700;"
           >
-            <span>📊</span> Loop Insights
+            <span>🎙️</span> Voice-to-Insight
+          </button>
+          <button
+            class="btn-topbar"
+            onclick="openMicroFeedbackModal('registration')"
+            title="Buka Micro-Feedback per Touchpoint Layanan"
+          >
+            <span>⚡</span> Micro-Feedback
+          </button>
+          <button
+            class="btn-topbar"
+            onclick="openNonUserInviteModal()"
+            title="Simulasikan Undangan Feedback Pasien Non-User / Walk-in"
+          >
+            <span>📨</span> Undangan Non-User
+          </button>
+          <button
+            class="btn-topbar"
+            onclick="openRetentionAnalyticsModal()"
+            title="Lihat Tahapan Perjalanan Perawatan Anda"
+          >
+            <span>🗺️</span> Perjalanan Perawatan
           </button>
           <button
             class="btn-topbar"
@@ -1447,7 +1469,7 @@
                 <span class="menu-item-arrow">→</span>
               </button>
 
-              <!-- Retention Loop Insights (Module 3 Demonstration) -->
+              <!-- Patient Care Journey (Module 3 Demonstration) -->
               <button
                 class="profile-menu-item"
                 onclick="openRetentionAnalyticsModal()"
@@ -1457,14 +1479,14 @@
                     class="menu-item-icon"
                     style="color: #6366f1; background: #eef2ff"
                   >
-                    📊
+                    🗺️
                   </div>
                   <div>
                     <div class="menu-item-title" style="color: #4f46e5">
-                      Retention Loop Insights
+                      Perjalanan Perawatan Anda
                     </div>
                     <div class="menu-item-sub">
-                      Metrik reminder H-3, open rate & MIRA triage
+                      Tahapan pengingat, jadwal kontrol & pemulihan MIRA
                     </div>
                   </div>
                 </div>
@@ -2275,7 +2297,7 @@
               background: #eef2ff;
             "
           >
-            <span>📊</span> Loop Insights
+            <span>🗺️</span> Perjalanan Perawatan
           </button>
           <button
             class="btn-secondary-mobile"
@@ -4019,18 +4041,23 @@
       </div>
     </div>
 
-    <!-- 24. MIRA Voice Feedback Simulation Modal (Voice-to-Insight Preview) -->
+    <!-- 24. MIRA Voice Feedback Simulation Modal (Feature 4.4 Voice-to-Insight) -->
     <div class="modal-backdrop" id="modal-voice-feedback-demo">
       <div
         class="modal-content-card"
-        style="text-align: center; max-height: 85vh; overflow-y: auto"
+        style="text-align: center; max-height: 88vh; overflow-y: auto"
       >
         <div class="modal-header-close">
           <div style="display: flex; align-items: center; gap: 8px">
-            <span style="font-size: 20px">🎤</span>
-            <h3 class="modal-title" style="margin: 0; font-size: 15px">
-              MIRA Voice Feedback
-            </h3>
+            <span style="font-size: 20px">🎙️</span>
+            <div>
+              <h3 class="modal-title" style="margin: 0; font-size: 15px; font-weight: 800">
+                MIRA Listen Voice-to-Insight
+              </h3>
+              <div style="font-size: 11px; color: #64748b; font-weight: 600">
+                Analisis Suara Pasien & Ekstraksi Sentimen Cerdas
+              </div>
+            </div>
           </div>
           <button
             class="close-btn"
@@ -4040,22 +4067,97 @@
           </button>
         </div>
 
-        <div class="voice-feedback-hero">
-          <div class="voice-mic-circle">
-            <span class="voice-mic-icon">🎙️</span>
-            <div class="voice-mic-ripple"></div>
+        <!-- Locked Banner if Voice Feedback was already submitted for one touchpoint (Feature 13) -->
+        <div id="voice-modal-locked-banner" class="voice-locked-banner" style="display: none; margin-top: 10px;">
+          <div style="font-size: 12px; font-weight: 800; color: #5b21b6; display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+            <span>🎙️</span> Voice Feedback sudah digunakan
+          </div>
+          <p id="voice-modal-locked-text" style="font-size: 11.5px; color: #4c1d95; line-height: 1.45; margin: 0 0 8px 0;">
+            Anda telah menyampaikan masukan melalui Voice Note pada layanan <strong id="voice-modal-locked-tp">Konsultasi Dokter</strong>. Untuk layanan lainnya, Anda tetap dapat memberikan penilaian dan masukan tertulis.
+          </p>
+          <button
+            type="button"
+            class="btn-primary-mobile"
+            id="btn-voice-modal-switch-typed"
+            onclick="handleRedirectToTypedFeedback()"
+            style="font-size: 11.5px; padding: 7px 12px; width: 100%;"
+          >
+            ✍️ Isi Masukan Tertulis
+          </button>
+        </div>
+
+        <div class="voice-feedback-hero" style="padding-top: 4px;">
+          <!-- Touchpoint Selector Tabs -->
+          <div class="micro-touchpoint-tabs" style="margin-bottom: 10px; width: 100%;">
+            <button
+              class="micro-touchpoint-tab active"
+              id="tab-voice-tp-registration"
+              onclick="switchVoiceModalTouchpoint('registration')"
+            >
+              <span>📋</span> Registrasi
+            </button>
+            <button
+              class="micro-touchpoint-tab"
+              id="tab-voice-tp-doctor_consultation"
+              onclick="switchVoiceModalTouchpoint('doctor_consultation')"
+            >
+              <span>🩺</span> Konsultasi
+            </button>
+            <button
+              class="micro-touchpoint-tab"
+              id="tab-voice-tp-pharmacy"
+              onclick="switchVoiceModalTouchpoint('pharmacy')"
+            >
+              <span>💊</span> Farmasi
+            </button>
           </div>
 
-          <h4 class="voice-hero-title">Ceritakan kepada MIRA</h4>
-          <p class="voice-hero-sub">
-            "Bagikan pengalaman Anda selama proses perawatan dan pemulihan
-            secara langsung lewat suara."
-          </p>
+          <!-- Scenario Quick Chips -->
+          <div class="voice-scenario-section">
+            <div class="voice-scenario-label">
+              <span>🎯</span> Pilih Skenario Uji Coba Demo:
+              <span id="voice-scenario-lock-badge" style="display: none; font-size: 10px; background: #ede9fe; color: #6d28d9; border: 1px solid #ddd6fe; padding: 2px 7px; border-radius: 9999px; font-weight: 700;">🔒 Skenario Terkunci</span>
+            </div>
+            <div class="voice-scenario-grid">
+              <button
+                type="button"
+                class="voice-scenario-chip active"
+                id="chip-scenario-positive"
+                onclick="selectVoiceScenario('scenario_very_positive')"
+              >
+                <span>⭐</span> Sangat Puas
+              </button>
+              <button
+                type="button"
+                class="voice-scenario-chip"
+                id="chip-scenario-mixed"
+                onclick="selectVoiceScenario('scenario_mixed')"
+              >
+                <span>💬</span> Puas dg Catatan
+              </button>
+              <button
+                type="button"
+                class="voice-scenario-chip"
+                id="chip-scenario-waiting"
+                onclick="selectVoiceScenario('scenario_waiting_friction')"
+              >
+                <span>⏳</span> Menunggu Lama
+              </button>
+              <button
+                type="button"
+                class="voice-scenario-chip"
+                id="chip-scenario-pharmacy"
+                onclick="selectVoiceScenario('scenario_pharmacy_review')"
+              >
+                <span>💊</span> Masukan Farmasi
+              </button>
+            </div>
+          </div>
 
-          <!-- Visual Mock Soundwave & Timer -->
+          <!-- Visual Soundwave & Simulation Timer -->
           <div class="voice-waveform-box">
-            <div class="voice-timer" id="voice-mock-timer">00:00</div>
-            <div class="voice-wave-bars" id="voice-mock-bars">
+            <div class="voice-timer" id="voice-mock-timer">00:03</div>
+            <div class="voice-wave-bars animating" id="voice-mock-bars">
               <span class="bar bar-1"></span>
               <span class="bar bar-2"></span>
               <span class="bar bar-3"></span>
@@ -4065,11 +4167,11 @@
               <span class="bar bar-7"></span>
             </div>
             <div class="voice-status-hint" id="voice-mock-hint">
-              Simulasi Voice-to-Insight (Fitur Prototype)
+              ● Rekaman Suara Terproses & Dianalisis oleh MIRA
             </div>
           </div>
 
-          <!-- Visual Interactive Hold/Tap Button -->
+          <!-- Simulate / Re-record Button -->
           <div class="voice-action-container">
             <button
               type="button"
@@ -4077,27 +4179,120 @@
               id="btn-mock-record"
               onclick="simulateVoiceFeedbackAction()"
             >
-              <span>🎙️</span> Tekan untuk Simulasi Rekaman
+              <span>🎙️</span> Putar / Ulangi Simulasi Suara
             </button>
           </div>
 
-          <div class="voice-feature-notice">
-            <span>💡</span>
-            <div>
-              <strong>Teknologi Voice-to-Insight:</strong> Pada rilis penuh,
-              MIRA akan otomatis mentranskripsikan suara menjadi teks dan
-              memetakan sentimen pengalaman pasien secara cerdas tanpa perlu
-              mengetik manual.
+          <!-- Live Transcribed Text (Editable) -->
+          <div class="voice-live-transcript-box">
+            <div class="voice-transcript-header">
+              <span class="voice-transcript-title">📝 Transkripsi Suara (Live)</span>
+              <span id="voice-transcript-edit-badge" style="font-size: 10.5px; color: #0284c7; font-weight: 700;">Dapat Diedit</span>
+            </div>
+            <textarea
+              id="voice-transcript-output"
+              class="voice-transcript-input"
+              rows="3"
+              placeholder="Transkripsi rekaman suara akan muncul di sini..."
+              oninput="onVoiceTranscriptChange(this.value)"
+            ></textarea>
+          </div>
+
+          <!-- Real-Time Structured MIRA Insight Card -->
+          <div class="mira-insight-card" id="voice-insight-card">
+            <div class="insight-card-topbar">
+              <div class="insight-brand-tag">
+                <span>🧠</span> MIRA Insight Analysis
+              </div>
+              <div class="insight-sentiment-pill positive" id="voice-insight-sentiment-pill">
+                Sangat Positif · +96%
+              </div>
+            </div>
+
+            <div class="insight-details-grid">
+              <div class="insight-detail-item">
+                <div class="insight-detail-label">
+                  <span>🏷️</span> Area Utama / Tema
+                </div>
+                <div class="insight-detail-value" id="voice-insight-main-issue">
+                  Komunikasi Dokter
+                </div>
+              </div>
+              <div class="insight-detail-item">
+                <div class="insight-detail-label">
+                  <span>🌟</span> Hal Diapresiasi
+                </div>
+                <div class="insight-detail-value" id="voice-insight-positive-aspect">
+                  Penjelasan Jelas & Ramah
+                </div>
+              </div>
+            </div>
+
+            <div style="font-size: 11px; color: #475569; margin-bottom: 6px; text-align: left;">
+              📍 <strong>Titik Layanan:</strong> <span id="voice-insight-touchpoint-label" style="color: #0369a1; font-weight: 700;">Konsultasi Dokter</span>
+            </div>
+
+            <div class="insight-summary-box">
+              <div class="insight-summary-label">
+                <span>✨</span> Ringkasan Insight MIRA
+              </div>
+              <p class="insight-summary-text" id="voice-insight-summary-text">
+                Pasien menyatakan kepuasan tinggi terhadap kejelasan konsultasi dokter serta keramahan perawat.
+              </p>
             </div>
           </div>
         </div>
 
-        <div class="modal-actions" style="margin-top: 14px">
+        <div class="modal-actions" style="margin-top: 10px; display: flex; gap: 8px;">
+          <button
+            class="btn-primary-mobile"
+            id="btn-save-voice-insight"
+            onclick="saveVoiceInsightFeedback()"
+            style="flex: 1; font-size: 12.5px; padding: 11px 12px;"
+          >
+            💾 Simpan & Terapkan ke Layanan (+20 Pts)
+          </button>
           <button
             class="btn-secondary-mobile"
+            id="btn-cancel-voice-insight"
             onclick="closeModal('modal-voice-feedback-demo')"
+            style="font-size: 12px; padding: 11px 12px;"
           >
-            Tutup & Gunakan Ketikan Teks
+            Batal
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 24B. Voice Feedback Already Used Notice Modal (Feature 13) -->
+    <div class="modal-backdrop" id="modal-voice-used-notice">
+      <div class="modal-content-card" style="text-align: center; max-height: 85vh; overflow-y: auto;">
+        <div class="modal-icon-badge" style="background: #ede9fe; color: #7c3aed; font-size: 28px; margin-bottom: 8px;">
+          🎙️
+        </div>
+        <h3 class="modal-title" style="margin-bottom: 6px; font-size: 16px; font-weight: 800; color: #1e293b;">
+          Voice Feedback sudah digunakan
+        </h3>
+        <p class="modal-text" id="voice-used-notice-desc" style="margin-bottom: 14px; font-size: 12.5px; color: #475569; line-height: 1.5;">
+          Anda telah menyampaikan masukan melalui Voice Note pada layanan <strong id="voice-used-notice-tp" style="color: #0284c7;">Konsultasi Dokter</strong>. Untuk layanan lainnya, Anda tetap dapat memberikan penilaian dan masukan tertulis.
+        </p>
+
+        <!-- Action Buttons -->
+        <div class="modal-actions" style="display: flex; flex-direction: column; gap: 8px;">
+          <button
+            class="btn-primary-mobile"
+            id="btn-voice-used-write-action"
+            onclick="handleRedirectToTypedFeedback()"
+            style="width: 100%; font-size: 13px; padding: 11px 14px;"
+          >
+            ✍️ Isi Masukan Tertulis
+          </button>
+          <button
+            class="btn-secondary-mobile"
+            onclick="closeModal('modal-voice-used-notice')"
+            style="width: 100%; font-size: 12px; padding: 10px 14px;"
+          >
+            Tutup
           </button>
         </div>
       </div>
@@ -4239,7 +4434,7 @@
       </div>
     </div>
 
-    <!-- 26. Retention Loop Analytics & Timeline Simulator Modal (Module 3.3) -->
+    <!-- 26. Patient Care Retention Journey Timeline Modal (Module 3.3) -->
     <div class="modal-backdrop" id="modal-retention-analytics">
       <div
         class="modal-content-card"
@@ -4259,7 +4454,7 @@
           "
         >
           <div style="display: flex; align-items: center; gap: 6px">
-            <span style="font-size: 18px">📊</span>
+            <span style="font-size: 18px">🗺️</span>
             <span
               style="
                 font-size: 11px;
@@ -4270,7 +4465,7 @@
                 border-radius: 6px;
               "
             >
-              RETENTION LOOP INSIGHTS
+              CARE CONTINUUM
             </span>
           </div>
           <button
@@ -4282,12 +4477,11 @@
           </button>
         </div>
 
-        <h3 class="modal-title" style="margin-bottom: 2px; font-size: 16px">
-          Demo Metrics & Retention Chain
+        <h3 class="modal-title" style="margin-bottom: 4px; font-size: 16px; font-weight: 800">
+          PERJALANAN PERAWATAN ANDA
         </h3>
-        <p class="modal-text" style="margin-bottom: 12px; font-size: 12px">
-          Analitik terukur membuktikan loop retensi pasien dari reminder H-3
-          hingga MIRA recovery check-in.
+        <p class="modal-text" style="margin-bottom: 12px; font-size: 12px; color: var(--text-muted); line-height: 1.45;">
+          Tetap terhubung dengan Mandaya di setiap tahap perawatan Anda.
         </p>
 
         <!-- Simulated Demo Timeline Switcher -->
@@ -4300,7 +4494,7 @@
             text-transform: uppercase;
           "
         >
-          ⏱️ Timeline Skenario Demo:
+          ⏱️ Simulasi Tahap Jadwal:
         </div>
         <div class="retention-timeline-switcher">
           <button
@@ -4358,124 +4552,900 @@
               border: 1px solid #c7d2fe;
             "
           >
-            ▶️ Picu Banner
+            ▶️ Picu Pengingat
           </button>
         </div>
 
-        <!-- KPI Metrics Grid -->
-        <div class="retention-kpi-grid">
-          <div class="retention-kpi-card">
-            <div class="retention-kpi-label">Notifications Displayed</div>
-            <div class="retention-kpi-val" id="metric-notifs-displayed">0</div>
-          </div>
-          <div class="retention-kpi-card">
-            <div class="retention-kpi-label">Notifications Opened</div>
-            <div class="retention-kpi-val" id="metric-notifs-opened">0</div>
-          </div>
-          <div
-            class="retention-kpi-card"
-            style="
-              grid-column: span 2;
-              background: #f0fdf4;
-              border-color: #bbf7d0;
-            "
-          >
-            <div
-              style="
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-              "
-            >
-              <div class="retention-kpi-label" style="color: #166534">
-                Notification Open Rate
-              </div>
-              <div
-                class="retention-kpi-val"
-                style="color: #15803d; font-size: 16px"
-                id="metric-open-rate"
-              >
-                0%
-              </div>
-            </div>
-            <div class="retention-rate-bar-wrap">
-              <div
-                class="retention-rate-bar"
-                id="metric-open-rate-bar"
-                style="width: 0%"
-              ></div>
-            </div>
-          </div>
-
-          <div class="retention-kpi-card">
-            <div class="retention-kpi-label">Check-ins Started</div>
-            <div class="retention-kpi-val" id="metric-checkins-started">0</div>
-          </div>
-          <div class="retention-kpi-card">
-            <div class="retention-kpi-label">Check-ins Completed</div>
-            <div class="retention-kpi-val" id="metric-checkins-completed">
-              0
-            </div>
-          </div>
-          <div
-            class="retention-kpi-card"
-            style="
-              grid-column: span 2;
-              background: #eff6ff;
-              border-color: #bfdbfe;
-            "
-          >
-            <div
-              style="
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-              "
-            >
-              <div class="retention-kpi-label" style="color: #1e40af">
-                Check-in Completion Rate
-              </div>
-              <div
-                class="retention-kpi-val"
-                style="color: #2563eb; font-size: 16px"
-                id="metric-completion-rate"
-              >
-                0%
-              </div>
-            </div>
-            <div class="retention-rate-bar-wrap">
-              <div
-                class="retention-rate-bar"
-                id="metric-completion-rate-bar"
-                style="
-                  width: 0%;
-                  background: linear-gradient(90deg, #2563eb, #38bdf8);
-                "
-              ></div>
-            </div>
-          </div>
+        <!-- Patient Care Timeline -->
+        <div class="patient-care-timeline" id="patient-care-timeline-list">
+          <!-- Populated dynamically by updateRetentionAnalyticsUI() -->
         </div>
 
-        <!-- Live Journey Event Chain Checklist -->
-        <div class="journey-event-chain">
-          <div class="event-chain-title">
-            <span>🔄 Retention Event Chain</span>
-            <span style="font-size: 10.5px; font-weight: 600; color: #64748b"
-              >Status Terkini</span
-            >
-          </div>
-          <div class="event-chain-list" id="retention-event-chain-list">
-            <!-- Populated dynamically by updateRetentionAnalyticsUI() -->
-          </div>
-        </div>
-
-        <div class="modal-actions" style="display: flex; gap: 8px">
+        <div class="modal-actions" style="display: flex; gap: 8px; margin-top: 10px">
           <button
             class="btn-primary-mobile"
             onclick="closeModal('modal-retention-analytics')"
             style="flex: 1"
           >
-            Tutup Insights
+            Tutup
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================================================================
+       FEATURE 4.1: NON-USER / WALK-IN PATIENT FRICTIONLESS FEEDBACK MODALS
+       ==================================================================== -->
+
+    <!-- 27. Non-User WhatsApp Feedback Invitation Modal -->
+    <div class="modal-backdrop" id="modal-nonuser-invite">
+      <div
+        class="modal-content-card"
+        style="
+          text-align: left;
+          max-height: 88vh;
+          overflow-y: auto;
+          padding: 16px 14px;
+        "
+      >
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+          "
+        >
+          <span
+            style="
+              font-size: 11px;
+              font-weight: 800;
+              color: #0369a1;
+              background: #e0f2fe;
+              padding: 3px 8px;
+              border-radius: 6px;
+            "
+          >
+            NON-USER / WALK-IN FLOW
+          </span>
+          <button
+            class="text-btn"
+            onclick="closeModal('modal-nonuser-invite')"
+            style="font-size: 18px"
+          >
+            ✕
+          </button>
+        </div>
+
+        <h3 class="modal-title" style="margin-bottom: 2px; font-size: 15px">
+          Undangan Feedback Pasien Non-User
+        </h3>
+        <p class="modal-text" style="margin-bottom: 12px; font-size: 12px">
+          Simulasi pesan WhatsApp yang dikirimkan kepada pasien rawat jalan/walk-in yang belum memiliki akun aplikasi Care Dokter.
+        </p>
+
+        <!-- Simulated WhatsApp Invitation Chat Frame -->
+        <div class="whatsapp-chat-frame">
+          <div class="whatsapp-chat-header">
+            <img
+              src="/assets/logo_mandaya.png"
+              alt="Mandaya"
+              class="whatsapp-avatar"
+            />
+            <div class="whatsapp-header-info">
+              <div class="whatsapp-name">
+                Mandaya Royal Hospital <span class="whatsapp-verified">✓</span>
+              </div>
+              <div class="whatsapp-sub">
+                Akun Bisnis Resmi · Layanan Pasien Mandaya Puri
+              </div>
+            </div>
+          </div>
+
+          <div class="whatsapp-chat-body">
+            <div class="whatsapp-bubble">
+              <div class="whatsapp-bubble-brand">
+                <span>🏥</span> Mandaya Patient Experience
+              </div>
+              <div
+                class="whatsapp-bubble-message"
+                style="
+                  white-space: pre-line;
+                  font-size: 12.5px;
+                  word-break: break-word;
+                  overflow-wrap: anywhere;
+                  word-wrap: break-word;
+                  min-width: 0;
+                  max-width: 100%;
+                "
+              >
+                Halo Budi 👋
+
+                Terima kasih telah mengunjungi <strong>Mandaya Royal Hospital Puri</strong> pada <strong>2 September 2026</strong> (Konsultasi Orthopedi bersama Dr. Andi Pratama, Sp.OT).
+
+                Kami ingin mendengar pengalaman Anda pada kunjungan hari ini.
+
+                Masukan Anda membantu kami meningkatkan pengalaman pelayanan pasien.
+
+                👉 <strong>Tautan Feedback Mandiri:</strong>
+                https://care.mandayahospitalgroup.com/feedback/VIS-2026-DEMO-001
+              </div>
+              <div class="whatsapp-bubble-time">
+                <span>14:30 WIB</span>
+                <span class="whatsapp-ticks">✓✓</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Non-User Explanatory Banner -->
+        <div
+          style="
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 10px;
+            padding: 9px 11px;
+            font-size: 11.5px;
+            color: #166534;
+            margin-bottom: 14px;
+            line-height: 1.45;
+          "
+        >
+          ✨ <strong>Pengalaman Frictionless (Tanpa Login):</strong> Pasien dapat langsung memberikan masukan dari peramban web tanpa harus mengunduh aplikasi, tanpa login, dan tanpa membuat akun. Data feedback tetap terhubung secara utuh dengan riwayat kunjungan di Mandaya.
+        </div>
+
+        <div class="modal-actions" style="display: flex; gap: 8px">
+          <button
+            class="btn-primary-mobile"
+            onclick="openNonUserFeedbackModal()"
+            style="flex: 1; background: #075e54"
+          >
+            💬 Berikan Feedback
+          </button>
+          <button
+            class="btn-secondary-mobile"
+            onclick="closeModal('modal-nonuser-invite')"
+          >
+            Tutup
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================================
+       FEATURE 4.2: MICRO-FEEDBACK PER TOUCHPOINT MODALS
+       ====================================================================== -->
+
+    <!-- 27B. Micro-Feedback Per Touchpoint Modal -->
+    <div class="modal-backdrop" id="modal-micro-feedback">
+      <div
+        class="modal-content-card"
+        style="
+          text-align: left;
+          max-height: 88vh;
+          overflow-y: auto;
+          padding: 16px 14px;
+        "
+      >
+        <!-- Modal Topbar -->
+        <div class="modal-header-close" style="margin-bottom: 8px">
+          <div style="display: flex; align-items: center; gap: 6px">
+            <span style="font-size: 18px">⚡</span>
+            <h3 class="modal-title" style="margin: 0; font-size: 15px; font-weight: 800">
+              Micro-Feedback Layanan
+            </h3>
+          </div>
+          <button
+            class="close-btn"
+            onclick="closeModal('modal-micro-feedback')"
+          >
+            ✕
+          </button>
+        </div>
+
+        <!-- 3 Primary Touchpoint Tabs -->
+        <div class="micro-touchpoint-nav" id="micro-touchpoint-nav">
+          <button
+            type="button"
+            class="micro-touchpoint-tab active"
+            id="tab-tp-registration"
+            onclick="switchMicroFeedbackTouchpoint('registration')"
+          >
+            <span>📋</span> Registrasi
+            <span class="micro-touchpoint-tab-check" id="check-tp-registration" style="display: none">✓</span>
+          </button>
+          <button
+            type="button"
+            class="micro-touchpoint-tab"
+            id="tab-tp-doctor_consultation"
+            onclick="switchMicroFeedbackTouchpoint('doctor_consultation')"
+          >
+            <span>🩺</span> Konsultasi
+            <span class="micro-touchpoint-tab-check" id="check-tp-doctor_consultation" style="display: none">✓</span>
+          </button>
+          <button
+            type="button"
+            class="micro-touchpoint-tab"
+            id="tab-tp-pharmacy"
+            onclick="switchMicroFeedbackTouchpoint('pharmacy')"
+          >
+            <span>💊</span> Farmasi
+            <span class="micro-touchpoint-tab-check" id="check-tp-pharmacy" style="display: none">✓</span>
+          </button>
+        </div>
+
+        <!-- Context Description Banner -->
+        <div class="micro-card-context-banner" id="micro-context-banner">
+          <div class="micro-context-icon" id="micro-context-icon">📋</div>
+          <div class="micro-context-text">
+            <div class="micro-context-title" id="micro-context-title">Registrasi & Admisi</div>
+            <div class="micro-context-sub" id="micro-context-desc">Proses pendaftaran & admisi pasien di Mandaya Royal Hospital</div>
+          </div>
+        </div>
+
+        <!-- Micro-Feedback Question Box -->
+        <div class="micro-question-wrap">
+          <h4 class="micro-question-title" id="micro-question-text">
+            "Bagaimana pengalaman Anda saat proses registrasi?"
+          </h4>
+          <div class="micro-question-hint">
+            Ketuk bintang untuk memberikan penilaian instan (1-5):
+          </div>
+
+          <!-- 5 Stars Quick Rating -->
+          <div class="micro-stars-row" id="micro-stars-row">
+            <button
+              type="button"
+              class="micro-star-btn"
+              onclick="selectMicroFeedbackRating(1)"
+              title="1 Bintang - Sangat Tidak Puas"
+            >
+              ★
+            </button>
+            <button
+              type="button"
+              class="micro-star-btn"
+              onclick="selectMicroFeedbackRating(2)"
+              title="2 Bintang - Tidak Puas"
+            >
+              ★
+            </button>
+            <button
+              type="button"
+              class="micro-star-btn"
+              onclick="selectMicroFeedbackRating(3)"
+              title="3 Bintang - Cukup"
+            >
+              ★
+            </button>
+            <button
+              type="button"
+              class="micro-star-btn"
+              onclick="selectMicroFeedbackRating(4)"
+              title="4 Bintang - Puas"
+            >
+              ★
+            </button>
+            <button
+              type="button"
+              class="micro-star-btn"
+              onclick="selectMicroFeedbackRating(5)"
+              title="5 Bintang - Sangat Puas"
+            >
+              ★
+            </button>
+          </div>
+
+          <div class="micro-rating-label" id="micro-rating-label">
+            Pilih penilaian bintang (1 - 5)
+          </div>
+
+          <!-- Optional Deeper Feedback Accordion Button -->
+          <button
+            type="button"
+            class="micro-optional-toggle-btn"
+            id="btn-toggle-micro-optional"
+            onclick="toggleMicroOptionalDetails()"
+          >
+            <span>💬 Ceritakan lebih lanjut (Opsional)</span>
+            <span id="micro-optional-arrow">▼</span>
+          </button>
+
+          <!-- Collapsible Optional Detail Box -->
+          <div class="micro-optional-box" id="micro-optional-box" style="display: none">
+            <div class="feedback-textarea-wrap" style="margin-top: 4px">
+              <textarea
+                id="micro-feedback-comment-input"
+                class="feedback-textarea"
+                placeholder="Tuliskan catatan atau saran spesifik untuk layanan ini..."
+                rows="2"
+              ></textarea>
+            </div>
+
+            <!-- Optional MIRA Voice Entry -->
+            <button
+              type="button"
+              class="micro-voice-entry-btn"
+              onclick="triggerMicroVoiceFeedback()"
+            >
+              <span class="mic-pulse-dot" style="width: 7px; height: 7px;"></span>
+              <span>🎙️ Ceritakan pengalaman Anda (Voice Note)</span>
+            </button>
+            <div id="micro-voice-status-tag" style="display: none; font-size: 11px; color: #16a34a; font-weight: 600; margin-top: 4px; text-align: center;">
+              ✓ Rekaman suara terhubung (Simulasi Voice Note)
+            </div>
+          </div>
+        </div>
+
+        <!-- Reward Info Pill for Existing Users vs Non-users -->
+        <div id="micro-reward-notice-box" style="font-size: 11px; color: #0369a1; background: #e0f2fe; border: 1px solid #bae6fd; border-radius: 8px; padding: 7px 10px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+          <span>🪙</span>
+          <span id="micro-reward-notice-text">Dapatkan +20 CarePoints untuk feedback pertama Anda.</span>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="modal-actions" style="display: flex; gap: 8px">
+          <button
+            class="btn-primary-mobile"
+            id="btn-submit-micro-feedback"
+            onclick="submitMicroFeedback()"
+            style="flex: 1"
+          >
+            Kirim Masukan
+          </button>
+          <button
+            class="btn-secondary-mobile"
+            onclick="closeModal('modal-micro-feedback')"
+          >
+            Batal
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 27C. Micro-Feedback Immediate Acknowledgement Modal -->
+    <div class="modal-backdrop" id="modal-micro-feedback-thanks">
+      <div class="modal-content-card" style="text-align: center; max-height: 88vh; overflow-y: auto;">
+        <div
+          class="modal-icon-badge"
+          style="background: #ecfdf5; color: #059669; font-size: 30px; margin-bottom: 8px;"
+        >
+          💚
+        </div>
+
+        <div
+          id="micro-thanks-pts-badge"
+          style="
+            margin-bottom: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #ecfdf5;
+            color: #047857;
+            font-weight: 700;
+            font-size: 12px;
+            padding: 5px 12px;
+            border-radius: 9999px;
+            border: 1px solid #a7f3d0;
+          "
+        >
+          <span>🪙</span>
+          <span id="micro-thanks-pts-text">+20 CarePoints Telah Ditambahkan</span>
+        </div>
+
+        <h3 class="modal-title" id="micro-thanks-title" style="margin-bottom: 6px; font-size: 16px; font-weight: 800">
+          Terima Kasih atas Masukan Anda
+        </h3>
+        <p class="modal-text" id="micro-thanks-desc" style="margin-bottom: 12px; font-size: 12.5px; color: #334155; line-height: 1.45;">
+          Masukan Anda telah diterima dan langsung membantu kami menjaga serta meningkatkan mutu pelayanan Mandaya.
+        </p>
+
+        <!-- Summary of submitted touchpoint feedback -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 14px; text-align: left; margin-bottom: 12px;">
+          <div style="font-size: 11px; font-weight: 800; color: #475569; text-transform: uppercase; margin-bottom: 4px;">
+            Touchpoint: <span id="micro-thanks-tp-label" style="color: #0284c7;">Registrasi</span>
+          </div>
+          <div id="micro-thanks-rating" style="font-weight: 700; color: #0f172a; font-size: 13px; margin-bottom: 4px;">
+            ★★★★★ 5/5 · Sangat Puas
+          </div>
+          <div id="micro-thanks-comment" style="color: #475569; font-size: 11.5px; font-style: italic; display: none;">
+            Catatan: "Proses cepat dan staf ramah."
+          </div>
+        </div>
+
+        <!-- Notification Expectation Note -->
+        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 10px 12px; text-align: left; margin-bottom: 14px; display: flex; align-items: flex-start; gap: 8px;">
+          <span style="font-size: 16px;">💡</span>
+          <div style="font-size: 11.5px; color: #166534; line-height: 1.45;">
+            <strong>Pembaruan Pelayanan:</strong> Jika terdapat pembaruan terkait masukan Anda, MIRA akan memberi tahu Anda melalui notifikasi aplikasi.
+          </div>
+        </div>
+
+        <div class="modal-actions" style="display: flex; gap: 8px">
+          <button
+            class="btn-secondary-mobile"
+            onclick="handleMicroThanksNextTouchpointAction();"
+            style="flex: 1; font-size: 12px;"
+            id="btn-micro-next-tp"
+          >
+            Beri Masukan Layanan Lain
+          </button>
+          <button
+            class="btn-primary-mobile"
+            onclick="handleMicroThanksFinishAction();"
+            style="flex: 1; font-size: 12px;"
+          >
+            Kembali ke Beranda
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 27D. Dedicated Feedback Loop Closure Modal (Feature 4.6) -->
+    <div class="modal-backdrop" id="modal-feedback-loop-closure">
+      <div class="modal-content-card" style="text-align: left; max-height: 90vh; overflow-y: auto; padding: 18px 16px;">
+        <div class="modal-header-close" style="margin-bottom: 8px;">
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span class="closure-top-badge">✨ MIRA Listen · Feedback Closure</span>
+          </div>
+          <button class="close-btn" onclick="closeModal('modal-feedback-loop-closure')" title="Tutup">✕</button>
+        </div>
+
+        <h3 class="modal-title" style="margin-bottom: 3px; font-size: 16.5px; font-weight: 800; color: #0f172a;">
+          Pembaruan Tindak Lanjut Pelayanan
+        </h3>
+        <p class="modal-text" style="font-size: 12px; color: #475569; margin-bottom: 14px; line-height: 1.45;">
+          Suara Anda tidak hilang. Mandaya telah meninjau masukan Anda untuk menyempurnakan kualitas pelayanan.
+        </p>
+
+        <!-- STEP 1: ANDA MENYAMPAIKAN -->
+        <div class="closure-step-card step-input" id="closure-step-1">
+          <div class="closure-step-header">
+            <div class="closure-step-badge blue">💬 ANDA MENYAMPAIKAN</div>
+            <span class="closure-tp-tag" id="closure-tp-label">Konsultasi Dokter</span>
+          </div>
+          <div class="closure-step-body">
+            <div class="closure-rating-row" id="closure-rating-row">★★★★★ 5/5 · Sangat Puas</div>
+            <div class="closure-quote-box" id="closure-user-quote">"Penjelasan dokter sangat ramah dan menenangkan."</div>
+          </div>
+        </div>
+
+        <!-- STEP 2: KAMI MENINDAKLANJUTI -->
+        <div class="closure-step-card step-action" id="closure-step-2">
+          <div class="closure-step-header">
+            <div class="closure-step-badge amber" id="closure-step2-badge">🔧 KAMI MENINDAKLANJUTI</div>
+          </div>
+          <div class="closure-step-body">
+            <p class="closure-step-text" id="closure-action-text">
+              Masukan mengenai alur pelayanan telah ditinjau bersama kepala unit poliklinik untuk evaluasi ketepatan waktu.
+            </p>
+          </div>
+        </div>
+
+        <!-- STEP 3: PEMBARUAN UNTUK ANDA -->
+        <div class="closure-step-card step-update" id="closure-step-3">
+          <div class="closure-step-header">
+            <div class="closure-step-badge emerald" id="closure-step3-badge">✨ PEMBARUAN UNTUK ANDA</div>
+          </div>
+          <div class="closure-step-body">
+            <p class="closure-step-text" id="closure-update-text">
+              Sistem sinkronisasi antrean digital dan estimasi waktu pelayanan kini diperbarui untuk kenyamanan pasien.
+            </p>
+          </div>
+        </div>
+
+        <!-- DYNAMIC MIRA INSIGHT CARD -->
+        <div id="closure-insight-container" style="display: none; margin-top: 10px;">
+          <div class="mira-insight-card" style="margin-bottom: 0;">
+            <div class="insight-card-topbar">
+              <div class="insight-brand-tag"><span>🧠</span> MIRA Voice-to-Insight</div>
+              <div class="insight-sentiment-pill positive" id="closure-insight-pill">Positif</div>
+            </div>
+            <div class="insight-details-grid">
+              <div class="insight-detail-item">
+                <div class="insight-detail-label"><span>🏷️</span> Area Utama</div>
+                <div class="insight-detail-value" id="closure-insight-issue">Komunikasi Medis</div>
+              </div>
+              <div class="insight-detail-item">
+                <div class="insight-detail-label"><span>🌟</span> Diapresiasi</div>
+                <div class="insight-detail-value" id="closure-insight-positive">Penjelasan Ramah</div>
+              </div>
+            </div>
+            <div class="insight-summary-box">
+              <div class="insight-summary-label"><span>✨</span> Ringkasan MIRA</div>
+              <p class="insight-summary-text" id="closure-insight-summary">Pasien memberikan apresiasi positif terhadap kejelasan penjelasan dokter.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-actions" style="margin-top: 14px;">
+          <button class="btn-primary-mobile" onclick="closeModal('modal-feedback-loop-closure')" style="width: 100%;">
+            Tutup & Kembali
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 28. Dedicated Standalone Web Feedback Modal for Non-User Patients -->
+    <div class="modal-backdrop" id="modal-nonuser-feedback">
+      <div
+        class="modal-content-card"
+        style="
+          text-align: left;
+          max-height: 90vh;
+          overflow-y: auto;
+          padding: 16px 14px;
+        "
+      >
+        <!-- Web Standalone Topbar -->
+        <div class="nonuser-web-topbar">
+          <div class="nonuser-brand-logo-group">
+            <img
+              src="/assets/logo_mandaya.png"
+              alt="Mandaya"
+              class="nonuser-brand-logo"
+            />
+            <span class="nonuser-brand-title">MIRA Listen</span>
+          </div>
+          <span class="nonuser-web-badge">
+            <span>🌐</span> Web Standalone
+          </span>
+        </div>
+
+        <!-- Greeting Header -->
+        <div style="margin-top: 4px; margin-bottom: 8px">
+          <h3 class="modal-title" style="margin-bottom: 2px; font-size: 16px; font-weight: 800">
+            Halo Budi 👋
+          </h3>
+          <p class="modal-text" style="font-size: 12.5px; color: var(--text-muted); line-height: 1.45;">
+            Terima kasih telah mempercayakan perawatan Anda kepada Mandaya.
+          </p>
+        </div>
+
+        <!-- Compact Visit Context Card -->
+        <div class="nonuser-visit-card">
+          <div class="nonuser-visit-header">
+            <span>🏥</span> Kunjungan Terdaftar
+          </div>
+          <div class="nonuser-visit-grid">
+            <div class="nonuser-visit-item">
+              <span class="nonuser-visit-item-icon">📍</span>
+              <div class="nonuser-visit-item-text">
+                <strong>Mandaya Royal Hospital Puri</strong>
+              </div>
+            </div>
+            <div class="nonuser-visit-item">
+              <span class="nonuser-visit-item-icon">📅</span>
+              <div class="nonuser-visit-item-text">
+                2 September 2026
+              </div>
+            </div>
+            <div class="nonuser-visit-item">
+              <span class="nonuser-visit-item-icon">🩺</span>
+              <div class="nonuser-visit-item-text">
+                Konsultasi Orthopedi · Dr. Andi Pratama, Sp.OT
+              </div>
+            </div>
+          </div>
+          <div class="nonuser-context-banner">
+            <span>🔒</span>
+            <span>Terhubung otomatis dengan riwayat kunjungan rumah sakit (Tanpa Perlu Login · Tanpa Poin).</span>
+          </div>
+        </div>
+
+        <!-- Touchpoint Switcher for Non-User -->
+        <div style="margin-bottom: 12px">
+          <label
+            style="
+              font-size: 12px;
+              font-weight: 700;
+              color: var(--text-main);
+              display: block;
+              margin-bottom: 4px;
+            "
+          >
+            Pilih Layanan / Touchpoint:
+          </label>
+          <div class="micro-touchpoint-nav" id="nonuser-touchpoint-nav" style="margin-bottom: 8px">
+            <button
+              type="button"
+              class="micro-touchpoint-tab active"
+              id="nonuser-tab-registration"
+              onclick="switchNonUserFeedbackTouchpoint('registration')"
+            >
+              <span>📋</span> Registrasi
+            </button>
+            <button
+              type="button"
+              class="micro-touchpoint-tab"
+              id="nonuser-tab-doctor_consultation"
+              onclick="switchNonUserFeedbackTouchpoint('doctor_consultation')"
+            >
+              <span>🩺</span> Konsultasi
+            </button>
+            <button
+              type="button"
+              class="micro-touchpoint-tab"
+              id="nonuser-tab-pharmacy"
+              onclick="switchNonUserFeedbackTouchpoint('pharmacy')"
+            >
+              <span>💊</span> Farmasi
+            </button>
+          </div>
+        </div>
+
+        <!-- Question: Contextual Micro Question -->
+        <div style="margin-bottom: 12px">
+          <label
+            id="nonuser-feedback-question-title"
+            style="
+              font-size: 13.5px;
+              font-weight: 800;
+              color: var(--text-main);
+              display: block;
+              margin-bottom: 2px;
+              line-height: 1.4;
+            "
+          >
+            "Bagaimana pengalaman Anda saat proses registrasi?" <span style="color: #ef4444">*</span>
+          </label>
+          <div
+            id="nonuser-feedback-question-sub"
+            style="
+              font-size: 11px;
+              color: var(--text-muted);
+              margin-bottom: 8px;
+            "
+          >
+            Pilih penilaian bintang untuk layanan ini (1 - 5):
+          </div>
+
+          <div class="feedback-stars-container" id="nonuser-feedback-stars-wrap">
+            <button
+              type="button"
+              class="star-item-btn"
+              onclick="selectNonUserFeedbackRating(1)"
+              title="1 Bintang"
+            >
+              ★
+            </button>
+            <button
+              type="button"
+              class="star-item-btn"
+              onclick="selectNonUserFeedbackRating(2)"
+              title="2 Bintang"
+            >
+              ★
+            </button>
+            <button
+              type="button"
+              class="star-item-btn"
+              onclick="selectNonUserFeedbackRating(3)"
+              title="3 Bintang"
+            >
+              ★
+            </button>
+            <button
+              type="button"
+              class="star-item-btn"
+              onclick="selectNonUserFeedbackRating(4)"
+              title="4 Bintang"
+            >
+              ★
+            </button>
+            <button
+              type="button"
+              class="star-item-btn"
+              onclick="selectNonUserFeedbackRating(5)"
+              title="5 Bintang"
+            >
+              ★
+            </button>
+          </div>
+          <div
+            id="nonuser-feedback-star-label"
+            class="feedback-star-hint"
+            style="font-size: 12px; margin-top: 4px; font-weight: 600"
+          >
+            Pilih penilaian bintang (1 - 5)
+          </div>
+        </div>
+
+        <!-- Question 2: Category / Touchpoints -->
+        <div style="margin-top: 6px; margin-bottom: 12px">
+          <label
+            style="
+              font-size: 13px;
+              font-weight: 700;
+              color: var(--text-main);
+              display: block;
+              margin-bottom: 4px;
+            "
+          >
+            Apa yang paling ingin Anda bagikan?
+          </label>
+          <div
+            style="
+              font-size: 11px;
+              color: var(--text-muted);
+              margin-bottom: 8px;
+            "
+          >
+            Dapat memilih lebih dari satu kategori
+          </div>
+
+          <div class="feedback-cat-grid" id="nonuser-feedback-categories-grid">
+            <div
+              class="feedback-cat-pill"
+              onclick="toggleNonUserFeedbackCategory('Pelayanan tenaga kesehatan', this)"
+            >
+              <span>👨‍⚕️</span> Pelayanan tenaga kesehatan
+            </div>
+            <div
+              class="feedback-cat-pill"
+              onclick="toggleNonUserFeedbackCategory('Kemudahan proses perawatan', this)"
+            >
+              <span>⚡</span> Kemudahan proses perawatan
+            </div>
+            <div
+              class="feedback-cat-pill"
+              onclick="toggleNonUserFeedbackCategory('Komunikasi', this)"
+            >
+              <span>🗣️</span> Komunikasi
+            </div>
+            <div
+              class="feedback-cat-pill"
+              onclick="toggleNonUserFeedbackCategory('Fasilitas', this)"
+            >
+              <span>🏥</span> Fasilitas
+            </div>
+            <div
+              class="feedback-cat-pill"
+              onclick="toggleNonUserFeedbackCategory('Teknologi dan layanan', this)"
+            >
+              <span>📱</span> Teknologi dan layanan
+            </div>
+            <div
+              class="feedback-cat-pill"
+              onclick="toggleNonUserFeedbackCategory('Pengalaman secara keseluruhan', this)"
+            >
+              <span>🌟</span> Pengalaman secara keseluruhan
+            </div>
+          </div>
+        </div>
+
+        <!-- Question 3: Optional Text Feedback -->
+        <div style="margin-top: 6px">
+          <label
+            style="
+              font-size: 13px;
+              font-weight: 700;
+              color: var(--text-main);
+              display: block;
+              margin-bottom: 2px;
+            "
+          >
+            Ceritakan Pengalaman Anda
+            <span
+              style="
+                font-weight: 500;
+                font-size: 11.5px;
+                color: var(--text-muted);
+              "
+              >(Opsional)</span
+            >
+          </label>
+          <div
+            style="
+              font-size: 11px;
+              color: var(--text-muted);
+              margin-bottom: 6px;
+            "
+          >
+            Anda hanya perlu membagikan informasi yang nyaman untuk Anda ceritakan.
+          </div>
+          <div class="feedback-textarea-wrap">
+            <textarea
+              id="nonuser-feedback-comment-input"
+              class="feedback-textarea"
+              placeholder="Ceritakan pengalaman Anda selama proses kunjungan dan konsultasi..."
+              rows="3"
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Information Notice -->
+        <div
+          style="
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 10px;
+            line-height: 1.4;
+          "
+        >
+          ℹ️ Masukan Anda langsung diterima oleh tim manajemen mutu Mandaya Royal Hospital Puri untuk evaluasi pelayanan.
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="modal-actions" style="margin-top: 16px; display: flex; gap: 8px">
+          <button
+            class="btn-primary-mobile"
+            id="btn-submit-nonuser-feedback"
+            onclick="submitNonUserFeedback()"
+            style="flex: 1"
+          >
+            Kirim Feedback
+          </button>
+          <button
+            class="btn-secondary-mobile"
+            onclick="closeModal('modal-nonuser-feedback')"
+          >
+            Batalkan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 29. Non-User Feedback Loop Closure / Thank You Modal -->
+    <div class="modal-backdrop" id="modal-nonuser-thanks">
+      <div class="modal-content-card" style="text-align: center; max-height: 88vh; overflow-y: auto;">
+        <div
+          class="modal-icon-badge"
+          style="background: #fef2f2; color: #dc2626; font-size: 32px; margin-bottom: 8px;"
+        >
+          ❤️
+        </div>
+
+        <h3 class="modal-title" style="margin-bottom: 6px; font-size: 17px; font-weight: 800">
+          ❤️ Terima kasih, Budi.
+        </h3>
+        <p class="modal-text" style="margin-bottom: 4px; font-size: 13px; color: #1e293b; line-height: 1.45;">
+          Masukan Anda telah diterima dan akan membantu Mandaya meningkatkan pengalaman pelayanan pasien.
+        </p>
+        <p class="modal-text" style="margin-bottom: 12px; font-size: 12px; color: var(--text-muted); font-style: italic;">
+          "Suara Anda membantu kami menjadi lebih baik."
+        </p>
+
+        <!-- Summary of submitted feedback & linked visit -->
+        <div class="nonuser-thanks-summary-card">
+          <div class="nonuser-thanks-title">
+            📋 Ringkasan Masukan Terhubung
+          </div>
+          <div style="font-size: 12px; color: #334155; line-height: 1.5;">
+            <div id="nonuser-thanks-rating" style="font-weight: 700; color: #0284c7; margin-bottom: 4px;">
+              ★★★★★ 5/5 · Sangat Puas
+            </div>
+            <div id="nonuser-thanks-categories" style="color: #475569; font-size: 11.5px; margin-bottom: 4px;">
+              Kategori: Pelayanan tenaga kesehatan
+            </div>
+            <div id="nonuser-thanks-comment" style="color: #334155; font-size: 11.5px; margin-bottom: 8px; font-style: italic;">
+              Catatan: "Pelayanan sangat baik dan dokter ramah."
+            </div>
+            <div style="padding-top: 6px; border-top: 1px solid #e2e8f0; font-size: 11px; color: #64748b;">
+              📍 <strong>Kunjungan:</strong> Mandaya Royal Hospital Puri · Konsultasi Orthopedi · 2 September 2026
+            </div>
+          </div>
+        </div>
+
+        <!-- Notification Expectation Note -->
+        <div style="background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 12px; padding: 10px 12px; text-align: left; margin-top: 10px; margin-bottom: 12px; display: flex; align-items: flex-start; gap: 8px;">
+          <span style="font-size: 16px;">💡</span>
+          <div style="font-size: 11.5px; color: #0369a1; line-height: 1.45;">
+            <strong>Tindak Lanjut Mandaya:</strong> Masukan Anda telah kami teruskan ke unit terkait. MIRA akan menampilkan notifikasi pembaruan tindak lanjut sebentar lagi.
+          </div>
+        </div>
+
+        <div class="modal-actions" style="margin-top: 14px">
+          <button
+            class="btn-primary-mobile"
+            onclick="handleNonUserThanksFinishAction()"
+            style="width: 100%"
+          >
+            Selesai
           </button>
         </div>
       </div>
