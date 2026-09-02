@@ -528,6 +528,12 @@ const DEFAULT_ADVOCACY = {
   testimonialConsent: false,
   referralShared: false,
   sharedAt: "",
+  isEligible: false,
+  eligibilityReason: null,
+  eligibilityDetectedAt: null,
+  promptDismissed: false,
+  lastPromptAt: null,
+  promptShown: false,
 };
 
 // ============================================================================
@@ -571,6 +577,9 @@ class AppState {
     const savedMultiChannel = localStorage.getItem("care_dokter_multichannel");
     const savedVoiceSession = localStorage.getItem(
       "care_dokter_voice_feedback_session",
+    );
+    const savedClosureNotif = localStorage.getItem(
+      "care_dokter_closure_notification",
     );
 
     this.isLoggedIn = savedLoggedIn ? JSON.parse(savedLoggedIn) : false;
@@ -623,8 +632,12 @@ class AppState {
     this.voiceFeedbackSession = savedVoiceSession
       ? JSON.parse(savedVoiceSession)
       : null;
+    this.closureNotification = savedClosureNotif
+      ? JSON.parse(savedClosureNotif)
+      : null;
+    this.pendingClosureContext = null;
     this.advocacy = savedAdvocacy
-      ? JSON.parse(savedAdvocacy)
+      ? { ...DEFAULT_ADVOCACY, ...JSON.parse(savedAdvocacy) }
       : { ...DEFAULT_ADVOCACY };
     this.notifications = savedNotifs
       ? JSON.parse(savedNotifs)
@@ -772,6 +785,14 @@ class AppState {
     } else {
       localStorage.removeItem("care_dokter_voice_feedback_session");
     }
+    if (this.closureNotification) {
+      localStorage.setItem(
+        "care_dokter_closure_notification",
+        JSON.stringify(this.closureNotification),
+      );
+    } else {
+      localStorage.removeItem("care_dokter_closure_notification");
+    }
   }
 
   login() {
@@ -876,6 +897,7 @@ class AppState {
     localStorage.removeItem("care_dokter_analytics");
     localStorage.removeItem("care_dokter_multichannel");
     localStorage.removeItem("care_dokter_voice_feedback_session");
+    localStorage.removeItem("care_dokter_closure_notification");
 
     this.isLoggedIn = stayLoggedIn;
     this.onboardingCompleted = stayLoggedIn;
@@ -892,6 +914,14 @@ class AppState {
     );
     this.nonUserFeedback = JSON.parse(JSON.stringify(DEFAULT_NONUSER_FEEDBACK));
     this.voiceFeedbackSession = null;
+    this.closureNotification = null;
+    this.pendingClosureContext = null;
+    if (typeof clearClosureNotificationTimer === "function") {
+      clearClosureNotificationTimer();
+    }
+    if (typeof clearAdvocacyPromptTimer === "function") {
+      clearAdvocacyPromptTimer();
+    }
     this.advocacy = { ...DEFAULT_ADVOCACY };
     this.notifications = DEFAULT_NOTIFICATIONS.map((n) => ({ ...n }));
     this.bannerDismissed = false;
@@ -2347,6 +2377,7 @@ function renderMiraScreen() {
 function renderHomeScreen() {
   renderHomeScreenPoints();
   renderHomeScreenFeedback();
+  renderTestimonialShowcase();
 
   // Notification badge & banner
   updateNotificationUI();
@@ -2512,6 +2543,17 @@ function handleNotificationAction(notifId) {
     } else if (notif.actionType === "appointment") {
       trackAnalyticsEvent("appointmentReminderViewed");
       openModal("modal-appointment-detail");
+    } else if (notif.actionType === "closure") {
+      if (state.closureNotification) {
+        state.closureNotification.read = true;
+        state.saveState();
+      }
+      openFeedbackLoopClosureModal(notif.closureData || state.closureNotification);
+    } else if (
+      notif.actionType === "advocacy_testimonial" ||
+      notif.actionType === "advocacy"
+    ) {
+      openTestimonialFromAdvocacy();
     } else if (notif.actionType === "journey") {
       switchTab("journey");
     } else if (notif.actionType === "rewards") {
@@ -2748,6 +2790,15 @@ function dismissPushNotification(event) {
   if (event) {
     event.stopPropagation();
   }
+  if (
+    currentPushNotificationAction === "advocacy_testimonial" ||
+    currentPushNotificationAction === "advocacy"
+  ) {
+    if (state.advocacy) {
+      state.advocacy.promptDismissed = true;
+      state.saveState();
+    }
+  }
   hidePushNotification(true);
   trackAnalyticsEvent("notificationDismissed");
   state.bannerDismissed = true;
@@ -2772,6 +2823,32 @@ function handlePushNotificationClick(event) {
       updateNotificationUI();
     }
     openModal("modal-appointment-detail");
+  } else if (currentPushNotificationAction === "closure") {
+    const closureNotif = state.notifications.find(
+      (n) => n.id === "notif-feedback-closure" || n.type === "feedback_closure",
+    );
+    if (closureNotif) {
+      closureNotif.read = true;
+    }
+    if (state.closureNotification) {
+      state.closureNotification.read = true;
+    }
+    state.saveState();
+    updateNotificationUI();
+    openFeedbackLoopClosureModal(state.closureNotification);
+  } else if (
+    currentPushNotificationAction === "advocacy_testimonial" ||
+    currentPushNotificationAction === "advocacy"
+  ) {
+    const advNotif = state.notifications.find(
+      (n) => n.id === "notif-advocacy-prompt" || n.type === "advocacy",
+    );
+    if (advNotif) {
+      advNotif.read = true;
+      state.saveState();
+      updateNotificationUI();
+    }
+    openTestimonialFromAdvocacy();
   } else {
     // Action 'mira'
     const checkinNotif = state.notifications.find(
@@ -3441,6 +3518,12 @@ function finalizeMiraCheckinSubmission() {
 
   // 7. Track analytics event
   trackAnalyticsEvent("checkInCompleted");
+
+  // Feature 5.1 & 5.2: Check Advocacy Eligibility upon recovery check-in and trigger timed prompt
+  checkAdvocacyEligibility();
+  if (state.advocacy && state.advocacy.isEligible) {
+    triggerTimedAdvocacyPrompt();
+  }
 
   // Save State
   state.saveState();
@@ -4654,6 +4737,16 @@ function saveVoiceInsightFeedback() {
     pointsAwarded: true,
   };
 
+  // Feature 4.6: Store pending closure context for delayed MIRA notification
+  state.pendingClosureContext = {
+    touchpoint: tpKey,
+    rating: currentVoiceModalState.rating,
+    comment: transcriptText,
+    insight: insight,
+    isVoice: true,
+    patientType: "existing_user",
+  };
+
   state.saveState();
   closeModal("modal-voice-feedback-demo");
 
@@ -4959,6 +5052,12 @@ function submitPatientFeedback() {
       );
     }
   } else {
+    // Feature 5.1 & 5.2: Evaluate advocacy eligibility & schedule timed prompt if eligible
+    checkAdvocacyEligibility();
+    if (state.advocacy && state.advocacy.isEligible) {
+      triggerTimedAdvocacyPrompt();
+    }
+
     openModal("modal-feedback-positive-advocacy");
     if (pointsAwardedThisTime) {
       showToast(
@@ -4970,6 +5069,213 @@ function submitPatientFeedback() {
       );
     }
   }
+}
+
+// ============================================================================
+// MODULE 5.1 & 5.2: ADVOCACY ENGINE
+// 5.1 ELIGIBLE REVIEWER IDENTIFICATION
+// 5.2 TIMED TESTIMONIAL PROMPT
+// ============================================================================
+
+const ADVOCACY_PROMPT_DELAY_MS = 2500; // Simulated delay ~2.5s
+let advocacyPromptTimer = null;
+
+/**
+ * Clear any active simulated advocacy prompt timers
+ */
+function clearAdvocacyPromptTimer() {
+  if (advocacyPromptTimer) {
+    clearTimeout(advocacyPromptTimer);
+    advocacyPromptTimer = null;
+  }
+}
+
+/**
+ * Module 5.1: Pure evaluation helper for advocacy eligibility.
+ * Evaluates existing state signals:
+ * - Rule A (Feedback): state.feedback.rating >= 4 OR any touchpoint feedback rating >= 4
+ * - Rule B (Recovery): state.miraData.checkinHistory with scenario-A/scenario-positive OR (scenario-B/scenario-stable with painScore <= 3)
+ * @param {AppState} stateObj
+ * @returns {{ isEligible: boolean, reason: string|null }}
+ */
+function isPatientEligibleForAdvocacy(stateObj = state) {
+  if (!stateObj) return { isEligible: false, reason: null };
+
+  let feedbackPositive = false;
+  let recoveryPositive = false;
+
+  // Rule A: Positive Feedback
+  if (stateObj.feedback && stateObj.feedback.submitted && stateObj.feedback.rating >= 4) {
+    feedbackPositive = true;
+  }
+  if (stateObj.touchpointsFeedback) {
+    const tps = Object.values(stateObj.touchpointsFeedback);
+    if (tps.some((tp) => tp && tp.submitted && tp.rating >= 4)) {
+      feedbackPositive = true;
+    }
+  }
+
+  // Rule B: Positive Recovery Progress
+  if (
+    stateObj.miraData &&
+    stateObj.miraData.checkinHistory &&
+    stateObj.miraData.checkinHistory.length > 0
+  ) {
+    for (const item of stateObj.miraData.checkinHistory) {
+      const scen = (item.scenario || "").toLowerCase();
+      let painScore = null;
+      if (typeof item.painScore === "number") {
+        painScore = item.painScore;
+      } else if (item.painLevel) {
+        const match = item.painLevel.match(/\d+/);
+        if (match) {
+          painScore = parseInt(match[0], 10);
+        } else if (
+          item.painLevel.toLowerCase().includes("ringan") ||
+          item.painLevel.toLowerCase().includes("tidak")
+        ) {
+          painScore = 2;
+        } else if (item.painLevel.toLowerCase().includes("berat")) {
+          painScore = 8;
+        } else if (item.painLevel.toLowerCase().includes("sedang")) {
+          painScore = 5;
+        }
+      }
+
+      const isScenarioA = scen === "scenario-a" || scen === "scenario-positive";
+      const isScenarioB = scen === "scenario-b" || scen === "scenario-stable";
+      const isLowPain = painScore !== null ? painScore <= 3 : true;
+
+      if (isScenarioA || (isScenarioB && isLowPain)) {
+        recoveryPositive = true;
+        break;
+      }
+    }
+  }
+
+  // Determine Reason
+  let reason = null;
+  if (feedbackPositive && recoveryPositive) {
+    reason = "multiple_positive_signals";
+  } else if (feedbackPositive) {
+    reason = "feedback_positive";
+  } else if (recoveryPositive) {
+    reason = "recovery_positive";
+  }
+
+  const isEligible = feedbackPositive || recoveryPositive;
+  return { isEligible, reason };
+}
+
+/**
+ * Module 5.1: Centralized function to evaluate and synchronize advocacy eligibility into state.advocacy
+ * @param {AppState} stateObj
+ * @returns {{ isEligible: boolean, reason: string|null }}
+ */
+function checkAdvocacyEligibility(stateObj = state) {
+  if (!stateObj) return { isEligible: false, reason: null };
+  const result = isPatientEligibleForAdvocacy(stateObj);
+
+  if (!stateObj.advocacy) {
+    stateObj.advocacy = { ...DEFAULT_ADVOCACY };
+  }
+
+  const previousEligible = stateObj.advocacy.isEligible;
+  stateObj.advocacy.isEligible = result.isEligible;
+  stateObj.advocacy.eligibilityReason = result.reason;
+
+  if (result.isEligible && !previousEligible && !stateObj.advocacy.eligibilityDetectedAt) {
+    stateObj.advocacy.eligibilityDetectedAt = new Date().toISOString();
+  }
+
+  stateObj.saveState();
+  return result;
+}
+
+/**
+ * Module 5.2: Timed Testimonial Prompt
+ * Schedules a delayed prototype prompt if patient is advocacy-eligible and hasn't received/dismissed it.
+ * STRICTLY 0 CarePoints awarded for prompt/eligibility.
+ * @param {number} customDelay
+ * @returns {boolean} Whether prompt scheduling was initiated
+ */
+function triggerTimedAdvocacyPrompt(customDelay = ADVOCACY_PROMPT_DELAY_MS) {
+  checkAdvocacyEligibility();
+
+  if (!state.advocacy || !state.advocacy.isEligible) {
+    return false;
+  }
+
+  if (state.advocacy.testimonialSubmitted) {
+    return false;
+  }
+
+  if (state.advocacy.promptDismissed) {
+    return false;
+  }
+
+  if (state.advocacy.promptShown) {
+    return false;
+  }
+
+  clearAdvocacyPromptTimer();
+
+  advocacyPromptTimer = setTimeout(() => {
+    // Re-verify conditions right before execution
+    if (
+      !state.advocacy.isEligible ||
+      state.advocacy.testimonialSubmitted ||
+      state.advocacy.promptDismissed ||
+      state.advocacy.promptShown
+    ) {
+      return;
+    }
+
+    // 1. Mark prompt as shown in state
+    state.advocacy.promptShown = true;
+    state.advocacy.lastPromptAt = new Date().toISOString();
+
+    // 2. Add notification to Notification Center (prevent duplicates)
+    if (!state.notifications) {
+      state.notifications = DEFAULT_NOTIFICATIONS.map((n) => ({ ...n }));
+    }
+
+    const existingNotif = state.notifications.find(
+      (n) => n.id === "notif-advocacy-prompt" || n.type === "advocacy",
+    );
+
+    if (!existingNotif) {
+      const advocacyNotif = {
+        id: "notif-advocacy-prompt",
+        type: "advocacy",
+        badgeLabel: "🌟 Cerita Pasien",
+        title: "🌟 Cerita Anda Bisa Menginspirasi Pasien Lain",
+        desc: "Progres pemulihan dan pengalaman positif Anda dapat membantu pasien lain yang sedang menjalani perjalanan serupa.",
+        timeAgo: "baru saja",
+        actionLabel: "Bagikan Cerita",
+        actionType: "advocacy_testimonial",
+        read: false,
+        completed: state.advocacy.testimonialSubmitted === true,
+      };
+      state.notifications.unshift(advocacyNotif);
+    }
+
+    state.saveState();
+    updateNotificationUI();
+    renderNotificationCenter();
+
+    // 3. Display push notification banner using existing showPushBanner()
+    showPushBanner({
+      title: "🌟 Cerita Anda Bisa Menginspirasi",
+      desc: "Pengalaman Anda bersama Mandaya dapat membantu pasien lain. Bagikan cerita Anda jika Anda berkenan.",
+      sender: "MIRA",
+      role: "Mandaya Care Assistant",
+      avatar: "/assets/mira/mira_avatar.png",
+      actionType: "advocacy_testimonial",
+    });
+  }, customDelay);
+
+  return true;
 }
 
 /**
@@ -5062,10 +5368,23 @@ function submitTestimonialAction() {
   state.advocacy.testimonialText = testimonialText;
   state.advocacy.testimonialConsent = true;
   state.advocacy.sharedAt = dateStr;
+
+  // Mark advocacy notification in Notification Center as completed and read
+  if (state.notifications) {
+    const advNotif = state.notifications.find(
+      (n) => n.id === "notif-advocacy-prompt" || n.type === "advocacy",
+    );
+    if (advNotif) {
+      advNotif.completed = true;
+      advNotif.read = true;
+    }
+  }
+
   state.saveState();
 
   closeModal("modal-advocacy-testimonial");
   renderHomeScreenFeedback();
+  renderTestimonialShowcase();
   renderCareJourneyTimeline();
   openModal("modal-advocacy-testimonial-thanks");
   showToast("Testimonial Anda berhasil dikirim.");
@@ -5097,6 +5416,7 @@ function executeReferralShare() {
   state.saveState();
 
   renderHomeScreenFeedback();
+  renderTestimonialShowcase();
   renderCareJourneyTimeline();
 
   if (navigator.share) {
@@ -5109,6 +5429,294 @@ function executeReferralShare() {
 
   closeModal("modal-advocacy-referral");
   showToast("Link rekomendasi Care Dokter siap dibagikan ke orang terdekat.");
+}
+
+// ============================================================================
+// MODULE 5.4: ADVOCACY ENGINE — TESTIMONIAL SHOWCASE / CERITA PASIEN
+// ============================================================================
+
+const VERIFIED_PATIENT_TESTIMONIALS = [
+  {
+    id: "testi-seed-1",
+    authorName: "Hendra Wijaya",
+    category: "orthopedic",
+    categoryLabel: "Orthopedic Recovery",
+    procedure: "Pasca Rekonstruksi ACL & Artroskopi",
+    doctor: "Dr. Andi Pratama, Sp.OT",
+    hospital: "Mandaya Royal Hospital Puri",
+    rating: 5,
+    quote: "Setelah operasi artroskopi dan fisioterapi bertahap di Mandaya, di minggu ke-4 lutut saya sudah bisa ditekuk 110° tanpa rasa nyeri tajam. Protokol pemulihan terstruktur dan panduan MIRA sangat membantu memantau latihan harian di rumah.",
+    recoveryPhase: "1 Bulan Pasca Operasi",
+    verified: true,
+    avatarColor: "#0284c7",
+    initials: "HW",
+  },
+  {
+    id: "testi-seed-2",
+    authorName: "Siti Rahmawati",
+    category: "rehabilitation",
+    categoryLabel: "Fisioterapi & Rehabilitasi",
+    procedure: "Penguatan Otot & Mobilisasi Sendi",
+    doctor: "Tim Fisioterapi & Rehab Medik Mandaya",
+    hospital: "Mandaya Royal Hospital Puri",
+    rating: 5,
+    quote: "Pendampingan tim fisioterapis sangat sabar dan telaten. Latihan penguatan otot quadriceps membuat saya kembali percaya diri berjalan mandiri tanpa bantuan kruk.",
+    recoveryPhase: "Fase Pemulihan Lanjutan",
+    verified: true,
+    avatarColor: "#059669",
+    initials: "SR",
+  },
+  {
+    id: "testi-seed-3",
+    authorName: "Dewi Kusuma",
+    category: "general",
+    categoryLabel: "Pelayanan Rawat Inap & Bedah",
+    procedure: "Perawatan Pasca Bedah Ortopedi",
+    doctor: "DPJP & Tim Perawat Mandaya",
+    hospital: "Mandaya Royal Hospital Puri",
+    rating: 5,
+    quote: "Fasilitas kamar rawat inap yang sangat nyaman dan perawat yang sigap 24 jam membuat masa pemulihan pasca tindakan terasa tenang. Komunikasi tim medis sangat transparan dan menenangkan.",
+    recoveryPhase: "Evaluasi Pasca Pulang",
+    verified: true,
+    avatarColor: "#7c3aed",
+    initials: "DK",
+  },
+  {
+    id: "testi-seed-4",
+    authorName: "Agus Pratama",
+    category: "orthopedic",
+    categoryLabel: "Orthopedic Recovery",
+    procedure: "Penanganan Nyeri Sendi & Terapi Lutut",
+    doctor: "Dr. Andi Pratama, Sp.OT",
+    hospital: "Mandaya Royal Hospital Puri",
+    rating: 5,
+    quote: "Kombinasi konsultasi dokter spesialis dan panduan aktivitas harian yang jelas membuat bengkak sendi cepat mereda dan saya bisa kembali beraktivitas kerja dengan nyaman.",
+    recoveryPhase: "Fase Pemeliharaan",
+    verified: true,
+    avatarColor: "#0d9488",
+    initials: "AP",
+  },
+];
+
+let currentTestimonialFilter = "all";
+
+/**
+ * Anonymize patient full name for privacy compliance.
+ * e.g., "Budi Santoso" -> "Budi S."
+ * e.g., "Hendra Wijaya" -> "Hendra W."
+ * e.g., "Siti Rahmawati Putri" -> "Siti R. P."
+ * @param {string} fullName
+ * @returns {string}
+ */
+function anonymizePatientName(fullName) {
+  if (!fullName || typeof fullName !== "string") return "Pasien Mandaya";
+  const parts = fullName.trim().split(/\s+/);
+  if (parts.length <= 1) return parts[0];
+  const firstName = parts[0];
+  const initials = parts
+    .slice(1)
+    .map((p) => `${p.charAt(0).toUpperCase()}.`)
+    .join(" ");
+  return `${firstName} ${initials}`;
+}
+
+/**
+ * Get Initials for avatar
+ * @param {string} name
+ * @returns {string}
+ */
+function getPatientInitials(name) {
+  if (!name || typeof name !== "string") return "PM";
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+  return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+}
+
+/**
+ * Switch testimonial category filter
+ * @param {string} category
+ */
+function filterTestimonials(category) {
+  currentTestimonialFilter = category;
+  renderTestimonialShowcase();
+}
+
+/**
+ * Render Testimonial Showcase Section (Strictly +0 CarePoints)
+ */
+function renderTestimonialShowcase() {
+  const container = document.getElementById("section-testimonial-showcase");
+  if (!container) return;
+
+  const user = state.currentUser || {
+    name: "Budi Santoso",
+    careJourney: "Orthopedic Recovery",
+  };
+  const advocacy = state.advocacy || {};
+  const feedback = state.feedback || {};
+
+  // Build combined stories list
+  const stories = [];
+
+  // 1. If user has submitted a testimonial, prepend it at the top
+  if (advocacy.testimonialSubmitted && advocacy.testimonialText) {
+    stories.push({
+      id: "user-submitted-story",
+      isUserSubmission: true,
+      authorName: user.name || "Budi Santoso",
+      category: "orthopedic",
+      categoryLabel: user.careJourney || "Orthopedic Recovery",
+      procedure: "Perjalanan Pemulihan Pasien Mandaya",
+      doctor: "Dr. Andi Pratama, Sp.OT",
+      hospital: "Mandaya Royal Hospital Puri",
+      rating: feedback.rating || 5,
+      quote: advocacy.testimonialText,
+      recoveryPhase: advocacy.sharedAt
+        ? `Dikirim ${advocacy.sharedAt}`
+        : "Baru saja",
+      verified: true,
+      avatarColor: "#0284c7",
+      initials: getPatientInitials(user.name || "Budi Santoso"),
+    });
+  }
+
+  // 2. Add seed testimonials with deterministic journey-relevant ordering
+  // (Orthopedic first, then Rehabilitation, then General)
+  const sortedSeeds = [...VERIFIED_PATIENT_TESTIMONIALS].sort((a, b) => {
+    const priority = { orthopedic: 1, rehabilitation: 2, general: 3 };
+    return (priority[a.category] || 99) - (priority[b.category] || 99);
+  });
+
+  stories.push(...sortedSeeds);
+
+  // 3. Filter by current active category
+  const filteredStories = stories.filter((story) => {
+    if (currentTestimonialFilter === "all") return true;
+    return story.category === currentTestimonialFilter;
+  });
+
+  // 4. Render filter buttons
+  const filters = [
+    { key: "all", label: "🌟 Semua Cerita" },
+    { key: "orthopedic", label: "🦴 Orthopedic" },
+    { key: "rehabilitation", label: "🏃 Fisioterapi" },
+    { key: "general", label: "🏥 Rawat Inap" },
+  ];
+
+  const filterButtonsHtml = filters
+    .map(
+      (f) => `
+    <button type="button" class="testimonial-filter-btn ${currentTestimonialFilter === f.key ? "active" : ""}" onclick="filterTestimonials('${f.key}')">
+      ${f.label}
+    </button>
+  `,
+    )
+    .join("");
+
+  // 5. Render cards
+  let cardsHtml = "";
+  if (filteredStories.length === 0) {
+    cardsHtml = `
+      <div class="testimonial-empty-state">
+        <p>Belum ada cerita untuk kategori ini.</p>
+      </div>
+    `;
+  } else {
+    cardsHtml = filteredStories
+      .map((story) => {
+        const anonymized = anonymizePatientName(story.authorName);
+        const stars = "★".repeat(story.rating) + "☆".repeat(5 - story.rating);
+        const isUser = story.isUserSubmission;
+
+        return `
+        <div class="testimonial-item-card ${isUser ? "user-story" : ""}" id="testimonial-card-${story.id}">
+          ${
+            isUser
+              ? `
+            <div class="testimonial-user-ribbon">
+              <span>🌟 Cerita Pemulihan Anda</span>
+              <span>✓ Ditampilkan</span>
+            </div>
+          `
+              : ""
+          }
+
+          <div class="testimonial-card-author-row">
+            <div class="testimonial-avatar" style="background: ${story.avatarColor || "#0284c7"};">
+              ${story.initials || "MR"}
+            </div>
+            <div class="testimonial-author-info">
+              <div class="testimonial-author-name-row">
+                <span class="testimonial-author-name">${anonymized}</span>
+                <span class="testimonial-verified-badge">✓ Terverifikasi</span>
+              </div>
+              <div class="testimonial-stars-row">
+                <span class="testimonial-stars-gold">${stars}</span>
+                <span class="testimonial-rating-num">${story.rating}/5</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial-journey-tag">
+            ${story.categoryLabel} · ${story.procedure}
+          </div>
+
+          <div class="testimonial-quote-box">
+            ${story.quote}
+          </div>
+
+          <div class="testimonial-footer-row">
+            <span class="testimonial-doctor-label">👨‍⚕️ ${story.doctor}</span>
+            <span class="testimonial-phase-tag">${story.recoveryPhase}</span>
+          </div>
+        </div>
+      `;
+      })
+      .join("");
+  }
+
+  // 6. Action prompt at bottom of showcase
+  let bottomCtaHtml = "";
+  if (!advocacy.testimonialSubmitted) {
+    bottomCtaHtml = `
+      <div class="testimonial-showcase-cta">
+        <button type="button" class="btn-showcase-share" onclick="openTestimonialFromAdvocacy()">
+          <span>✍️</span> Tulis Cerita Pemulihan Anda
+        </button>
+      </div>
+    `;
+  } else {
+    bottomCtaHtml = `
+      <div class="testimonial-showcase-cta">
+        <span style="font-size: 11.5px; color: #16a34a; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+          ✓ Cerita Anda telah membantu menginspirasi pasien lain
+        </span>
+      </div>
+    `;
+  }
+
+  // Assemble the entire section
+  container.innerHTML = `
+    <div class="testimonial-section-header">
+      <div class="testimonial-section-pill">
+        <span>🌟</span> Cerita & Inspirasi Pasien
+      </div>
+      <h3 class="testimonial-section-title">Cerita Pasien Mandaya</h3>
+      <p class="testimonial-section-desc">
+        Pengalaman pemulihan nyata dari pasien terverifikasi Mandaya Royal Hospital.
+      </p>
+    </div>
+
+    <div class="testimonial-filter-scroller">
+      ${filterButtonsHtml}
+    </div>
+
+    <div class="testimonial-cards-container">
+      ${cardsHtml}
+    </div>
+
+    ${bottomCtaHtml}
+  `;
 }
 
 // ============================================================================
@@ -5671,6 +6279,22 @@ function submitMicroFeedback() {
     pointsAwarded: true,
   };
 
+  // Feature 4.6: Store pending closure context for delayed MIRA notification
+  state.pendingClosureContext = {
+    touchpoint: tpKey,
+    rating: currentMicroFeedbackDraft.rating,
+    comment: commentText,
+    insight: insight,
+    isVoice: Boolean(currentMicroFeedbackDraft.voiceRef),
+    patientType: "existing_user",
+  };
+
+  // Feature 5.1 & 5.2: Check Advocacy Eligibility on micro feedback submission
+  checkAdvocacyEligibility();
+  if (state.advocacy && state.advocacy.isEligible) {
+    triggerTimedAdvocacyPrompt();
+  }
+
   // 4. Save state
   state.saveState();
 
@@ -5862,6 +6486,17 @@ function submitNonUserFeedback() {
       visitId: "VIS-2026-DEMO-001",
     },
   };
+
+  // Feature 4.6: Store pending closure context for delayed MIRA notification
+  state.pendingClosureContext = {
+    touchpoint: currentNonUserTouchpoint,
+    rating: currentNonUserFeedbackDraft.rating,
+    comment: commentText,
+    insight: nonUserInsight,
+    patientType: "non_user",
+    visitContext: state.nonUserFeedback.visitContext,
+  };
+
   state.saveState();
 
   closeModal("modal-nonuser-feedback");
@@ -5930,6 +6565,356 @@ function submitNonUserFeedback() {
 }
 
 // ============================================================================
+// MODULE 4.6: FEEDBACK LOOP CLOSURE & DELAYED NOTIFICATION EXPERIENCE
+// ============================================================================
+
+let closureNotificationTimer = null;
+const CLOSURE_SIMULATION_DELAY_MS = 3500; // 3.5 seconds delay
+
+/**
+ * Clear any active simulated closure notification timers
+ */
+function clearClosureNotificationTimer() {
+  if (closureNotificationTimer) {
+    clearTimeout(closureNotificationTimer);
+    closureNotificationTimer = null;
+  }
+}
+
+/**
+ * Schedule Delayed Feedback Loop Closure Notification (3-5s simulated delay)
+ */
+function scheduleDelayedFeedbackClosureNotification(closureData) {
+  if (!closureData) return;
+  clearClosureNotificationTimer();
+
+  state.pendingClosureContext = closureData;
+
+  closureNotificationTimer = setTimeout(() => {
+    triggerDelayedFeedbackClosureNotification(closureData);
+  }, CLOSURE_SIMULATION_DELAY_MS);
+}
+
+/**
+ * Fire the simulated MIRA Notification for Feedback Loop Closure
+ */
+function triggerDelayedFeedbackClosureNotification(closureData) {
+  clearClosureNotificationTimer();
+  if (!closureData) return;
+
+  const now = new Date();
+  const timeStr = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")} WIB`;
+
+  const record = {
+    id: `closure-${Date.now()}`,
+    available: true,
+    read: false,
+    createdAt: timeStr,
+    touchpoint: closureData.touchpoint || "doctor_consultation",
+    rating: closureData.rating || 5,
+    comment: closureData.comment || "",
+    insight: closureData.insight || null,
+    patientType: closureData.patientType || "existing_user",
+    isVoice: Boolean(closureData.isVoice || closureData.voiceRef),
+    visitContext: closureData.visitContext || null,
+  };
+
+  state.closureNotification = record;
+
+  const isPositive =
+    record.rating >= 4 &&
+    (!record.insight || record.insight.sentimentLevel === "positive");
+
+  const notifTitle = isPositive
+    ? "Ada pembaruan terkait apresiasi Anda."
+    : "Ada pembaruan terkait masukan Anda.";
+  const notifDesc =
+    "Mandaya telah meninjau masukan Anda. Ketuk untuk melihat tindak lanjut.";
+
+  // If existing user, add/update in state.notifications for Notification Center
+  if (record.patientType !== "non_user") {
+    if (!state.notifications) {
+      state.notifications = DEFAULT_NOTIFICATIONS.map((n) => ({ ...n }));
+    }
+    const existingIndex = state.notifications.findIndex(
+      (n) => n.id === "notif-feedback-closure",
+    );
+    const notifObj = {
+      id: "notif-feedback-closure",
+      type: "feedback_closure",
+      badgeLabel: "MIRA Listen",
+      title: notifTitle,
+      desc: notifDesc,
+      timeAgo: "baru saja",
+      actionText: "Lihat Tindak Lanjut",
+      actionType: "closure",
+      read: false,
+      closureData: record,
+    };
+    if (existingIndex >= 0) {
+      state.notifications[existingIndex] = notifObj;
+    } else {
+      state.notifications.unshift(notifObj);
+    }
+  }
+
+  state.saveState();
+  updateNotificationUI();
+
+  // Show floating push banner using Module 3 showPushBanner
+  showPushBanner({
+    title: notifTitle,
+    desc: notifDesc,
+    sender: "MIRA Listen",
+    role: "Quality Care Engine",
+    avatar: "/assets/mira/mira_avatar.png",
+    actionType: "closure",
+  });
+}
+
+/**
+ * Generate rich, dynamic, context-aware Feedback Loop Closure content
+ */
+function getFeedbackClosureContent(data) {
+  const tp = data?.touchpoint || "doctor_consultation";
+  const score = data?.rating || 5;
+  const comment = data?.comment || "";
+  const insight = data?.insight || null;
+  const isPositive =
+    score >= 4 && (!insight || insight.sentimentLevel === "positive");
+
+  let touchpointLabel = "Konsultasi Dokter";
+  if (tp === "registration") touchpointLabel = "Registrasi & Admisi";
+  else if (tp === "pharmacy") touchpointLabel = "Farmasi & Pengambilan Obat";
+  else if (tp === "doctor_consultation") touchpointLabel = "Konsultasi Dokter";
+  else if (data?.visitContext?.service)
+    touchpointLabel = data.visitContext.service;
+
+  // Step 1: User Quote / Main summary
+  let userQuote = comment;
+  if (!userQuote && insight && insight.summary) {
+    userQuote = insight.summary;
+  }
+  if (!userQuote) {
+    if (isPositive) {
+      if (tp === "registration")
+        userQuote = "Pelayanan pendaftaran sangat cepat dan staf ramah.";
+      else if (tp === "pharmacy")
+        userQuote =
+          "Apoteker menjelaskan petunjuk konsumsi obat dengan sangat jelas.";
+      else
+        userQuote = "Penjelasan dokter sangat ramah, detail, dan menenangkan.";
+    } else {
+      if (tp === "registration")
+        userQuote = "Waktu tunggu antrean loket pendaftaran cukup lama.";
+      else if (tp === "pharmacy")
+        userQuote = "Waktu tunggu penyiapan resep obat di apotek perlu dipercepat.";
+      else
+        userQuote = "Waktu tunggu giliran konsultasi dokter perlu dioptimalkan.";
+    }
+  }
+
+  // Step 2 & 3: Context-aware Follow up & Update
+  let step2Badge = isPositive
+    ? "🌟 KAMI MENGHARGAI MASUKAN ANDA"
+    : "🔧 KAMI MENINDAKLANJUTI";
+  let step3Badge = isPositive ? "💚 KOMITMEN KAMI" : "✨ PEMBARUAN UNTUK ANDA";
+  let step2Text = "";
+  let step3Text = "";
+
+  if (tp === "registration") {
+    if (isPositive) {
+      step2Text =
+        "Apresiasi Anda terhadap kecepatan dan keramahan petugas telah kami sampaikan ke unit Front Office & Admission.";
+      step3Text =
+        "Mandaya berkomitmen mempertahankan standar hospitality unggul dan kenyamanan proses admisi di setiap kunjungan Anda.";
+    } else {
+      step2Text =
+        "Masukan mengenai antrean pendaftaran telah dievaluasi bersama tim Patient Experience dan supervisor loket admisi.";
+      step3Text =
+        "Alur Fast-Track pra-admisi dan loket digital mandiri kini dioptimalkan untuk memangkas waktu tunggu registrasi.";
+    }
+  } else if (tp === "pharmacy") {
+    if (isPositive) {
+      step2Text =
+        "Apresiasi Anda telah diteruskan kepada Instalasi Farmasi Klinis untuk mendukung ketelitian dan kenyamanan konseling obat.";
+      step3Text =
+        "Kami terus menjaga standar keselamatan pengobatan (Patient Safety) dan kejelasan edukasi aturan minum obat bagi setiap pasien.";
+    } else {
+      step2Text =
+        "Kepala Instalasi Farmasi telah meninjau alur double-check peracikan resep obat untuk mempercepat proses penyerahan.";
+      step3Text =
+        "Sistem tracking status resep digital kini aktif untuk memastikan estimasi waktu tunggu penyerahan obat lebih transparan dan efisien.";
+    }
+  } else {
+    // doctor_consultation or general visit
+    if (isPositive) {
+      step2Text =
+        "Apresiasi Anda telah disampaikan langsung kepada DPJP (Dokter Penanggung Jawab Pelayanan) dan tim perawat poliklinik.";
+      step3Text =
+        "Mandaya senantiasa menjaga kualitas komunikasi klinis yang empatik, menyeluruh, dan berpusat pada kenyamanan pemulihan pasien.";
+    } else {
+      step2Text =
+        "Tim mutu pelayanan medis telah berkoordinasi dengan poliklinik spesialis mengenai sinkronisasi jadwal dan durasi konsultasi.";
+      step3Text =
+        "Estimasi giliran konsultasi real-time kini disinkronkan langsung ke aplikasi agar pasien dapat memantau antrean dengan nyaman.";
+    }
+  }
+
+  // If Voice-to-Insight exists, blend the actual issues/positives seamlessly
+  if (insight) {
+    if (insight.mainIssue && !isPositive) {
+      step2Text = `Masukan mengenai "${insight.mainIssue}" pada layanan ${touchpointLabel} telah masuk dalam agenda evaluasi mutu operasional hari ini.`;
+    }
+    if (insight.positiveAspect && isPositive) {
+      step2Text = `Apresiasi Anda atas "${insight.positiveAspect}" telah dicatat dalam laporan keunggulan layanan klinis Mandaya.`;
+    }
+  }
+
+  return {
+    touchpointLabel,
+    userQuote,
+    step2Badge,
+    step2Text,
+    step3Badge,
+    step3Text,
+    isPositive,
+    insight,
+  };
+}
+
+/**
+ * Open Feedback Loop Closure Modal (Strictly 0 CarePoints awarded)
+ */
+function openFeedbackLoopClosureModal(customData) {
+  const data =
+    customData ||
+    state.closureNotification || {
+      touchpoint:
+        (state.feedback &&
+          state.feedback.categories &&
+          state.feedback.categories[0]) ||
+        "doctor_consultation",
+      rating: (state.feedback && state.feedback.rating) || 5,
+      comment: (state.feedback && state.feedback.comment) || "",
+      insight:
+        (state.feedback && state.feedback.insight) ||
+        (state.voiceFeedbackSession && state.voiceFeedbackSession.insight) ||
+        null,
+    };
+
+  const content = getFeedbackClosureContent(data);
+
+  const tpLabelEl = document.getElementById("closure-tp-label");
+  const ratingRowEl = document.getElementById("closure-rating-row");
+  const userQuoteEl = document.getElementById("closure-user-quote");
+  const step2BadgeEl = document.getElementById("closure-step2-badge");
+  const step2TextEl = document.getElementById("closure-action-text");
+  const step3BadgeEl = document.getElementById("closure-step3-badge");
+  const step3TextEl = document.getElementById("closure-update-text");
+
+  if (tpLabelEl) tpLabelEl.textContent = content.touchpointLabel;
+  if (ratingRowEl) {
+    const score = data.rating || 5;
+    const stars = "★".repeat(score) + "☆".repeat(5 - score);
+    ratingRowEl.textContent = `${stars} ${score}/5 · ${getRatingLabel(score)}`;
+  }
+  if (userQuoteEl) {
+    userQuoteEl.textContent = `"${content.userQuote}"`;
+  }
+  if (step2BadgeEl) {
+    step2BadgeEl.textContent = content.step2Badge;
+    step2BadgeEl.className = content.isPositive
+      ? "closure-step-badge emerald"
+      : "closure-step-badge amber";
+  }
+  if (step2TextEl) {
+    step2TextEl.textContent = content.step2Text;
+  }
+  if (step3BadgeEl) {
+    step3BadgeEl.textContent = content.step3Badge;
+    step3BadgeEl.className = "closure-step-badge emerald";
+  }
+  if (step3TextEl) {
+    step3TextEl.textContent = content.step3Text;
+  }
+
+  // Voice-to-Insight Card
+  const insightContainer = document.getElementById(
+    "closure-insight-container",
+  );
+  const insightPill = document.getElementById("closure-insight-pill");
+  const insightIssue = document.getElementById("closure-insight-issue");
+  const insightPositive = document.getElementById("closure-insight-positive");
+  const insightSummary = document.getElementById("closure-insight-summary");
+
+  const actualInsight =
+    content.insight ||
+    (state.voiceFeedbackSession && state.voiceFeedbackSession.insight);
+  if (insightContainer && actualInsight) {
+    insightContainer.style.display = "block";
+    if (insightPill) {
+      insightPill.textContent = `${actualInsight.sentiment} · ${actualInsight.sentimentScore}`;
+      insightPill.className = `insight-sentiment-pill ${actualInsight.sentimentLevel}`;
+    }
+    if (insightIssue)
+      insightIssue.textContent = actualInsight.mainIssue || "Pelayanan";
+    if (insightPositive)
+      insightPositive.textContent =
+        actualInsight.positiveAspect || "Hospitality";
+    if (insightSummary)
+      insightSummary.textContent = actualInsight.summary || "";
+  } else if (insightContainer) {
+    insightContainer.style.display = "none";
+  }
+
+  openModal("modal-feedback-loop-closure");
+}
+
+/**
+ * Handle "Kembali ke Beranda" button in Micro-Feedback Thanks Modal
+ */
+function handleMicroThanksFinishAction() {
+  closeModal("modal-micro-feedback-thanks");
+  switchTab("home");
+  navigateToScreen("screen-home");
+  if (
+    state.pendingClosureContext &&
+    (!state.closureNotification || !state.closureNotification.available)
+  ) {
+    scheduleDelayedFeedbackClosureNotification(state.pendingClosureContext);
+  }
+}
+
+/**
+ * Handle "Beri Masukan Layanan Lain" button in Micro-Feedback Thanks Modal
+ */
+function handleMicroThanksNextTouchpointAction() {
+  closeModal("modal-micro-feedback-thanks");
+  const nextUnrated = getNextUnratedTouchpoint();
+  openMicroFeedbackModal(nextUnrated);
+  if (
+    state.pendingClosureContext &&
+    (!state.closureNotification || !state.closureNotification.available)
+  ) {
+    scheduleDelayedFeedbackClosureNotification(state.pendingClosureContext);
+  }
+}
+
+/**
+ * Handle "Selesai" button in Non-User Thanks Modal
+ */
+function handleNonUserThanksFinishAction() {
+  closeModal("modal-nonuser-thanks");
+  if (
+    state.pendingClosureContext &&
+    (!state.closureNotification || !state.closureNotification.available)
+  ) {
+    scheduleDelayedFeedbackClosureNotification(state.pendingClosureContext);
+  }
+}
+
+// ============================================================================
 // 13. MODALS & BOTTOM SHEETS
 // ============================================================================
 
@@ -5976,6 +6961,20 @@ function closeModal(modalId) {
   const modal = document.getElementById(modalId);
   if (modal) {
     modal.classList.remove("active");
+  }
+
+  // Feature 4.6: If closing acknowledgement thanks modal and closure is pending, schedule delayed notification
+  if (
+    modalId === "modal-micro-feedback-thanks" ||
+    modalId === "modal-nonuser-thanks"
+  ) {
+    if (
+      state.pendingClosureContext &&
+      (!state.closureNotification || !state.closureNotification.available) &&
+      !closureNotificationTimer
+    ) {
+      scheduleDelayedFeedbackClosureNotification(state.pendingClosureContext);
+    }
   }
 }
 
@@ -6141,4 +7140,23 @@ document.addEventListener("DOMContentLoaded", () => {
   window.handleRedirectToTypedFeedback = handleRedirectToTypedFeedback;
   window.analyzeVoiceFeedback = analyzeVoiceFeedback;
   window.VOICE_SCENARIOS = VOICE_SCENARIOS;
+  window.openFeedbackLoopClosureModal = openFeedbackLoopClosureModal;
+  window.scheduleDelayedFeedbackClosureNotification =
+    scheduleDelayedFeedbackClosureNotification;
+  window.triggerDelayedFeedbackClosureNotification =
+    triggerDelayedFeedbackClosureNotification;
+  window.clearClosureNotificationTimer = clearClosureNotificationTimer;
+  window.handleMicroThanksFinishAction = handleMicroThanksFinishAction;
+  window.handleMicroThanksNextTouchpointAction =
+    handleMicroThanksNextTouchpointAction;
+  window.handleNonUserThanksFinishAction = handleNonUserThanksFinishAction;
+  window.checkAdvocacyEligibility = checkAdvocacyEligibility;
+  window.isPatientEligibleForAdvocacy = isPatientEligibleForAdvocacy;
+  window.triggerTimedAdvocacyPrompt = triggerTimedAdvocacyPrompt;
+  window.clearAdvocacyPromptTimer = clearAdvocacyPromptTimer;
+  window.openTestimonialFromAdvocacy = openTestimonialFromAdvocacy;
+  window.renderTestimonialShowcase = renderTestimonialShowcase;
+  window.filterTestimonials = filterTestimonials;
+  window.anonymizePatientName = anonymizePatientName;
+  window.VERIFIED_PATIENT_TESTIMONIALS = VERIFIED_PATIENT_TESTIMONIALS;
 });
