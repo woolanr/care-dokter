@@ -528,6 +528,8 @@ const DEFAULT_ADVOCACY = {
   testimonialConsent: false,
   referralShared: false,
   sharedAt: "",
+  referralRewardAwarded: false,
+  referralCode: null,
   isEligible: false,
   eligibilityReason: null,
   eligibilityDetectedAt: null,
@@ -3780,7 +3782,7 @@ function renderHomeScreenFeedback() {
     if (adv && adv.referralShared) {
       chipsHtml += `
         <div class="feedback-status-chip chip-referral">
-          <span>✓</span> Mandaya Dibagikan
+          <span>✓</span> Mandaya Dibagikan${adv.referralRewardAwarded ? " (+30 Pts)" : ""}
         </div>
       `;
     }
@@ -5390,34 +5392,164 @@ function submitTestimonialAction() {
   showToast("Testimonial Anda berhasil dikirim.");
 }
 
+let isReferralShareProcessing = false;
+
+/**
+ * Deterministic personalized referral code generator (Feature 5.5)
+ * Format: MANDAYA-<FIRSTNAME>-0881
+ */
+function getReferralCode() {
+  if (state.advocacy && state.advocacy.referralCode) {
+    return state.advocacy.referralCode;
+  }
+  const user = state.currentUser || DEFAULT_DEMO_PATIENT;
+  const firstName = (user.name || "Budi").trim().split(/\s+/)[0].toUpperCase();
+  const code = `MANDAYA-${firstName}-0881`;
+  if (state.advocacy) {
+    state.advocacy.referralCode = code;
+    state.saveState();
+  }
+  return code;
+}
+
+/**
+ * Get full referral URL for the patient
+ */
+function getReferralUrl() {
+  const code = getReferralCode();
+  return `https://mandayahospitalgroup.com/care-dokter?ref=${code}`;
+}
+
+/**
+ * Copy Referral Link to clipboard without awarding CarePoints
+ */
+function copyReferralLink() {
+  const url = getReferralUrl();
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard
+      .writeText(url)
+      .then(() => {
+        showToast("Link referral berhasil disalin.");
+      })
+      .catch(() => {
+        fallbackCopyText(url);
+      });
+  } else {
+    fallbackCopyText(url);
+  }
+}
+
+function fallbackCopyText(text) {
+  try {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";
+    textArea.style.left = "-9999px";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textArea);
+    showToast("Link referral berhasil disalin.");
+  } catch (err) {
+    showToast("Gagal menyalin link.");
+  }
+}
+
+/**
+ * Update Referral Modal UI with dynamic code, URL and reward state
+ */
+function updateReferralModalUI() {
+  const code = getReferralCode();
+  const url = getReferralUrl();
+
+  const codeEl = document.getElementById("referral-code-display");
+  if (codeEl) codeEl.textContent = code;
+
+  const linkEl = document.getElementById("referral-link-display");
+  if (linkEl) linkEl.textContent = url.replace("https://", "");
+
+  const badgeEl = document.getElementById("referral-modal-reward-badge");
+  const shareBtn = document.getElementById("btn-execute-referral-share");
+
+  if (state.advocacy && state.advocacy.referralRewardAwarded) {
+    if (badgeEl) {
+      badgeEl.innerHTML = `
+        <div style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #047857; padding: 6px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; justify-content: center; width: 100%;">
+          <span>✓</span> Referral sudah pernah dibagikan · 🪙 +30 CarePoints diterima
+        </div>
+      `;
+    }
+    if (shareBtn) {
+      shareBtn.innerHTML = `<span>📤</span> Bagikan Lagi`;
+    }
+  } else {
+    if (badgeEl) {
+      badgeEl.innerHTML = `
+        <div style="background: #fef3c7; border: 1px solid #fde68a; color: #b45309; padding: 6px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; justify-content: center; width: 100%;">
+          <span>🪙</span> Dapatkan <strong>+30 CarePoints</strong> saat membagikan rekomendasi
+        </div>
+      `;
+    }
+    if (shareBtn) {
+      shareBtn.innerHTML = `<span>📤</span> Bagikan (+30 Pts)`;
+    }
+  }
+}
+
 /**
  * Open Referral modal from advocacy invitation
  */
 function openReferralFromAdvocacy() {
   closeModal("modal-feedback-positive-advocacy");
+  updateReferralModalUI();
   openModal("modal-advocacy-referral");
 }
 
 /**
- * Execute Referral Sharing Action (privacy-safe, no third-party health collection)
+ * Execute Referral Sharing Action (privacy-safe, +30 CarePoints on FIRST share only)
  */
 function executeReferralShare() {
+  if (isReferralShareProcessing) return; // Prevent rapid double click race
+  isReferralShareProcessing = true;
+
+  const refCode = getReferralCode();
+  const refUrl = getReferralUrl();
+
   const shareData = {
     title: "Care Dokter - Mandaya Royal Hospital Puri",
-    text: "Temukan pendamping perjalanan perawatan kesehatan di Mandaya Royal Hospital bersama aplikasi Care Dokter.",
-    url: "https://mandayahospitalgroup.com/care-dokter",
+    text: `Temukan pendamping perjalanan perawatan kesehatan di Mandaya Royal Hospital bersama aplikasi Care Dokter. Gunakan kode rekomendasi: ${refCode}`,
+    url: refUrl,
   };
 
   const now = new Date();
   const dateStr = `${now.getDate()} ${["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"][now.getMonth()]} ${now.getFullYear()}`;
 
+  const wasAlreadyRewarded = state.advocacy.referralRewardAwarded === true;
+  let pointsAwarded = false;
+
+  // STRICT IDEMPOTENCY GUARD: One-time CarePoints reward
+  if (!wasAlreadyRewarded) {
+    state.addPoints(
+      30,
+      "Referral Program Reward",
+      "Membagikan rekomendasi Care Dokter Mandaya",
+      "👥"
+    );
+    state.advocacy.referralRewardAwarded = true;
+    pointsAwarded = true;
+  }
+
   state.advocacy.referralShared = true;
   state.advocacy.sharedAt = dateStr;
   state.saveState();
 
+  // Re-render UI components
+  renderHomeScreenPoints();
   renderHomeScreenFeedback();
   renderTestimonialShowcase();
   renderCareJourneyTimeline();
+  updatePointPrescriptionUI();
 
   if (navigator.share) {
     navigator.share(shareData).catch(() => {});
@@ -5428,7 +5560,16 @@ function executeReferralShare() {
   }
 
   closeModal("modal-advocacy-referral");
-  showToast("Link rekomendasi Care Dokter siap dibagikan ke orang terdekat.");
+
+  if (pointsAwarded) {
+    openModal("modal-advocacy-referral-thanks");
+  } else {
+    showToast("Link rekomendasi Care Dokter siap dibagikan.");
+  }
+
+  setTimeout(() => {
+    isReferralShareProcessing = false;
+  }, 600);
 }
 
 // ============================================================================
@@ -7159,4 +7300,9 @@ document.addEventListener("DOMContentLoaded", () => {
   window.filterTestimonials = filterTestimonials;
   window.anonymizePatientName = anonymizePatientName;
   window.VERIFIED_PATIENT_TESTIMONIALS = VERIFIED_PATIENT_TESTIMONIALS;
+  window.getReferralCode = getReferralCode;
+  window.getReferralUrl = getReferralUrl;
+  window.copyReferralLink = copyReferralLink;
+  window.updateReferralModalUI = updateReferralModalUI;
+  window.executeReferralShare = executeReferralShare;
 });

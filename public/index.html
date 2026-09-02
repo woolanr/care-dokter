@@ -4008,7 +4008,7 @@
         <p
           class="modal-text"
           style="
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             font-size: 12px;
             line-height: 1.45;
             color: var(--text-body);
@@ -4017,6 +4017,11 @@
           Jika Anda merasa pengalaman Anda bermanfaat, Anda dapat membagikan
           Mandaya kepada keluarga atau teman.
         </p>
+
+        <!-- Referral Reward Status / Promo Banner -->
+        <div id="referral-modal-reward-badge" style="margin-bottom: 12px">
+          <!-- Populated dynamically by updateReferralModalUI() -->
+        </div>
 
         <!-- Referral Card Preview -->
         <div class="referral-share-card">
@@ -4027,23 +4032,135 @@
           <p class="referral-card-msg">
             "Temukan layanan dan perjalanan perawatan bersama Mandaya."
           </p>
-          <div class="referral-link-box">
-            <span>🔗 mandayahospitalgroup.com/care-dokter</span>
-            <span style="color: #7dd3fc; font-weight: 700; font-size: 10px"
-              >Salin Link</span
+
+          <div
+            style="
+              background: rgba(255, 255, 255, 0.15);
+              border: 1px dashed rgba(255, 255, 255, 0.35);
+              border-radius: 8px;
+              padding: 6px 10px;
+              margin-bottom: 8px;
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+            "
+          >
+            <span style="font-size: 10.5px; opacity: 0.9">Kode Referral:</span>
+            <strong
+              id="referral-code-display"
+              style="
+                font-size: 11.5px;
+                letter-spacing: 0.5px;
+                font-family: monospace;
+              "
+              >MANDAYA-BUDI-0881</strong
+            >
+          </div>
+
+          <div
+            class="referral-link-box"
+            style="cursor: pointer"
+            onclick="copyReferralLink()"
+            title="Klik untuk menyalin link"
+          >
+            <span
+              id="referral-link-display"
+              style="
+                word-break: break-all;
+                overflow-wrap: break-word;
+                font-size: 10px;
+                line-height: 1.3;
+                text-align: left;
+                min-width: 0;
+              "
+              >mandayahospitalgroup.com/care-dokter?ref=MANDAYA-BUDI-0881</span
+            >
+            <span
+              class="btn-copy-link-pill"
+              style="
+                color: #7dd3fc;
+                font-weight: 700;
+                font-size: 10px;
+                background: rgba(125, 211, 252, 0.15);
+                padding: 3px 8px;
+                border-radius: 6px;
+                white-space: nowrap;
+                flex-shrink: 0;
+              "
+              >📋 Salin Link</span
             >
           </div>
         </div>
 
         <div class="modal-actions" style="margin-top: 14px">
-          <button class="btn-primary-mobile" onclick="executeReferralShare()">
-            <span>📤</span> Bagikan
+          <button
+            id="btn-execute-referral-share"
+            class="btn-primary-mobile"
+            onclick="executeReferralShare()"
+          >
+            <span>📤</span> Bagikan (+30 Pts)
           </button>
           <button
             class="btn-secondary-mobile"
             onclick="closeModal('modal-advocacy-referral')"
           >
             Selesai
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 23b. Referral Reward Confirmation Modal (Feature 5.5) -->
+    <div class="modal-backdrop" id="modal-advocacy-referral-thanks">
+      <div class="modal-content-card" style="text-align: center">
+        <div
+          class="modal-icon-badge"
+          style="background: #ecfdf5; color: #10b981; font-size: 32px"
+        >
+          👥
+        </div>
+        <div
+          style="
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #fef3c7;
+            color: #b45309;
+            border: 1px solid #fde68a;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 800;
+            margin-bottom: 8px;
+          "
+        >
+          <span>🪙</span> +30 CarePoints
+        </div>
+        <h3 class="modal-title" style="color: #047857; margin-bottom: 6px">
+          Referral Berhasil Dibagikan
+        </h3>
+        <p
+          class="modal-text"
+          style="
+            margin-bottom: 16px;
+            font-size: 12.5px;
+            line-height: 1.45;
+            color: var(--text-body);
+          "
+        >
+          Terima kasih telah merekomendasikan Mandaya kepada orang terdekat. Poin
+          reward telah ditambahkan ke CarePoints Anda.
+        </p>
+
+        <div class="modal-actions">
+          <button
+            class="btn-primary-mobile"
+            onclick="
+              closeModal('modal-advocacy-referral-thanks');
+              switchTab('home');
+            "
+          >
+            Kembali ke Home
           </button>
         </div>
       </div>

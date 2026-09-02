@@ -4848,6 +4848,22 @@ input:checked + .slider-toggle:before {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
+  transition: all 0.2s ease;
+  user-select: all;
+}
+
+.referral-link-box:hover {
+  background: rgba(0, 0, 0, 0.35);
+  border-color: rgba(125, 211, 252, 0.7);
+}
+
+.referral-link-box:active {
+  transform: scale(0.99);
+}
+
+.btn-copy-link-pill:hover {
+  background: rgba(125, 211, 252, 0.28) !important;
+  color: #ffffff !important;
 }
 
 /* ==========================================================================
