@@ -37,39 +37,17 @@
             alt="Mandaya Logo"
             style="width: 24px; height: 24px; object-fit: contain"
           />
-          <span>Care Dokter · Continuous Care Companion</span>
-          <span class="prototype-badge">Patient Role Only</span>
+          <span>Care Dokter</span>
+          <span class="prototype-badge">Patient Role</span>
         </div>
 
         <div class="prototype-actions">
           <button
             class="btn-topbar"
-            onclick="openVoiceFeedbackModal()"
-            title="Buka MIRA Listen Voice-to-Insight Engine"
-            style="background: linear-gradient(135deg, rgba(109, 75, 216, 0.15) 0%, rgba(46, 212, 199, 0.15) 100%); border-color: #a78bfa; color: #5b21b6; font-weight: 700;"
-          >
-            <span>🎙️</span> Voice-to-Insight
-          </button>
-          <button
-            class="btn-topbar"
-            onclick="openMicroFeedbackModal('registration')"
-            title="Buka Micro-Feedback per Touchpoint Layanan"
-          >
-            <span>⚡</span> Micro-Feedback
-          </button>
-          <button
-            class="btn-topbar"
             onclick="openNonUserInviteModal()"
-            title="Simulasikan Undangan Feedback Pasien Non-User / Walk-in"
+            title="Simulasikan Feedback Pasien Non-User / Walk-in"
           >
-            <span>📨</span> Undangan Non-User
-          </button>
-          <button
-            class="btn-topbar"
-            onclick="openRetentionAnalyticsModal()"
-            title="Lihat Tahapan Perjalanan Perawatan Anda"
-          >
-            <span>🗺️</span> Perjalanan Perawatan
+            <span>📨</span> Feedback Non-user
           </button>
           <button
             class="btn-topbar"
@@ -79,12 +57,11 @@
             <span>🔄</span> Reset Demo
           </button>
           <button
-            class="btn-toggle-frame"
-            id="btn-toggle-frame"
-            onclick="toggleDeviceFrame()"
-            title="Ubah ukuran tampilan"
+            class="btn-topbar"
+            onclick="handleLogout()"
+            title="Keluar dari akun pasien"
           >
-            <span>🖥️</span> Mode Luas
+            <span>🚪</span> Logout
           </button>
         </div>
       </div>
