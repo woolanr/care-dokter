@@ -2931,18 +2931,13 @@ function updateRetentionAnalyticsUI() {
   }
 
   // 2. Render Chronological Care Journey Timeline
-<<<<<<< HEAD
   const timelineContainer = document.getElementById(
     "patient-care-timeline-list",
   );
-=======
-  const timelineContainer = document.getElementById("patient-care-timeline-list");
->>>>>>> 8ab235af209114f410eb115cdea36dc220b07b13
   if (!timelineContainer) return;
 
   const isH3Shown = Boolean(
     state.reminderState &&
-<<<<<<< HEAD
     state.reminderState["H-3"] &&
     (state.reminderState["H-3"].shown ||
       state.reminderState["H-3"].read ||
@@ -2954,19 +2949,6 @@ function updateRetentionAnalyticsUI() {
     (state.reminderState["H-1"].shown ||
       state.reminderState["H-1"].read ||
       state.reminderState["H-1"].clicked),
-=======
-      state.reminderState["H-3"] &&
-      (state.reminderState["H-3"].shown ||
-        state.reminderState["H-3"].read ||
-        state.reminderState["H-3"].clicked),
-  );
-  const isH1Shown = Boolean(
-    state.reminderState &&
-      state.reminderState["H-1"] &&
-      (state.reminderState["H-1"].shown ||
-        state.reminderState["H-1"].read ||
-        state.reminderState["H-1"].clicked),
->>>>>>> 8ab235af209114f410eb115cdea36dc220b07b13
   );
   const isAptConfirmed = Boolean(
     state.currentUser && state.currentUser.appointmentConfirmed,
@@ -2976,21 +2958,12 @@ function updateRetentionAnalyticsUI() {
   );
   const isMiraFollowupViewed = Boolean(
     isCheckinDone ||
-<<<<<<< HEAD
     (state.notifications &&
       state.notifications.some(
         (n) =>
           (n.id === "notif-mira-checkin" || n.type === "checkin") &&
           (n.read || n.completed),
       )),
-=======
-      (state.notifications &&
-        state.notifications.some(
-          (n) =>
-            (n.id === "notif-mira-checkin" || n.type === "checkin") &&
-            (n.read || n.completed),
-        )),
->>>>>>> 8ab235af209114f410eb115cdea36dc220b07b13
   );
 
   // Stage 1: H-3 — Pengingat Jadwal Kontrol
@@ -3847,16 +3820,54 @@ function analyzeVoiceFeedback({
 
   // 1. Keyword Lexicon
   const positiveKeywords = [
-    "puas", "sangat puas", "ramah", "membantu", "jelas", "nyaman", "cepat",
-    "baik", "profesional", "terima kasih", "menenangkan", "sigap", "bersih",
-    "teratur", "teliti", "detail", "bagus", "hebat", "sopan", "informatif",
-    "mudah", "memuaskan", "rapi", "komunikatif"
+    "puas",
+    "sangat puas",
+    "ramah",
+    "membantu",
+    "jelas",
+    "nyaman",
+    "cepat",
+    "baik",
+    "profesional",
+    "terima kasih",
+    "menenangkan",
+    "sigap",
+    "bersih",
+    "teratur",
+    "teliti",
+    "detail",
+    "bagus",
+    "hebat",
+    "sopan",
+    "informatif",
+    "mudah",
+    "memuaskan",
+    "rapi",
+    "komunikatif",
   ];
 
   const frictionKeywords = [
-    "lama", "menunggu", "antre", "antrean", "bingung", "tidak jelas", "sulit",
-    "lambat", "terlambat", "kecewa", "mahal", "buru-buru", "kurang", "panjang",
-    "berbelit", "antri", "nunggu", "lama sekali", "antrian", "tertahan", "delay"
+    "lama",
+    "menunggu",
+    "antre",
+    "antrean",
+    "bingung",
+    "tidak jelas",
+    "sulit",
+    "lambat",
+    "terlambat",
+    "kecewa",
+    "mahal",
+    "buru-buru",
+    "kurang",
+    "panjang",
+    "berbelit",
+    "antri",
+    "nunggu",
+    "lama sekali",
+    "antrian",
+    "tertahan",
+    "delay",
   ];
 
   const posMatches = positiveKeywords.filter((k) => text.includes(k));
@@ -3886,7 +3897,10 @@ function analyzeVoiceFeedback({
     sentimentScore = "70%";
     sentimentLevel = "neutral";
     confidenceLabel = "Evaluasi Standar Layanan";
-  } else if (numRating <= 2 || (hasFriction && numRating <= 3 && posMatches.length === 0)) {
+  } else if (
+    numRating <= 2 ||
+    (hasFriction && numRating <= 3 && posMatches.length === 0)
+  ) {
     sentiment = "Perlu Perhatian";
     sentimentScore = "Perhatian Khusus";
     sentimentLevel = "attention";
@@ -3958,8 +3972,10 @@ function analyzeVoiceFeedback({
     mainIssue = "Pelayanan & Keramahan Staf";
     themeCategory = "staff_experience";
   } else {
-    if (touchpoint === "registration") mainIssue = "Alur Proses Registrasi & Admisi";
-    else if (touchpoint === "doctor_consultation") mainIssue = "Konsultasi Klinis Dokter";
+    if (touchpoint === "registration")
+      mainIssue = "Alur Proses Registrasi & Admisi";
+    else if (touchpoint === "doctor_consultation")
+      mainIssue = "Konsultasi Klinis Dokter";
     else if (touchpoint === "pharmacy") mainIssue = "Layanan Apotek & Farmasi";
   }
 
@@ -4008,7 +4024,8 @@ function analyzeVoiceFeedback({
   // 5. Touchpoint Context
   let touchpointTitle = "Konsultasi Dokter";
   if (touchpoint === "registration") touchpointTitle = "Registrasi & Admisi";
-  else if (touchpoint === "pharmacy") touchpointTitle = "Farmasi & Pengambilan Obat";
+  else if (touchpoint === "pharmacy")
+    touchpointTitle = "Farmasi & Pengambilan Obat";
 
   // 6. Contextual Indonesian Summary
   let summary = "";
@@ -4046,10 +4063,16 @@ function analyzeVoiceFeedback({
  * Show patient-friendly notice when voice feedback has already been submitted for one touchpoint (Feature 13)
  */
 function showVoiceAlreadyUsedNotice(submittedTpKey, targetTpKey) {
-  const submittedConfig = TOUCHPOINTS_CONFIG[submittedTpKey] || TOUCHPOINTS_CONFIG["doctor_consultation"];
-  const targetConfig = TOUCHPOINTS_CONFIG[targetTpKey] || TOUCHPOINTS_CONFIG[getNextUnratedTouchpoint()] || TOUCHPOINTS_CONFIG["registration"];
+  const submittedConfig =
+    TOUCHPOINTS_CONFIG[submittedTpKey] ||
+    TOUCHPOINTS_CONFIG["doctor_consultation"];
+  const targetConfig =
+    TOUCHPOINTS_CONFIG[targetTpKey] ||
+    TOUCHPOINTS_CONFIG[getNextUnratedTouchpoint()] ||
+    TOUCHPOINTS_CONFIG["registration"];
 
-  window._pendingTypedFeedbackTouchpoint = targetTpKey || getNextUnratedTouchpoint();
+  window._pendingTypedFeedbackTouchpoint =
+    targetTpKey || getNextUnratedTouchpoint();
 
   const descEl = document.getElementById("voice-used-notice-desc");
   const tpEl = document.getElementById("voice-used-notice-tp");
@@ -4073,7 +4096,8 @@ function handleRedirectToTypedFeedback() {
   closeModal("modal-voice-used-notice");
   closeModal("modal-voice-feedback-demo");
 
-  const targetTp = window._pendingTypedFeedbackTouchpoint || getNextUnratedTouchpoint();
+  const targetTp =
+    window._pendingTypedFeedbackTouchpoint || getNextUnratedTouchpoint();
   openMicroFeedbackModal(targetTp);
 
   // Automatically expand comment input and focus it
@@ -4084,14 +4108,18 @@ function handleRedirectToTypedFeedback() {
   if (optArrow) optArrow.textContent = "▲";
 
   setTimeout(() => {
-    const commentInput = document.getElementById("micro-feedback-comment-input");
+    const commentInput = document.getElementById(
+      "micro-feedback-comment-input",
+    );
     if (commentInput) {
       commentInput.focus();
     }
   }, 200);
 
   const tpTitle = TOUCHPOINTS_CONFIG[targetTp]?.title || "Layanan";
-  showToast(`Silakan berikan penilaian bintang dan masukan tertulis untuk ${tpTitle}.`);
+  showToast(
+    `Silakan berikan penilaian bintang dan masukan tertulis untuk ${tpTitle}.`,
+  );
 }
 
 /**
@@ -4099,7 +4127,9 @@ function handleRedirectToTypedFeedback() {
  */
 function setupLockedVoiceModalView(session) {
   const submittedTp = session.touchpoint || "doctor_consultation";
-  const config = TOUCHPOINTS_CONFIG[submittedTp] || TOUCHPOINTS_CONFIG["doctor_consultation"];
+  const config =
+    TOUCHPOINTS_CONFIG[submittedTp] ||
+    TOUCHPOINTS_CONFIG["doctor_consultation"];
 
   currentVoiceModalState.touchpoint = submittedTp;
   currentVoiceModalState.rating = session.rating || 5;
@@ -4120,7 +4150,12 @@ function setupLockedVoiceModalView(session) {
   const lockBadge = document.getElementById("voice-scenario-lock-badge");
   if (lockBadge) lockBadge.style.display = "inline-flex";
 
-  ["scenario_very_positive", "scenario_mixed", "scenario_waiting_friction", "scenario_pharmacy_review"].forEach((key) => {
+  [
+    "scenario_very_positive",
+    "scenario_mixed",
+    "scenario_waiting_friction",
+    "scenario_pharmacy_review",
+  ].forEach((key) => {
     const chipConfig = VOICE_SCENARIOS[key];
     if (chipConfig) {
       const chipEl = document.getElementById(chipConfig.chipId);
@@ -4158,7 +4193,9 @@ function setupLockedVoiceModalView(session) {
 
   if (timerEl) timerEl.textContent = "00:03";
   if (barsEl) barsEl.classList.remove("animating");
-  if (hintEl) hintEl.textContent = "✓ Rekaman Suara Terverifikasi & Disimpan di Database MIRA";
+  if (hintEl)
+    hintEl.textContent =
+      "✓ Rekaman Suara Terverifikasi & Disimpan di Database MIRA";
   if (btnEl) {
     btnEl.innerHTML = "<span>✓</span> Rekaman Suara Tersimpan";
     btnEl.disabled = true;
@@ -4199,7 +4236,9 @@ function setupLockedVoiceModalView(session) {
  * Configure Voice Modal in Active / Simulation View
  */
 function setupActiveVoiceModalView(initialTouchpoint) {
-  const tpKey = TOUCHPOINTS_CONFIG[initialTouchpoint] ? initialTouchpoint : "doctor_consultation";
+  const tpKey = TOUCHPOINTS_CONFIG[initialTouchpoint]
+    ? initialTouchpoint
+    : "doctor_consultation";
   currentVoiceModalState.touchpoint = tpKey;
 
   // 1. Hide locked banner
@@ -4210,7 +4249,12 @@ function setupActiveVoiceModalView(initialTouchpoint) {
   const lockBadge = document.getElementById("voice-scenario-lock-badge");
   if (lockBadge) lockBadge.style.display = "none";
 
-  ["scenario_very_positive", "scenario_mixed", "scenario_waiting_friction", "scenario_pharmacy_review"].forEach((key) => {
+  [
+    "scenario_very_positive",
+    "scenario_mixed",
+    "scenario_waiting_friction",
+    "scenario_pharmacy_review",
+  ].forEach((key) => {
     const chipConfig = VOICE_SCENARIOS[key];
     if (chipConfig) {
       const chipEl = document.getElementById(chipConfig.chipId);
@@ -4273,7 +4317,9 @@ function setupActiveVoiceModalView(initialTouchpoint) {
  * Open Voice Feedback Simulation & Voice-to-Insight Modal
  */
 function openVoiceFeedbackModal(initialTouchpoint = "doctor_consultation") {
-  const isLocked = Boolean(state.voiceFeedbackSession && state.voiceFeedbackSession.submitted);
+  const isLocked = Boolean(
+    state.voiceFeedbackSession && state.voiceFeedbackSession.submitted,
+  );
 
   if (isLocked) {
     const session = state.voiceFeedbackSession;
@@ -4281,7 +4327,11 @@ function openVoiceFeedbackModal(initialTouchpoint = "doctor_consultation") {
 
     // If caller explicitly requested a DIFFERENT touchpoint from the one that used voice,
     // show the patient-friendly "Voice Feedback sudah digunakan" notice modal!
-    if (initialTouchpoint && initialTouchpoint !== submittedTp && TOUCHPOINTS_CONFIG[initialTouchpoint]) {
+    if (
+      initialTouchpoint &&
+      initialTouchpoint !== submittedTp &&
+      TOUCHPOINTS_CONFIG[initialTouchpoint]
+    ) {
       showVoiceAlreadyUsedNotice(submittedTp, initialTouchpoint);
       return;
     }
@@ -4306,14 +4356,20 @@ function selectVoiceScenario(scenarioKey, animateWave = true) {
     return;
   }
 
-  const sc = VOICE_SCENARIOS[scenarioKey] || VOICE_SCENARIOS["scenario_very_positive"];
+  const sc =
+    VOICE_SCENARIOS[scenarioKey] || VOICE_SCENARIOS["scenario_very_positive"];
   currentVoiceModalState.scenarioKey = scenarioKey;
   currentVoiceModalState.touchpoint = sc.touchpoint;
   currentVoiceModalState.rating = sc.rating;
   currentVoiceModalState.transcript = sc.transcript;
 
   // 1. Update Scenario Chips UI
-  ["scenario_very_positive", "scenario_mixed", "scenario_waiting_friction", "scenario_pharmacy_review"].forEach((key) => {
+  [
+    "scenario_very_positive",
+    "scenario_mixed",
+    "scenario_waiting_friction",
+    "scenario_pharmacy_review",
+  ].forEach((key) => {
     const chipConfig = VOICE_SCENARIOS[key];
     if (chipConfig) {
       const chipEl = document.getElementById(chipConfig.chipId);
@@ -4368,7 +4424,8 @@ function selectVoiceScenario(scenarioKey, animateWave = true) {
       setTimeout(() => barsEl.classList.remove("animating"), 1200);
     }
   }
-  if (hintEl) hintEl.textContent = "● Rekaman Suara Terproses & Dianalisis oleh MIRA";
+  if (hintEl)
+    hintEl.textContent = "● Rekaman Suara Terproses & Dianalisis oleh MIRA";
   if (btnEl) {
     btnEl.innerHTML = "<span>🎙️</span> Putar / Ulangi Simulasi Suara";
     btnEl.disabled = false;
@@ -4383,7 +4440,10 @@ function switchVoiceModalTouchpoint(touchpointKey) {
 
   if (state.voiceFeedbackSession && state.voiceFeedbackSession.submitted) {
     if (touchpointKey !== state.voiceFeedbackSession.touchpoint) {
-      showVoiceAlreadyUsedNotice(state.voiceFeedbackSession.touchpoint, touchpointKey);
+      showVoiceAlreadyUsedNotice(
+        state.voiceFeedbackSession.touchpoint,
+        touchpointKey,
+      );
     }
     return;
   }
@@ -4392,8 +4452,10 @@ function switchVoiceModalTouchpoint(touchpointKey) {
 
   // Pick matching scenario
   let scenarioKey = "scenario_very_positive";
-  if (touchpointKey === "registration") scenarioKey = "scenario_waiting_friction";
-  else if (touchpointKey === "pharmacy") scenarioKey = "scenario_pharmacy_review";
+  if (touchpointKey === "registration")
+    scenarioKey = "scenario_waiting_friction";
+  else if (touchpointKey === "pharmacy")
+    scenarioKey = "scenario_pharmacy_review";
   else scenarioKey = "scenario_very_positive";
 
   selectVoiceScenario(scenarioKey, false);
@@ -4459,7 +4521,8 @@ function simulateVoiceFeedbackAction() {
   btnEl.disabled = true;
   btnEl.innerHTML = "<span>🔴</span> Merekam Suara & Menganalisis...";
   if (barsEl) barsEl.classList.add("animating");
-  if (hintEl) hintEl.textContent = "MIRA sedang mendengarkan rekaman suara Anda...";
+  if (hintEl)
+    hintEl.textContent = "MIRA sedang mendengarkan rekaman suara Anda...";
 
   let seconds = 0;
   const interval = setInterval(() => {
@@ -4468,15 +4531,21 @@ function simulateVoiceFeedbackAction() {
     if (timerEl) timerEl.textContent = `00:0${secStr}`.slice(-5);
     if (seconds >= 3) {
       clearInterval(interval);
-      if (hintEl) hintEl.textContent = "✓ MIRA berhasil mengekstrak sentimen dan konteks layanan!";
+      if (hintEl)
+        hintEl.textContent =
+          "✓ MIRA berhasil mengekstrak sentimen dan konteks layanan!";
       if (btnEl) {
         btnEl.innerHTML = "<span>✓</span> Transkripsi & Insight Siap";
         btnEl.disabled = false;
       }
 
       // Re-run and refresh insight
-      const transcriptInput = document.getElementById("voice-transcript-output");
-      const currentText = transcriptInput ? transcriptInput.value : currentVoiceModalState.transcript;
+      const transcriptInput = document.getElementById(
+        "voice-transcript-output",
+      );
+      const currentText = transcriptInput
+        ? transcriptInput.value
+        : currentVoiceModalState.transcript;
       const insight = analyzeVoiceFeedback({
         transcript: currentText,
         rating: currentVoiceModalState.rating,
@@ -4500,19 +4569,24 @@ function saveVoiceInsightFeedback() {
   }
 
   const tpKey = currentVoiceModalState.touchpoint;
-  const config = TOUCHPOINTS_CONFIG[tpKey] || TOUCHPOINTS_CONFIG["doctor_consultation"];
+  const config =
+    TOUCHPOINTS_CONFIG[tpKey] || TOUCHPOINTS_CONFIG["doctor_consultation"];
   const transcriptInput = document.getElementById("voice-transcript-output");
-  const transcriptText = transcriptInput ? transcriptInput.value.trim() : currentVoiceModalState.transcript;
+  const transcriptText = transcriptInput
+    ? transcriptInput.value.trim()
+    : currentVoiceModalState.transcript;
 
   const now = new Date();
   const dateStr = `${now.getDate()} ${["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"][now.getMonth()]} ${now.getFullYear()}`;
 
-  const insight = currentVoiceModalState.insight || analyzeVoiceFeedback({
-    transcript: transcriptText,
-    rating: currentVoiceModalState.rating,
-    touchpoint: tpKey,
-    patientType: "existing_user",
-  });
+  const insight =
+    currentVoiceModalState.insight ||
+    analyzeVoiceFeedback({
+      transcript: transcriptText,
+      rating: currentVoiceModalState.rating,
+      touchpoint: tpKey,
+      patientType: "existing_user",
+    });
 
   // 1. Record Centralized Voice Session (Feature 13: 1 Voice feedback per session rule)
   state.voiceFeedbackSession = {
@@ -4526,7 +4600,9 @@ function saveVoiceInsightFeedback() {
 
   // 2. Save to state.touchpointsFeedback
   if (!state.touchpointsFeedback) {
-    state.touchpointsFeedback = JSON.parse(JSON.stringify(DEFAULT_TOUCHPOINTS_FEEDBACK));
+    state.touchpointsFeedback = JSON.parse(
+      JSON.stringify(DEFAULT_TOUCHPOINTS_FEEDBACK),
+    );
   }
 
   state.touchpointsFeedback[tpKey] = {
@@ -4540,7 +4616,9 @@ function saveVoiceInsightFeedback() {
   };
 
   // 3. Centralized Duplicate Reward Check
-  const wasAlreadyAwarded = Boolean(state.feedback && state.feedback.pointsAwarded);
+  const wasAlreadyAwarded = Boolean(
+    state.feedback && state.feedback.pointsAwarded,
+  );
   let pointsAwardedThisTime = false;
 
   if (!wasAlreadyAwarded) {
@@ -4620,11 +4698,21 @@ function saveVoiceInsightFeedback() {
   }
 
   // Render Insight on Thank You Modal
-  const thanksInsightCard = document.getElementById("micro-thanks-insight-card");
-  const thanksInsightPill = document.getElementById("micro-thanks-insight-pill");
-  const thanksInsightIssue = document.getElementById("micro-thanks-insight-issue");
-  const thanksInsightPositive = document.getElementById("micro-thanks-insight-positive");
-  const thanksInsightSummary = document.getElementById("micro-thanks-insight-summary");
+  const thanksInsightCard = document.getElementById(
+    "micro-thanks-insight-card",
+  );
+  const thanksInsightPill = document.getElementById(
+    "micro-thanks-insight-pill",
+  );
+  const thanksInsightIssue = document.getElementById(
+    "micro-thanks-insight-issue",
+  );
+  const thanksInsightPositive = document.getElementById(
+    "micro-thanks-insight-positive",
+  );
+  const thanksInsightSummary = document.getElementById(
+    "micro-thanks-insight-summary",
+  );
 
   if (thanksInsightCard && insight) {
     thanksInsightCard.style.display = "block";
@@ -4633,14 +4721,18 @@ function saveVoiceInsightFeedback() {
       thanksInsightPill.className = `insight-sentiment-pill ${insight.sentimentLevel}`;
     }
     if (thanksInsightIssue) thanksInsightIssue.textContent = insight.mainIssue;
-    if (thanksInsightPositive) thanksInsightPositive.textContent = insight.positiveAspect;
-    if (thanksInsightSummary) thanksInsightSummary.textContent = insight.summary;
+    if (thanksInsightPositive)
+      thanksInsightPositive.textContent = insight.positiveAspect;
+    if (thanksInsightSummary)
+      thanksInsightSummary.textContent = insight.summary;
   }
 
   openModal("modal-micro-feedback-thanks");
 
   if (pointsAwardedThisTime) {
-    showToast(`Masukan suara ${config.title} berhasil dianalisis & disimpan! +20 CarePoints ditambahkan.`);
+    showToast(
+      `Masukan suara ${config.title} berhasil dianalisis & disimpan! +20 CarePoints ditambahkan.`,
+    );
   } else {
     showToast(`Masukan suara ${config.title} berhasil diperbarui.`);
   }
@@ -5066,7 +5158,9 @@ function openNonUserFeedbackModal() {
     catGrid.querySelectorAll(".feedback-cat-pill").forEach((pill) => {
       const text = pill.textContent.trim().replace(/^[^\s]+\s*/, ""); // remove emoji
       const isSelected = currentNonUserFeedbackDraft.categories.some(
-        (c) => text.toLowerCase().includes(c.toLowerCase()) || c.toLowerCase().includes(text.toLowerCase())
+        (c) =>
+          text.toLowerCase().includes(c.toLowerCase()) ||
+          c.toLowerCase().includes(text.toLowerCase()),
       );
       if (isSelected) {
         pill.classList.add("selected");
@@ -5077,7 +5171,9 @@ function openNonUserFeedbackModal() {
   }
 
   // Populate comment textarea
-  const commentInput = document.getElementById("nonuser-feedback-comment-input");
+  const commentInput = document.getElementById(
+    "nonuser-feedback-comment-input",
+  );
   if (commentInput) {
     commentInput.value = currentNonUserFeedbackDraft.comment || "";
   }
@@ -5148,7 +5244,10 @@ function updateNonUserFeedbackSubmitBtn() {
   const btn = document.getElementById("btn-submit-nonuser-feedback");
   if (!btn) return;
 
-  if (currentNonUserFeedbackDraft.rating !== null && currentNonUserFeedbackDraft.rating > 0) {
+  if (
+    currentNonUserFeedbackDraft.rating !== null &&
+    currentNonUserFeedbackDraft.rating > 0
+  ) {
     btn.disabled = false;
     btn.style.opacity = "1";
     btn.style.cursor = "pointer";
@@ -5191,7 +5290,9 @@ function openMicroFeedbackModal(touchpointKey = "registration") {
     comment:
       existingRecord && existingRecord.comment ? existingRecord.comment : "",
     voiceRef:
-      existingRecord && existingRecord.voiceRef ? existingRecord.voiceRef : null,
+      existingRecord && existingRecord.voiceRef
+        ? existingRecord.voiceRef
+        : null,
     optionalExpanded: Boolean(
       existingRecord && (existingRecord.comment || existingRecord.voiceRef),
     ),
@@ -5382,8 +5483,13 @@ function toggleMicroOptionalDetails() {
  */
 function triggerMicroVoiceFeedback() {
   if (state.voiceFeedbackSession && state.voiceFeedbackSession.submitted) {
-    showVoiceAlreadyUsedNotice(state.voiceFeedbackSession.touchpoint, currentMicroFeedbackDraft.touchpoint);
-    const commentInput = document.getElementById("micro-feedback-comment-input");
+    showVoiceAlreadyUsedNotice(
+      state.voiceFeedbackSession.touchpoint,
+      currentMicroFeedbackDraft.touchpoint,
+    );
+    const commentInput = document.getElementById(
+      "micro-feedback-comment-input",
+    );
     if (commentInput) {
       commentInput.focus();
     }
@@ -5399,7 +5505,8 @@ function triggerMicroVoiceFeedback() {
     const tpKey = currentMicroFeedbackDraft.touchpoint;
     let voiceTranscript = "Pelayanan sangat baik, ramah dan teratur.";
     if (tpKey === "registration") {
-      voiceTranscript = "Petugas pendaftaran ramah, tetapi antrean admisi sangat panjang dan saya harus menunggu hampir 40 menit di loket.";
+      voiceTranscript =
+        "Petugas pendaftaran ramah, tetapi antrean admisi sangat panjang dan saya harus menunggu hampir 40 menit di loket.";
     } else if (tpKey === "doctor_consultation") {
       voiceTranscript =
         "Dokter Andi menjelaskan kondisi tulang saya dengan sangat jelas dan menenangkan. Pelayanan perawat juga sangat ramah dan sigap.";
@@ -5424,7 +5531,9 @@ function triggerMicroVoiceFeedback() {
     currentMicroFeedbackDraft.insight = insight;
 
     if (voiceTag) voiceTag.style.display = "block";
-    showToast("✓ Transkripsi suara berhasil diproses oleh MIRA Voice-to-Insight!");
+    showToast(
+      "✓ Transkripsi suara berhasil diproses oleh MIRA Voice-to-Insight!",
+    );
   }, 900);
 }
 
@@ -5478,12 +5587,16 @@ function submitMicroFeedback() {
   const dateStr = `${now.getDate()} ${["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"][now.getMonth()]} ${now.getFullYear()}`;
 
   // Run insight analysis if comment or voice is present
-  const insight = currentMicroFeedbackDraft.insight || (commentText ? analyzeVoiceFeedback({
-    transcript: commentText,
-    rating: currentMicroFeedbackDraft.rating,
-    touchpoint: tpKey,
-    patientType: "existing_user",
-  }) : null);
+  const insight =
+    currentMicroFeedbackDraft.insight ||
+    (commentText
+      ? analyzeVoiceFeedback({
+          transcript: commentText,
+          rating: currentMicroFeedbackDraft.rating,
+          touchpoint: tpKey,
+          patientType: "existing_user",
+        })
+      : null);
 
   // 1. Save touchpoint specific record
   if (!state.touchpointsFeedback) {
@@ -5493,7 +5606,10 @@ function submitMicroFeedback() {
   }
 
   // If voice was used for this micro-feedback, record centralized voice session
-  if (currentMicroFeedbackDraft.voiceRef && (!state.voiceFeedbackSession || !state.voiceFeedbackSession.submitted)) {
+  if (
+    currentMicroFeedbackDraft.voiceRef &&
+    (!state.voiceFeedbackSession || !state.voiceFeedbackSession.submitted)
+  ) {
     state.voiceFeedbackSession = {
       submitted: true,
       touchpoint: tpKey,
@@ -5607,11 +5723,21 @@ function submitMicroFeedback() {
   }
 
   // Render Insight on Thank You Modal
-  const thanksInsightCard = document.getElementById("micro-thanks-insight-card");
-  const thanksInsightPill = document.getElementById("micro-thanks-insight-pill");
-  const thanksInsightIssue = document.getElementById("micro-thanks-insight-issue");
-  const thanksInsightPositive = document.getElementById("micro-thanks-insight-positive");
-  const thanksInsightSummary = document.getElementById("micro-thanks-insight-summary");
+  const thanksInsightCard = document.getElementById(
+    "micro-thanks-insight-card",
+  );
+  const thanksInsightPill = document.getElementById(
+    "micro-thanks-insight-pill",
+  );
+  const thanksInsightIssue = document.getElementById(
+    "micro-thanks-insight-issue",
+  );
+  const thanksInsightPositive = document.getElementById(
+    "micro-thanks-insight-positive",
+  );
+  const thanksInsightSummary = document.getElementById(
+    "micro-thanks-insight-summary",
+  );
 
   if (thanksInsightCard && insight) {
     thanksInsightCard.style.display = "block";
@@ -5620,8 +5746,10 @@ function submitMicroFeedback() {
       thanksInsightPill.className = `insight-sentiment-pill ${insight.sentimentLevel}`;
     }
     if (thanksInsightIssue) thanksInsightIssue.textContent = insight.mainIssue;
-    if (thanksInsightPositive) thanksInsightPositive.textContent = insight.positiveAspect;
-    if (thanksInsightSummary) thanksInsightSummary.textContent = insight.summary;
+    if (thanksInsightPositive)
+      thanksInsightPositive.textContent = insight.positiveAspect;
+    if (thanksInsightSummary)
+      thanksInsightSummary.textContent = insight.summary;
   } else if (thanksInsightCard) {
     thanksInsightCard.style.display = "none";
   }
@@ -5692,7 +5820,9 @@ function submitNonUserFeedback() {
     return;
   }
 
-  const commentInput = document.getElementById("nonuser-feedback-comment-input");
+  const commentInput = document.getElementById(
+    "nonuser-feedback-comment-input",
+  );
   const commentText = commentInput ? commentInput.value.trim() : "";
 
   const now = new Date();
@@ -5704,7 +5834,8 @@ function submitNonUserFeedback() {
 
   // Run MIRA Voice-to-Insight engine for Non-User feedback
   const nonUserInsight = analyzeVoiceFeedback({
-    transcript: commentText || (currentConfig.title + " pelayanan memuaskan dan teratur"),
+    transcript:
+      commentText || currentConfig.title + " pelayanan memuaskan dan teratur",
     rating: currentNonUserFeedbackDraft.rating,
     touchpoint: currentNonUserTouchpoint,
     patientType: "non_user",
@@ -5762,11 +5893,21 @@ function submitNonUserFeedback() {
   }
 
   // Populate Non-User Insight Card
-  const nonUserInsightCard = document.getElementById("nonuser-thanks-insight-card");
-  const nonUserInsightPill = document.getElementById("nonuser-thanks-insight-pill");
-  const nonUserInsightIssue = document.getElementById("nonuser-thanks-insight-issue");
-  const nonUserInsightPositive = document.getElementById("nonuser-thanks-insight-positive");
-  const nonUserInsightSummary = document.getElementById("nonuser-thanks-insight-summary");
+  const nonUserInsightCard = document.getElementById(
+    "nonuser-thanks-insight-card",
+  );
+  const nonUserInsightPill = document.getElementById(
+    "nonuser-thanks-insight-pill",
+  );
+  const nonUserInsightIssue = document.getElementById(
+    "nonuser-thanks-insight-issue",
+  );
+  const nonUserInsightPositive = document.getElementById(
+    "nonuser-thanks-insight-positive",
+  );
+  const nonUserInsightSummary = document.getElementById(
+    "nonuser-thanks-insight-summary",
+  );
 
   if (nonUserInsightCard && nonUserInsight) {
     nonUserInsightCard.style.display = "block";
@@ -5774,9 +5915,12 @@ function submitNonUserFeedback() {
       nonUserInsightPill.textContent = `${nonUserInsight.sentiment} · ${nonUserInsight.sentimentScore}`;
       nonUserInsightPill.className = `insight-sentiment-pill ${nonUserInsight.sentimentLevel}`;
     }
-    if (nonUserInsightIssue) nonUserInsightIssue.textContent = nonUserInsight.mainIssue;
-    if (nonUserInsightPositive) nonUserInsightPositive.textContent = nonUserInsight.positiveAspect;
-    if (nonUserInsightSummary) nonUserInsightSummary.textContent = nonUserInsight.summary;
+    if (nonUserInsightIssue)
+      nonUserInsightIssue.textContent = nonUserInsight.mainIssue;
+    if (nonUserInsightPositive)
+      nonUserInsightPositive.textContent = nonUserInsight.positiveAspect;
+    if (nonUserInsightSummary)
+      nonUserInsightSummary.textContent = nonUserInsight.summary;
   } else if (nonUserInsightCard) {
     nonUserInsightCard.style.display = "none";
   }
